@@ -45,8 +45,8 @@ export const Footer = () => {
             </ul>
           </div>
         </div>
-        <div className="mt-8 border-t border-gray-200 pt-8">
-          <p className="text-base text-gray-400 text-center">© Oshi Box</p>
+        <div className="flex mt-8 border-t border-gray-200 pt-8">
+          <p className="text-base text-gray-400 text-center">©Oshi Box</p>
         </div>
       </div>
     </footer>
