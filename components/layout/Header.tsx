@@ -8,6 +8,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
+import { UserIcon } from "@/components/svg/UserIcon";
 
 export const Header = () => {
   return (
@@ -22,9 +23,7 @@ export const Header = () => {
           <nav className="flex items-center space-x-4">
             <DropdownMenu>
               <DropdownMenuTrigger className="focus:outline-none cursor-pointer">
-                <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center">
-                  <span className="text-sm">👤</span>
-                </div>
+                <UserIcon className="w-8 h-8" />
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56">
                 <DropdownMenuItem asChild>

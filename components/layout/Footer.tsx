@@ -31,7 +31,7 @@ export const Footer = () => {
                   href="/terms"
                   className="text-base text-gray-500 hover:text-gray-900"
                 >
-                  terms
+                  利用規約
                 </Link>
               </li>
               <li>
@@ -39,7 +39,7 @@ export const Footer = () => {
                   href="/privacy"
                   className="text-base text-gray-500 hover:text-gray-900"
                 >
-                  privacy policy
+                  プライバシーポリシー
                 </Link>
               </li>
             </ul>
