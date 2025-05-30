@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { XButton } from "@/components/ui/x_button";
 
 export default function SessionNew() {
   return (
@@ -9,6 +10,9 @@ export default function SessionNew() {
           <h1 className="text-[#52525b]">ログイン</h1>
         </CardHeader>
         <CardContent className="py-5">
+          <div className="flex flex-col gap-6 max-w-64 sm:max-w-72 mx-auto mb-6">
+            <XButton />
+          </div>
           <ul className="text-sm">
             <li>
               <p>
