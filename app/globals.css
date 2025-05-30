@@ -83,6 +83,9 @@
   body {
     @apply bg-background text-foreground;
   }
+  .rose_link {
+    @apply text-rose-300 hover:text-rose-600 underline;
+  }
 }
 
 body {
@@ -90,7 +93,9 @@ body {
   color: var(--foreground);
   overflow-wrap: break-word;
   word-wrap: break-word;
-  font-family: Hiragino Maru Gothic Pro, Hiragino Kaku Gothic ProN, -apple-system, system-ui, Hiragino Sans, "游ゴシック Medium", メイリオ, Meiryo, MS Pゴシック, MS PMGothic, sans-serif;
+  font-family: Hiragino Maru Gothic Pro, Hiragino Kaku Gothic ProN,
+    -apple-system, system-ui, Hiragino Sans, "游ゴシック Medium", メイリオ,
+    Meiryo, MS Pゴシック, MS PMGothic, sans-serif;
   -webkit-hyphens: auto;
   hyphens: auto;
   word-break: break-all;
@@ -101,4 +106,21 @@ body {
 .container {
   max-width: 640px;
   margin: 0 auto;
+}
+
+h1 {
+  color: #3f3f46;
+}
+
+p {
+  color: #71717a;
+}
+
+.custom_card {
+  --tw-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+  --tw-shadow-colored: 0 1px 3px 0 var(--tw-shadow-color),
+    0 1px 2px -1px var(--tw-shadow-color);
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000),
+    var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+  border: 0 solid #e5e7eb;
 }

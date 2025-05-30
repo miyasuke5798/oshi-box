@@ -27,12 +27,12 @@ export const Header = () => {
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56">
                 <DropdownMenuItem asChild>
-                  <Link href="/" className="w-full">
+                  <Link href="/" className="w-full cursor-pointer">
                     推しボックスとは？
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                  <Link href="/" className="w-full">
+                  <Link href="/" className="w-full cursor-pointer">
                     よくある質問
                   </Link>
                 </DropdownMenuItem>

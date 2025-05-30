@@ -9,7 +9,7 @@ export default async function MainLayout({
   return (
     <>
       <Header />
-      <main className="flex-grow container px-3 sm:px-0 py-16">{children}</main>
+      <main className="flex-grow container px-3 sm:px-0">{children}</main>
       <Footer />
     </>
   );
