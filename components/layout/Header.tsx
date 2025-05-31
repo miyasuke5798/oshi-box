@@ -24,6 +24,7 @@ export const Header = () => {
                 width={62}
                 height={62}
                 loading="eager"
+                priority
               />
             </Link>
           </div>

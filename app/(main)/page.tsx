@@ -7,9 +7,23 @@ export default function Home() {
     <div className="mt-6 mb-16">
       <Card className="w-full">
         <CardContent className="flex flex-col gap-6 py-16">
-          <h1 className="text-2xl sm:text-4xl font-medium mb-8">ホームたいとる</h1>
-          <div className="mb-8">
-            <p>ホームテキスト</p>
+          <h1 className="text-2xl sm:text-3xl font-medium mb-4">
+            「忘れたくない、あの瞬間がある。」
+          </h1>
+          <div className="text-lg leading-relaxed mb-8">
+            <p>
+              日常の中に、ふと訪れる尊い一瞬。
+              <br />
+              推しがくれた笑顔、言葉、感動のライブ──
+              <br />
+              どれもが、かけがえのない宝物。
+              <br />
+              <br />
+              「すぐに書き残せて、いつでも見返せる。」
+              <br />
+              推しBOXは、そんな“ときめき”をそっと残す、あなただけの日記帳です。
+              <br />
+            </p>
           </div>
           <Link href="/users/new" className="w-full">
             <Button size="lg" className="w-full">
