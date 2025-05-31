@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,42 +18,50 @@ export const Header = () => {
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center">
             <Link href="/" className="font-bold">
-              oshi box
+              <Image
+                src="/oshi_box_logo.png"
+                alt="oshi-box logo"
+                width={62}
+                height={62}
+                loading="eager"
+              />
             </Link>
           </div>
-          <nav className="flex items-center space-x-4">
-            <DropdownMenu>
-              <DropdownMenuTrigger className="focus:outline-none cursor-pointer">
-                <UserIcon className="w-8 h-8" />
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56">
-                <DropdownMenuItem asChild>
-                  <Link href="/" className="w-full cursor-pointer">
-                    推しボックスとは？
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link href="/" className="w-full cursor-pointer">
-                    よくある質問
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild className="focus:bg-transparent">
-                  <Link href="/users/new" className="w-full">
-                    <Button className="w-full" variant="default">
-                      新規登録
-                    </Button>
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild className="focus:bg-transparent">
-                  <Link href="/session/new" className="w-full">
-                    <Button className="w-full" variant="default">
-                      ログイン
-                    </Button>
-                  </Link>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </nav>
+          <div className="flex items-center gap-4">
+            <nav className="flex items-center space-x-4">
+              <DropdownMenu>
+                <DropdownMenuTrigger className="focus:outline-none cursor-pointer">
+                  <UserIcon className="w-8 h-8" />
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56">
+                  <DropdownMenuItem asChild>
+                    <Link href="/" className="w-full cursor-pointer">
+                      推しボックスとは？
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href="/" className="w-full cursor-pointer">
+                      よくある質問
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild className="focus:bg-transparent">
+                    <Link href="/users/new" className="w-full">
+                      <Button className="w-full" variant="default">
+                        新規登録
+                      </Button>
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild className="focus:bg-transparent">
+                    <Link href="/session/new" className="w-full">
+                      <Button className="w-full" variant="default">
+                        ログイン
+                      </Button>
+                    </Link>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </nav>
+          </div>
         </div>
       </div>
     </header>
