@@ -11,10 +11,10 @@ export default function UsersNew() {
         </CardHeader>
         <CardContent className="py-5">
           <div className="text-sm mb-6">
-            <p>テキスト</p>
+            <p></p>
           </div>
           <div className="flex flex-col gap-6 max-w-64 sm:max-w-72 mx-auto mb-6">
-            <XButton />
+            <XButton type="register" />
           </div>
         </CardContent>
       </Card>

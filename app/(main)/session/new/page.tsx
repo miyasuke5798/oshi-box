@@ -11,7 +11,7 @@ export default function SessionNew() {
         </CardHeader>
         <CardContent className="py-5">
           <div className="flex flex-col gap-6 max-w-64 sm:max-w-72 mx-auto mt-2 mb-6">
-            <XButton />
+            <XButton type="login" />
           </div>
           <ul className="text-sm">
             <li>
