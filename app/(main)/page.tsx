@@ -11,7 +11,7 @@ export default function Home() {
             「忘れたくない、あの瞬間がある。」
           </h1>
           <div className="text-lg leading-relaxed mb-8">
-            <p>
+            <p className="text-[#71717a]">
               日常の中に、ふと訪れる尊い一瞬。
               <br />
               推しがくれた笑顔、言葉、感動のライブ──

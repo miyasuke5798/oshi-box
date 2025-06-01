@@ -15,7 +15,7 @@ export default function SessionNew() {
           </div>
           <ul className="text-sm">
             <li>
-              <p>
+              <p className="text-[#71717a]">
                 ユーザ登録をされていない方は
                 <Link href="/users/new" className="rose_link">
                   こちら
