@@ -46,7 +46,7 @@ export default function About() {
             </div>
           </div>
           <div className="mb-4">
-            <h3 className="text-xl mb-2">推しごとカレンダー</h3>
+            <h3 className="text-xl mb-2">推しごとカレンダー（実装予定）</h3>
             <div className="text-[#71717a]">
               <p>ライブ・配信・グッズ発売日など、予定をひと目でチェック。</p>
               <ul className="list-disc list-inside">

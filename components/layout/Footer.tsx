@@ -48,7 +48,7 @@ export const Footer = () => {
           </div>
         </div>
         <div className="mt-8 border-t border-gray-200">
-          <div className="mt-4 mb-8">
+          <div className="mt-4 mb-6">
             <h3 className="text-[#3f3f46] text-sm font-semibold mb-2">
               公式アカウント
             </h3>
@@ -56,11 +56,26 @@ export const Footer = () => {
               <XIcon width={23} height={23} className="text-[#9a9a9a]" />
             </div>
           </div>
-          <div className="my-4">
-            <h3 className="text-[#3f3f46] text-sm font-semibold mb-2">サポート</h3>
+          <div className="mt-4 mb-6">
+            <h3 className="text-[#3f3f46] text-sm font-semibold mb-2">
+              サポート
+            </h3>
             <div>
               <Link href="/about" className="text-[#71717a] text-sm">
                 推しBOXとは？
+              </Link>
+            </div>
+          </div>
+          <div className="mt-4 mb-6">
+            <h3 className="text-[#3f3f46] text-sm font-semibold mb-2">
+              規約・ポリシー
+            </h3>
+            <div className="flex gap-4">
+              <Link href="/terms/privacy" className="text-[#71717a] text-sm">
+                プライバシーポリシー
+              </Link>
+              <Link href="/terms/service" className="text-[#71717a] text-sm">
+                利用規約
               </Link>
             </div>
           </div>
