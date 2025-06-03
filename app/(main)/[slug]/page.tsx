@@ -12,10 +12,15 @@ export default function SlugPage() {
         </CardHeader>
         <CardContent>コンテンツ</CardContent>
       </Card>
-      <Card>
+      <Card className="w-full mb-4">
         <CardContent className="flex flex-col justify-center items-center py-5 px-6">
           <UserIcon className="w-34 h-34 border border-gray-300 rounded-full" />
           <h1 className="text-xl text-[#181818] mt-4 mb-2">xxx</h1>
+        </CardContent>
+      </Card>
+      <Card className="w-full mb-4">
+        <CardContent className="py-5 px-6">
+          <h1 className="text-xl font-bold mb-6">自分の投稿一覧</h1>
         </CardContent>
       </Card>
     </div>
