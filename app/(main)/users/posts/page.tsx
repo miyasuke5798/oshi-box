@@ -215,7 +215,7 @@ export default function UsersPostsPage() {
               </RadioGroup>
             </div>
             {error && <p className="text-sm text-red-500">{error}</p>}
-            <Button type="submit" className="w-full" disabled={isSubmitting}>
+            <Button type="submit" className="w-full mt-4" disabled={isSubmitting}>
               {isSubmitting ? "作成中..." : "作成"}
             </Button>
           </form>
