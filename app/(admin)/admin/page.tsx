@@ -39,7 +39,7 @@ export default function Admin() {
       setError("");
       // TODO: ここに実際のログイン処理を実装
       console.log("Login data:", data);
-      router.push("/admin/dashboard");
+      router.push("/admin/dashboard/users");
       toast.success("ログインしました", { icon: <SuccessCircle /> });
     } catch {
       setError("ログインに失敗しました。もう一度お試しください。");

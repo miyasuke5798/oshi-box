@@ -93,7 +93,7 @@ export default function SettingsProfilePage() {
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             <div className="space-y-2">
               <p className="text-sm mb-1">プロフィール画像</p>
-              <div className="flex flex-col space-y-4">
+              <div className="flex flex-col items-center space-y-4">
                 <div className="relative w-34 h-34">
                   {previewUrl ? (
                     <>
@@ -119,13 +119,13 @@ export default function SettingsProfilePage() {
                   type="file"
                   accept="image/*"
                   onChange={handleImageChange}
-                  className="w-fit cursor-pointer"
+                  className="w-auto sm:w-fit cursor-pointer"
                 />
               </div>
             </div>
             <div className="space-y-2">
               <label htmlFor="name" className="text-sm font-medium">
-                表示名
+                名前
               </label>
               <Input id="name" type="text" {...register("name")} />
               {errors.name && (
@@ -147,7 +147,7 @@ export default function SettingsProfilePage() {
             </div>
             <div className="space-y-2">
               <label htmlFor="oshiName" className="text-sm font-medium">
-                推し名
+                推し
               </label>
               <Input id="oshiName" type="text" {...register("oshiName")} />
               {errors.oshiName && (
