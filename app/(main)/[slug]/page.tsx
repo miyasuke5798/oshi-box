@@ -12,7 +12,7 @@ export default function SlugPage() {
         <CardHeader className="text-sm font-normal">
           このエリアはxxxさんだけに見えています
         </CardHeader>
-        <Link href="/settings/profile" className="bg-white hover:bg-gray-50">
+        <Link href="/settings/profile" className="bg-white hover:bg-gray-50 rounded-[.5rem]">
           <CardContent className="flex flex-row items-center gap-3 py-4 px-6">
             <CircleUser strokeWidth={1.5} className="w-6 h-6" />
             <p>プロフィール編集</p>
@@ -27,7 +27,7 @@ export default function SlugPage() {
       </Card>
       <Card className="w-full mb-4">
         <CardContent className="py-5 px-6">
-          <h1 className="text-xl font-bold mb-6">自分の投稿一覧</h1>
+          <h1 className="text-xl font-bold mb-6">投稿一覧</h1>
         </CardContent>
       </Card>
     </div>

@@ -28,11 +28,11 @@ export const ShareMenu: React.FC = () => {
   ];
 
   return (
-    <ul className="px-3 sm:px-0 py-4 grid grid-cols-4 gap-3">
+    <ul className="px-3 py-4 flex justify-between gap-3">
       {menuItems.map((item) => {
         const isActive = pathname === item.href;
         return (
-          <li key={item.label}>
+          <li key={item.label} className="w-full max-w-[120px]">
             <Link
               href={item.href}
               className="flex flex-col items-center w-full gap-1"

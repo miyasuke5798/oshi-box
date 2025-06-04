@@ -10,7 +10,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { SuccessCircle } from "@/components/svg/success_circle";
-import { X } from "lucide-react";
+import { X, AlertCircle } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -23,6 +23,8 @@ const categories = [
   { id: "vtuber", label: "Vtuber" },
   { id: "game", label: "ゲーム" },
   { id: "idol", label: "アイドル" },
+  { id: "illust", label: "イラスト" },
+  { id: "cosplay", label: "コスプレ" },
 ] as const;
 
 const usersPostSchema = z.object({
@@ -32,9 +34,27 @@ const usersPostSchema = z.object({
     .max(100, "100文字以内で入力してください"),
   content: z.string().max(1000, "1000文字以内で入力してください"),
   visibility: z.enum(["public", "followers", "private"]),
-  images: z.any().optional(),
+  images: z
+    .any()
+    .refine(
+      (files) => {
+        if (!files || files.length === 0) return true;
+        return files.length <= 4;
+      },
+      { message: "画像は最大4枚までアップロードできます" }
+    )
+    .optional(),
   categories: z.array(
-    z.enum(["live", "goods", "oshi", "vtuber", "game", "idol"])
+    z.enum([
+      "live",
+      "goods",
+      "oshi",
+      "vtuber",
+      "game",
+      "idol",
+      "illust",
+      "cosplay",
+    ])
   ),
 });
 
@@ -61,8 +81,36 @@ export default function UsersPostsPage() {
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
     if (files.length > 0) {
-      // 既存の画像データを取得し、新しい画像を追加
+      // ファイル形式のチェック
+      const allowedTypes = [
+        "image/jpeg",
+        "image/jpg",
+        "image/png",
+        "image/webp",
+      ];
+      const invalidFiles = files.filter(
+        (file) => !allowedTypes.includes(file.type)
+      );
+
+      if (invalidFiles.length > 0) {
+        toast.error("JPEG / JPG / PNG / WebP形式のみアップロード可能です", {
+          icon: <AlertCircle className="h-5 w-5 text-red-500" />,
+        });
+        return;
+      }
+
+      // 既存の画像データを取得
       const currentImages = watch("images") || [];
+
+      // 合計枚数のチェック
+      if (currentImages.length + files.length > 4) {
+        toast.error("画像は最大4枚までアップロードできます", {
+          icon: <AlertCircle className="h-5 w-5 text-red-500" />,
+        });
+        return;
+      }
+
+      // 新しい画像を追加
       setValue("images", [...currentImages, ...files]);
 
       // プレビューURLの生成
@@ -124,10 +172,10 @@ export default function UsersPostsPage() {
               <div className="flex flex-col space-y-4">
                 <Input
                   type="file"
-                  accept="image/*"
+                  accept="image/jpeg,image/jpg,image/png,image/webp"
                   multiple
                   onChange={handleImageChange}
-                  className="w-fit cursor-pointer"
+                  className="w-auto sm:w-fit cursor-pointer"
                 />
                 {previewUrls.length > 0 && (
                   <div className="grid grid-cols-3 gap-4 sm:grid-cols-4 md:grid-cols-5">
@@ -198,7 +246,7 @@ export default function UsersPostsPage() {
                     value as "public" | "followers" | "private"
                   )
                 }
-                className="flex flex-row space-x-2"
+                className="flex flex-row flex-wrap space-x-2"
               >
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="public" id="public" />
@@ -215,7 +263,11 @@ export default function UsersPostsPage() {
               </RadioGroup>
             </div>
             {error && <p className="text-sm text-red-500">{error}</p>}
-            <Button type="submit" className="w-full mt-4" disabled={isSubmitting}>
+            <Button
+              type="submit"
+              className="w-full mt-4"
+              disabled={isSubmitting}
+            >
               {isSubmitting ? "作成中..." : "作成"}
             </Button>
           </form>
