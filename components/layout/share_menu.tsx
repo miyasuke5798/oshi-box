@@ -17,7 +17,7 @@ export const ShareMenu: React.FC = () => {
     },
     {
       label: "投稿する",
-      href: "/users/posts",
+      href: "/users/posts/new",
       icon: <BsFillSendFill size={26} color="#3ebff5" />,
     },
     {
