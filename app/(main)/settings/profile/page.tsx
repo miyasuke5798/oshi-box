@@ -119,7 +119,7 @@ export default function SettingsProfilePage() {
                   type="file"
                   accept="image/*"
                   onChange={handleImageChange}
-                  className="w-auto sm:w-fit cursor-pointer"
+                  className="w-full sm:w-fit cursor-pointer"
                 />
               </div>
             </div>
