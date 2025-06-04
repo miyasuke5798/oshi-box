@@ -7,7 +7,7 @@ export default function PostsPage() {
       <ShareMenu />
       <Card className="w-full mb-4">
         <CardContent className="py-5 px-6">
-          <h1 className="text-xl font-bold mb-6">みんなの投稿一覧</h1>
+          <h1 className="text-xl font-bold mb-6">みんなの投稿</h1>
         </CardContent>
       </Card>
     </div>

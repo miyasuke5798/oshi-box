@@ -1,5 +1,5 @@
 "use client";
-import { HiHome } from "react-icons/hi2";
+import { HiHome } from "react-icons/hi";
 import { BsFillSendFill } from "react-icons/bs";
 import { FaSearch } from "react-icons/fa";
 import React from "react";
@@ -13,17 +13,17 @@ export const ShareMenu: React.FC = () => {
     {
       label: "マイページ",
       href: "/xxx",
-      icon: <HiHome size={26} color="#8ed3f0" />,
+      icon: <HiHome size={26} color="#3ebff5" />,
     },
     {
       label: "投稿する",
       href: "/users/posts",
-      icon: <BsFillSendFill size={26} color="#8ed3f0" />,
+      icon: <BsFillSendFill size={26} color="#3ebff5" />,
     },
     {
-      label: "みんなの投稿一覧",
+      label: "みんなの投稿",
       href: "/posts",
-      icon: <FaSearch size={26} color="#8ed3f0" />,
+      icon: <FaSearch size={26} color="#3ebff5" />,
     },
   ];
 
@@ -41,8 +41,8 @@ export const ShareMenu: React.FC = () => {
               <div
                 className={
                   isActive
-                    ? "bg-[#8ed3f0] text-white flex items-center justify-center text-[10px] h-[23px] w-full rounded-sm"
-                    : "text-[#8ed3f0] flex items-center justify-center text-[10px] h-[23px] w-full rounded-sm"
+                    ? "bg-[#3ebff5] text-white flex items-center justify-center text-[10px] h-[23px] w-full rounded-sm"
+                    : "text-[#3ebff5] flex items-center justify-center text-[10px] h-[23px] w-full rounded-sm"
                 }
               >
                 {item.label}

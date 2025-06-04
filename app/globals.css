@@ -84,7 +84,7 @@
     @apply bg-background text-foreground;
   }
   .rose_link {
-    @apply text-[#8ed3f0] hover:text-[#8ed3f0] underline;
+    @apply text-[#3ebff5] hover:text-[#3ebff5] underline;
   }
 }
 
