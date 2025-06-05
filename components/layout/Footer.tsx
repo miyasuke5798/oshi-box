@@ -53,7 +53,9 @@ export const Footer = () => {
               公式アカウント
             </h3>
             <div>
-              <XIcon width={23} height={23} className="text-[#9a9a9a]" />
+              <Link href="https://x.com/oshiboxbox" target="_blank">
+                <XIcon width={23} height={23} className="text-[#9a9a9a]" />
+              </Link>
             </div>
           </div>
           <div className="mt-4 mb-6">

@@ -149,7 +149,12 @@ export default function UsersPostsPage() {
               <label htmlFor="title" className="text-sm font-medium">
                 タイトル
               </label>
-              <Input id="title" type="text" {...register("title")} />
+              <Input
+                id="title"
+                type="text"
+                {...register("title")}
+                placeholder="例：初めての現地ライブで涙が止まらなかった話"
+              />
               {errors.title && (
                 <p className="text-sm text-red-500">{errors.title.message}</p>
               )}
@@ -162,6 +167,7 @@ export default function UsersPostsPage() {
                 id="content"
                 {...register("content")}
                 className="min-h-[110px]"
+                placeholder="例：推しの○○のライブに行ってきました！生で見た瞬間に涙腺崩壊…。衣装や表情、ファンサも最高すぎて、一生の思い出です！"
               />
               {errors.content && (
                 <p className="text-sm text-red-500">{errors.content.message}</p>
