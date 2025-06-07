@@ -10,11 +10,25 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { SuccessCircle } from "@/components/svg/success_circle";
-import { X, AlertCircle } from "lucide-react";
+import { X, AlertCircle, CirclePlus } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { toast } from "sonner";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 const categories = [
   { id: "live", label: "ライブ" },
@@ -56,6 +70,7 @@ const usersPostSchema = z.object({
       "cosplay",
     ])
   ),
+  oshi: z.string().nullable(),
 });
 
 type usersPostFormData = z.infer<typeof usersPostSchema>;
@@ -63,6 +78,7 @@ type usersPostFormData = z.infer<typeof usersPostSchema>;
 export default function UsersPostsPage() {
   const [error, setError] = useState<string>("");
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const {
     register,
     handleSubmit,
@@ -75,6 +91,7 @@ export default function UsersPostsPage() {
       visibility: "public",
       images: [],
       categories: [],
+      oshi: null,
     },
   });
 
@@ -144,7 +161,7 @@ export default function UsersPostsPage() {
       <Card className="w-full mb-4">
         <CardContent className="py-5 px-6">
           <h1 className="text-xl font-bold mb-6">投稿する</h1>
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             <div className="space-y-2">
               <label htmlFor="title" className="text-sm font-medium">
                 タイトル
@@ -240,6 +257,57 @@ export default function UsersPostsPage() {
                     </Label>
                   </div>
                 ))}
+              </div>
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium">推し選択</label>
+              <div className="flex gap-2">
+                <div className="flex-1">
+                  <Select
+                    onValueChange={(value) =>
+                      setValue("oshi", value === "none" ? null : value)
+                    }
+                    value={watch("oshi") || "none"}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="推しを選択してください" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="none">未選択</SelectItem>
+                      <SelectItem value="oshi1">推し１</SelectItem>
+                      <SelectItem value="oshi2">推し２</SelectItem>
+                      <SelectItem value="oshi3">推し３</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                  <DialogTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className="shrink-0 font-normal py-0"
+                    >
+                      <CirclePlus className="h-5 w-5" />
+                      <span className="">新規登録</span>
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>推しを新規登録</DialogTitle>
+                    </DialogHeader>
+                    <div className="space-y-4 py-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="oshiName">名前</Label>
+                        <Input id="oshiName" placeholder="推しの名前を入力" />
+                      </div>
+                      <Button
+                        className="w-full"
+                        onClick={() => setIsDialogOpen(false)}
+                      >
+                        登録
+                      </Button>
+                    </div>
+                  </DialogContent>
+                </Dialog>
               </div>
             </div>
             <div className="space-y-2">
