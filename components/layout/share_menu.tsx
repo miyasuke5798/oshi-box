@@ -28,7 +28,7 @@ export const ShareMenu: React.FC = () => {
   ];
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-white shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.03)]">
+    <div className="fixed bottom-0 left-0 right-0 bg-white shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.03)] z-50">
       <div className="container pb-4">
         <ul className="px-3 py-3 flex justify-between gap-3">
           {menuItems.map((item) => {

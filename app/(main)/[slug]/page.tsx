@@ -3,7 +3,7 @@ import Link from "next/link";
 import { ShareMenu } from "@/components/layout/share_menu";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { UserIcon } from "@/components/svg/UserIcon";
-import { CircleUser } from "lucide-react";
+import { CircleUser, UsersRound } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function SlugPage() {
@@ -16,11 +16,20 @@ export default function SlugPage() {
         </CardHeader>
         <Link
           href="/settings/profile"
-          className="bg-white hover:bg-gray-50 rounded-[.5rem]"
+          className="bg-white hover:bg-gray-50 border-b"
         >
           <CardContent className="flex flex-row items-center gap-3 py-4 px-6">
             <CircleUser strokeWidth={1.5} className="w-6 h-6" />
             <p>プロフィール編集</p>
+          </CardContent>
+        </Link>
+        <Link
+          href="/settings/oshi"
+          className="bg-white hover:bg-gray-50 rounded-[.5rem]"
+        >
+          <CardContent className="flex flex-row items-center gap-3 py-4 px-6">
+            <UsersRound strokeWidth={1.5} className="w-6 h-6" />
+            <p>推し管理</p>
           </CardContent>
         </Link>
       </Card>
