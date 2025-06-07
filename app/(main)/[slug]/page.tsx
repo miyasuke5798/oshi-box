@@ -1,8 +1,10 @@
+"use client";
 import Link from "next/link";
 import { ShareMenu } from "@/components/layout/share_menu";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { UserIcon } from "@/components/svg/UserIcon";
 import { CircleUser } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function SlugPage() {
   return (
@@ -12,7 +14,10 @@ export default function SlugPage() {
         <CardHeader className="text-sm font-normal">
           このエリアはxxxさんだけに見えています
         </CardHeader>
-        <Link href="/settings/profile" className="bg-white hover:bg-gray-50 rounded-[.5rem]">
+        <Link
+          href="/settings/profile"
+          className="bg-white hover:bg-gray-50 rounded-[.5rem]"
+        >
           <CardContent className="flex flex-row items-center gap-3 py-4 px-6">
             <CircleUser strokeWidth={1.5} className="w-6 h-6" />
             <p>プロフィール編集</p>
@@ -28,6 +33,30 @@ export default function SlugPage() {
       <Card className="w-full mb-4">
         <CardContent className="py-5 px-6">
           <h1 className="text-xl font-bold mb-6">投稿一覧</h1>
+          <Tabs defaultValue="all" className="w-full">
+            <TabsList className="grid w-full grid-cols-4">
+              <TabsTrigger value="all">すべて</TabsTrigger>
+              <TabsTrigger value="oshi1">推し１</TabsTrigger>
+              <TabsTrigger value="oshi2">推し２</TabsTrigger>
+              <TabsTrigger value="oshi3">推し３</TabsTrigger>
+            </TabsList>
+            <TabsContent value="all" className="mt-6">
+              <p>
+                まだ投稿がありません。
+                <br />
+                あなたの「推し活」をシェアしてみましょう！
+              </p>
+            </TabsContent>
+            <TabsContent value="oshi1" className="mt-6">
+              <p>推し１の投稿</p>
+            </TabsContent>
+            <TabsContent value="oshi2" className="mt-6">
+              <p>推し２の投稿</p>
+            </TabsContent>
+            <TabsContent value="oshi3" className="mt-6">
+              <p>推し３の投稿</p>
+            </TabsContent>
+          </Tabs>
         </CardContent>
       </Card>
     </div>
