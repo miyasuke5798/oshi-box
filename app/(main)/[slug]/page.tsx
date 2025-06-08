@@ -34,8 +34,8 @@ export default function SlugPage() {
         </Link>
       </Card>
       <Card className="w-full mb-4">
-        <CardContent className="flex flex-col justify-center items-center py-5 px-6">
-          <UserIcon className="w-34 h-34 border border-gray-300 rounded-full" />
+        <CardContent className="flex flex-row justify-items-start items-center gap-4 py-5 px-6">
+          <UserIcon className="w-28 h-28 border border-gray-300 rounded-full" />
           <h1 className="text-xl text-[#181818] mt-4 mb-2">xxx</h1>
         </CardContent>
       </Card>

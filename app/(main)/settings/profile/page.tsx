@@ -93,8 +93,8 @@ export default function SettingsProfilePage() {
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             <div className="space-y-2">
               <p className="text-sm mb-1">プロフィール画像</p>
-              <div className="flex flex-col items-center space-y-4">
-                <div className="relative w-34 h-34">
+              <div className="flex flex-col space-y-4">
+                <div className="relative w-28 h-28">
                   {previewUrl ? (
                     <>
                       <Image
@@ -112,7 +112,7 @@ export default function SettingsProfilePage() {
                       </button>
                     </>
                   ) : (
-                    <UserIcon className="w-34 h-34 border border-gray-300 rounded-full" />
+                    <UserIcon className="w-28 h-28 border border-gray-300 rounded-full" />
                   )}
                 </div>
                 <Input
