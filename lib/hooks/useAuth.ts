@@ -7,7 +7,12 @@ export const useAuth = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
+    if (!auth) {
+      setLoading(false);
+      return;
+    }
+
+    const unsubscribe = auth.onAuthStateChanged((user: User | null) => {
       setUser(user);
       setLoading(false);
     });
@@ -16,6 +21,11 @@ export const useAuth = () => {
   }, []);
 
   const signOut = async () => {
+    if (!auth) {
+      console.error("Firebaseの初期化に失敗しています");
+      return;
+    }
+
     try {
       await auth.signOut();
     } catch (error) {

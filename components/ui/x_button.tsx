@@ -11,6 +11,11 @@ export const XButton = () => {
   const router = useRouter();
 
   const handleClick = async () => {
+    if (!auth) {
+      toast.error("Firebaseの初期化に失敗しています");
+      return;
+    }
+
     try {
       const provider = new TwitterAuthProvider();
       const result = await signInWithPopup(auth, provider);
