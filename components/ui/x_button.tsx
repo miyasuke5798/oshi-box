@@ -6,13 +6,16 @@ import { XIcon } from "@/components/svg/x_icon";
 import { useRouter } from "next/navigation";
 import { auth } from "@/lib/firebase";
 import { TwitterAuthProvider, signInWithPopup } from "firebase/auth";
+import { AlertCircle } from "lucide-react";
 
 export const XButton = () => {
   const router = useRouter();
 
   const handleClick = async () => {
     if (!auth) {
-      toast.error("Firebaseの初期化に失敗しています");
+      toast.error("Firebaseの初期化に失敗しています", {
+        icon: <AlertCircle />,
+      });
       return;
     }
 
@@ -30,7 +33,9 @@ export const XButton = () => {
       }
     } catch (error) {
       console.error("認証エラー:", error);
-      toast.error("認証に失敗しました");
+      toast.error("認証に失敗しました", {
+        icon: <AlertCircle />,
+      });
     }
   };
 

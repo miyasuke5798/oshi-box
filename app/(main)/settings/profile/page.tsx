@@ -7,7 +7,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { UserIcon } from "@/components/svg/UserIcon";
-import { X } from "lucide-react";
+import { X, AlertCircle } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -73,7 +73,9 @@ export default function SettingsProfilePage() {
       toast.success("プロフィールを保存しました", { icon: <SuccessCircle /> });
       console.log("Profile data:", data);
     } catch (error) {
-      toast.error("エラーが発生しました。もう一度お試しください。");
+      toast.error("エラーが発生しました。もう一度お試しください。", {
+        icon: <AlertCircle />,
+      });
       console.error("Error:", error);
     }
   };

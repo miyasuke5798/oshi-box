@@ -14,6 +14,7 @@ import { useAuth } from "@/lib/hooks/useAuth";
 import { toast } from "sonner";
 import { SuccessCircle } from "@/components/svg/success_circle";
 import { useRouter } from "next/navigation";
+import { AlertCircle } from "lucide-react";
 
 export const Header = () => {
   const { user, signOut } = useAuth();
@@ -26,7 +27,9 @@ export const Header = () => {
       router.push("/");
     } catch (error) {
       console.error("ログアウトエラー:", error);
-      toast.error("ログアウトに失敗しました");
+      toast.error("ログアウトに失敗しました", {
+        icon: <AlertCircle />,
+      });
     }
   };
 
