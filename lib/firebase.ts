@@ -12,10 +12,6 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID ?? "",
 };
 
-if (!firebaseConfig.apiKey || !firebaseConfig.projectId) {
-  throw new Error("Firebaseの環境変数が設定されていません");
-}
-
 const app =
   getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
 
