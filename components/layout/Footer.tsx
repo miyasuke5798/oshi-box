@@ -1,7 +1,26 @@
+"use client";
 import Link from "next/link";
 import { XIcon } from "@/components/svg/x_icon";
+import { useAuth } from "@/lib/hooks/useAuth";
+import { toast } from "sonner";
+import { SuccessCircle } from "@/components/svg/success_circle";
+import { useRouter } from "next/navigation";
 
 export const Footer = () => {
+  const { user, signOut } = useAuth();
+  const router = useRouter();
+
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+      toast.success("ログアウトしました", { icon: <SuccessCircle /> });
+      router.push("/");
+    } catch (error) {
+      console.error("ログアウトエラー:", error);
+      toast.error("ログアウトに失敗しました");
+    }
+  };
+
   return (
     <footer className="border-t border-gray-200 pb-4 mb-[100px]">
       <div className="container px-3 sm:px-0 pt-8">
@@ -35,15 +54,33 @@ export const Footer = () => {
                 </Link>
               </li>
               <li>
-                <Link href="/users/new" className="text-[#71717a]">
-                  新規登録
+                <Link href="/settings/profile" className="text-[#71717a]">
+                  設定
                 </Link>
               </li>
-              <li>
-                <Link href="/session/new" className="text-[#71717a]">
-                  ログイン
-                </Link>
-              </li>
+              {user ? (
+                <li>
+                  <button
+                    onClick={handleSignOut}
+                    className="text-[#71717a] cursor-pointer"
+                  >
+                    ログアウト
+                  </button>
+                </li>
+              ) : (
+                <>
+                  <li>
+                    <Link href="/users/new" className="text-[#71717a]">
+                      新規登録
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/session/new" className="text-[#71717a]">
+                      ログイン
+                    </Link>
+                  </li>
+                </>
+              )}
             </ul>
           </div>
         </div>

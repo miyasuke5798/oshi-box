@@ -94,7 +94,7 @@ export default function SettingsProfilePage() {
             <div className="space-y-2">
               <p className="text-sm mb-1">プロフィール画像</p>
               <div className="flex flex-col space-y-4">
-                <div className="relative w-26 h-26">
+                <div className="relative w-24 h-24">
                   {previewUrl ? (
                     <>
                       <Image
@@ -112,7 +112,7 @@ export default function SettingsProfilePage() {
                       </button>
                     </>
                   ) : (
-                    <UserIcon className="w-26 h-26 border border-gray-300 rounded-full" />
+                    <UserIcon className="w-24 h-24 border border-gray-300 rounded-full" />
                   )}
                 </div>
                 <Input

@@ -10,8 +10,26 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { UserIcon } from "@/components/svg/UserIcon";
+import { useAuth } from "@/lib/hooks/useAuth";
+import { toast } from "sonner";
+import { SuccessCircle } from "@/components/svg/success_circle";
+import { useRouter } from "next/navigation";
 
 export const Header = () => {
+  const { user, signOut } = useAuth();
+  const router = useRouter();
+
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+      toast.success("ログアウトしました", { icon: <SuccessCircle /> });
+      router.push("/");
+    } catch (error) {
+      console.error("ログアウトエラー:", error);
+      toast.error("ログアウトに失敗しました");
+    }
+  };
+
   return (
     <header className="bg-white border-b border-gray-200 shadow z-50">
       <div className="container px-3 sm:px-0">
@@ -35,25 +53,54 @@ export const Header = () => {
                   <UserIcon className="w-8 h-8" />
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-56">
+                  {user && (
+                    <DropdownMenuItem asChild>
+                      <Link
+                        href="/settings/profile"
+                        className="w-full cursor-pointer"
+                      >
+                        設定
+                      </Link>
+                    </DropdownMenuItem>
+                  )}
                   <DropdownMenuItem asChild>
                     <Link href="/about" className="w-full cursor-pointer">
-                    推しBOXとは？
+                      推しBOXとは？
                     </Link>
                   </DropdownMenuItem>
-                  <DropdownMenuItem asChild className="focus:bg-transparent">
-                    <Link href="/users/new" className="w-full">
-                      <Button className="w-full" variant="default">
-                        新規登録
-                      </Button>
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild className="focus:bg-transparent">
-                    <Link href="/session/new" className="w-full">
-                      <Button className="w-full" variant="default">
-                        ログイン
-                      </Button>
-                    </Link>
-                  </DropdownMenuItem>
+                  {user ? (
+                    <DropdownMenuItem asChild>
+                      <div
+                        onClick={handleSignOut}
+                        className="w-full cursor-pointer"
+                      >
+                        ログアウト
+                      </div>
+                    </DropdownMenuItem>
+                  ) : (
+                    <>
+                      <DropdownMenuItem
+                        asChild
+                        className="focus:bg-transparent"
+                      >
+                        <Link href="/users/new" className="w-full">
+                          <Button className="w-full" variant="default">
+                            新規登録
+                          </Button>
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        asChild
+                        className="focus:bg-transparent"
+                      >
+                        <Link href="/session/new" className="w-full">
+                          <Button className="w-full" variant="default">
+                            ログイン
+                          </Button>
+                        </Link>
+                      </DropdownMenuItem>
+                    </>
+                  )}
                 </DropdownMenuContent>
               </DropdownMenu>
             </nav>

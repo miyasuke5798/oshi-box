@@ -15,6 +15,7 @@ const Toaster = ({ ...props }: ToasterProps) => {
         classNames: {
           toast: "sonner-fade",
         },
+        //duration: Infinity, //フェードアウトを一時的にストップ
       }}
       style={
         {

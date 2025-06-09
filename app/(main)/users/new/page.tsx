@@ -14,7 +14,7 @@ export default function UsersNew() {
             <p></p>
           </div>
           <div className="flex flex-col gap-6 max-w-64 sm:max-w-72 mx-auto mb-6">
-            <XButton type="register" />
+            <XButton />
           </div>
         </CardContent>
       </Card>

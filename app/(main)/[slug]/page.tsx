@@ -11,6 +11,13 @@ export default function SlugPage() {
     <div className="mt-3 mb-16">
       <ShareMenu />
       <Card className="w-full mb-4">
+        <CardContent className="flex flex-row justify-items-start items-center gap-4 py-5 px-6">
+          <UserIcon className="w-24 h-24 border border-gray-300 rounded-full" />
+          <h1 className="text-xl text-[#181818] mt-4 mb-2">xxx</h1>
+        </CardContent>
+      </Card>
+      {/* TODO:自身がログインているときは非表示 */}
+      <Card className="w-full mb-4">
         <Link
           href="/settings/profile"
           className="bg-white hover:bg-gray-50 border-b rounded-t-[.5rem]"
@@ -29,12 +36,6 @@ export default function SlugPage() {
             <p>推し管理</p>
           </CardContent>
         </Link>
-      </Card>
-      <Card className="w-full mb-4">
-        <CardContent className="flex flex-row justify-items-start items-center gap-4 py-5 px-6">
-          <UserIcon className="w-26 h-26 border border-gray-300 rounded-full" />
-          <h1 className="text-xl text-[#181818] mt-4 mb-2">xxx</h1>
-        </CardContent>
       </Card>
       <Card className="w-full mb-4">
         <CardContent className="py-5 px-6">

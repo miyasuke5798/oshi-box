@@ -1,7 +1,24 @@
 .sonner-fade {
-  gap: 10px !important;
-  position: relative !important;
-  width: 100% !important;
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  max-width: 100%;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  background: var(--normal-bg);
+  color: var(--normal-text);
+  border: 1px solid var(--normal-border);
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  margin: 0.5rem;
+}
+
+@media (max-width: 640px) {
+  .sonner-fade {
+    margin: 0.25rem;
+    padding: 0.75rem;
+    font-size: 0.875rem;
+  }
 }
 
 .sonner-fade button {
