@@ -290,7 +290,7 @@ export default function UsersPostsPage() {
                       <span className="">新規登録</span>
                     </Button>
                   </DialogTrigger>
-                  <DialogContent>
+                  <DialogContent onOpenAutoFocus={(e) => e.preventDefault()}>
                     <DialogHeader>
                       <DialogTitle>推しを新規登録</DialogTitle>
                     </DialogHeader>
