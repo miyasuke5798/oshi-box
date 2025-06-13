@@ -53,7 +53,7 @@ export const XButton = () => {
           toast.success("ログインしました", { icon: <SuccessCircle /> });
         }
 
-        router.push("/xxx"); // TODO:ログイン後のリダイレクト先を設定
+        router.push(`/${result.user.uid}`);
       }
     } catch (error) {
       console.error("認証エラー:", error);
