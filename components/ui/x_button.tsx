@@ -4,15 +4,16 @@ import { toast } from "sonner";
 import { SuccessCircle } from "@/components/svg/success_circle";
 import { XIcon } from "@/components/svg/x_icon";
 import { useRouter } from "next/navigation";
-import { auth } from "@/lib/firebase";
+import { auth, db } from "@/lib/firebase";
 import { TwitterAuthProvider, signInWithPopup } from "firebase/auth";
 import { AlertCircle } from "lucide-react";
+import { doc, setDoc, getDoc } from "firebase/firestore";
 
 export const XButton = () => {
   const router = useRouter();
 
   const handleClick = async () => {
-    if (!auth) {
+    if (!auth || !db) {
       toast.error("Firebaseの初期化に失敗しています", {
         icon: <AlertCircle />,
       });
@@ -24,12 +25,35 @@ export const XButton = () => {
       const result = await signInWithPopup(auth, provider);
 
       if (result.user) {
-        router.push("/xxx"); // TODO:ログイン後のリダイレクト先を設定
-        if (result.operationType === "signIn") {
-          toast.success("ログインしました", { icon: <SuccessCircle /> });
-        } else {
+        // ユーザー情報をFirestoreに保存/更新
+        const userRef = doc(db, "users", result.user.uid);
+        const userDoc = await getDoc(userRef);
+
+        if (!userDoc.exists()) {
+          // 新規ユーザーの場合
+          await setDoc(userRef, {
+            uid: result.user.uid,
+            displayName: result.user.displayName,
+            photoURL: result.user.photoURL,
+            email: result.user.email,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          });
           toast.success("登録に成功しました", { icon: <SuccessCircle /> });
+        } else {
+          // 既存ユーザーの場合
+          await setDoc(
+            userRef,
+            {
+              ...userDoc.data(),
+              updatedAt: new Date(),
+            },
+            { merge: true }
+          );
+          toast.success("ログインしました", { icon: <SuccessCircle /> });
         }
+
+        router.push("/xxx"); // TODO:ログイン後のリダイレクト先を設定
       }
     } catch (error) {
       console.error("認証エラー:", error);
