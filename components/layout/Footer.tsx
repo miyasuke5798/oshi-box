@@ -52,7 +52,10 @@ export const Footer = () => {
             <h3 className="text-[#3f3f46] font-semibold">あなたのページ</h3>
             <ul className="text-sm my-3 space-y-4">
               <li>
-                <Link href="/xxx" className="text-[#71717a]">
+                <Link
+                  href={user ? `/${user.uid}` : "/"}
+                  className="text-[#71717a]"
+                >
                   マイページ
                 </Link>
               </li>

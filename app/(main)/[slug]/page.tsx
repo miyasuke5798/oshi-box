@@ -11,6 +11,10 @@ import { doc, getDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { use } from "react";
 import { UserData, UserParams } from "@/types/user";
+import { Loading } from "@/components/ui/loading";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import { AlertCircle } from "lucide-react";
 
 export default function SlugPage({ params }: { params: Promise<UserParams> }) {
   const { user } = useAuth();
@@ -18,6 +22,7 @@ export default function SlugPage({ params }: { params: Promise<UserParams> }) {
   const [loading, setLoading] = useState(true);
   const resolvedParams = use(params);
   const slug = resolvedParams.slug;
+  const router = useRouter();
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -29,23 +34,32 @@ export default function SlugPage({ params }: { params: Promise<UserParams> }) {
 
         if (userDoc.exists()) {
           setUserData(userDoc.data() as UserData);
+        } else {
+          toast.error("ユーザーが見つかりません", {
+            icon: <AlertCircle className="h-5 w-5 text-red-500" />,
+          });
+          router.push("/");
         }
       } catch (error) {
         console.error("ユーザー情報の取得に失敗しました:", error);
+        toast.error("ユーザー情報の取得に失敗しました", {
+          icon: <AlertCircle className="h-5 w-5 text-red-500" />,
+        });
+        router.push("/");
       } finally {
         setLoading(false);
       }
     };
 
     fetchUserData();
-  }, [slug]);
+  }, [slug, router]);
 
   if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  if (!userData) {
-    return <div>ユーザーが見つかりません</div>;
+    return (
+      <div className="h-screen">
+        <Loading />
+      </div>
+    );
   }
 
   const isCurrentUser = user?.uid === slug;
@@ -55,18 +69,18 @@ export default function SlugPage({ params }: { params: Promise<UserParams> }) {
       <ShareMenu />
       <Card className="w-full mb-4">
         <CardContent className="flex flex-row justify-items-start items-center gap-4 py-5 px-6">
-          {userData.photoURL ? (
+          {userData?.photoURL ? (
             // TODO: 画像はFirebase Storageから取得
             <img
               src={userData.photoURL}
               alt={userData.displayName || "ユーザー"}
-              className="w-24 h-24 border border-gray-300 rounded-full object-cover"
+              className="w-24 h-24 min-w-24 min-h-24 border border-gray-300 rounded-full object-cover"
             />
           ) : (
-            <UserIcon className="w-24 h-24 border border-gray-300 rounded-full" />
+            <UserIcon className="w-24 h-24 min-w-24 min-h-24 border border-gray-300 rounded-full" />
           )}
           <h1 className="text-xl text-[#181818] mt-4 mb-2">
-            {userData.displayName || ""}
+            {userData?.displayName || ""}
           </h1>
         </CardContent>
       </Card>

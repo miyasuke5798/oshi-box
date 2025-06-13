@@ -34,7 +34,6 @@ export const XButton = () => {
           await setDoc(userRef, {
             uid: result.user.uid,
             displayName: result.user.displayName,
-            photoURL: result.user.photoURL,
             email: result.user.email,
             createdAt: new Date(),
             updatedAt: new Date(),

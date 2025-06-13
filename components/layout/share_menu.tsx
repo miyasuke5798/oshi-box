@@ -5,14 +5,16 @@ import { FaSearch } from "react-icons/fa";
 import React from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
+import { useAuth } from "@/lib/hooks/useAuth";
 
 export const ShareMenu: React.FC = () => {
   const pathname = usePathname();
+  const { user } = useAuth();
 
   const menuItems = [
     {
       label: "マイページ",
-      href: "/xxx",
+      href: user ? `/${user.uid}` : "/",
       icon: <HiHome size={26} color="#3ebff5" />,
     },
     {
