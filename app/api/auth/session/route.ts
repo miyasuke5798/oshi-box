@@ -4,6 +4,13 @@ import { adminAuth } from "@/lib/firebase-admin";
 
 export async function POST(request: Request) {
   try {
+    if (!adminAuth) {
+      return NextResponse.json(
+        { error: "認証サービスが利用できません" },
+        { status: 503 }
+      );
+    }
+
     const { idToken } = await request.json();
     const expiresIn = 60 * 60 * 24 * 7 * 1000; // 7日間
 

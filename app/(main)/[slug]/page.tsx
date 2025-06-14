@@ -16,10 +16,10 @@ export default async function SlugPage({ params }: PageProps) {
   const { slug } = await params;
 
   // ユーザー情報を取得
-  const userRef = adminDb.collection("users").doc(slug);
-  const userDoc = await userRef.get();
+  const userRef = adminDb?.collection("users").doc(slug);
+  const userDoc = await userRef?.get();
 
-  if (!userDoc.exists) {
+  if (!userDoc?.exists) {
     notFound();
   }
 

@@ -11,14 +11,10 @@ const isFirebaseAdminConfigAvailable = () => {
   );
 };
 
-if (!isFirebaseAdminConfigAvailable()) {
-  throw new Error("Firebase Admin SDKの環境変数が適切に設定されていません。");
-}
-
 // Initialize Firebase Admin
 const apps = getApps();
 
-if (!apps.length) {
+if (!apps.length && isFirebaseAdminConfigAvailable()) {
   initializeApp({
     credential: cert({
       projectId: process.env.FIREBASE_PROJECT_ID,
@@ -28,5 +24,6 @@ if (!apps.length) {
   });
 }
 
-export const adminAuth = getAuth();
-export const adminDb = getFirestore();
+// 環境変数が設定されていない場合はnullを返す
+export const adminAuth = isFirebaseAdminConfigAvailable() ? getAuth() : null;
+export const adminDb = isFirebaseAdminConfigAvailable() ? getFirestore() : null;
