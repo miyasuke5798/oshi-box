@@ -15,6 +15,7 @@ import { toast } from "sonner";
 import { SuccessCircle } from "@/components/svg/success_circle";
 import { Textarea } from "@/components/ui/textarea";
 
+// TODO: 現在のユーザーが表示対象のユーザーと一致するかどうかを判定
 const profileSchema = z.object({
   name: z
     .string()
@@ -87,6 +88,7 @@ export default function SettingsProfilePage() {
         <CardContent className="py-5 px-6">
           <h1 className="text-base font-bold mb-4">プロフィール</h1>
           <p className="text-sm text-[#71717a] mb-6">
+            {/* TODO: マイページのURLを取得 */}
             <Link href="/xxx" className="rose_link">
               マイページ
             </Link>

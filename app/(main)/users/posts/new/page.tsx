@@ -30,6 +30,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 
+// TODO: カテゴリーをFirestoreから取得
 const categories = [
   { id: "live", label: "ライブ" },
   { id: "goods", label: "グッズ" },

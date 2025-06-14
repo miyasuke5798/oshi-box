@@ -2,6 +2,7 @@
 import { ShareMenu } from "@/components/layout/share_menu";
 import { Card, CardContent } from "@/components/ui/card";
 
+// TODO: 現在のユーザーが表示対象のユーザーと一致するかどうかを判定
 export default function SettingsOshiPage() {
   return (
     <div className="mt-3 mb-16">
