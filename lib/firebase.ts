@@ -12,9 +12,7 @@ const isFirebaseConfigAvailable = () => {
 };
 
 if (!isFirebaseConfigAvailable()) {
-  throw new Error(
-    "Firebaseの環境変数が適切に設定されていません。"
-  );
+  throw new Error("Firebaseの環境変数が適切に設定されていません。");
 }
 
 const firebaseConfig = {

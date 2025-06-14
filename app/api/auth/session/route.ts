@@ -1,13 +1,13 @@
 import { cookies } from "next/headers";
-import { getAuth } from "firebase-admin/auth";
 import { NextResponse } from "next/server";
+import { adminAuth } from "@/lib/firebase-admin";
 
 export async function POST(request: Request) {
   try {
     const { idToken } = await request.json();
     const expiresIn = 60 * 60 * 24 * 7 * 1000; // 7日間
 
-    const sessionCookie = await getAuth().createSessionCookie(idToken, {
+    const sessionCookie = await adminAuth.createSessionCookie(idToken, {
       expiresIn,
     });
 

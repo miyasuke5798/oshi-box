@@ -1,6 +1,6 @@
 import { requireAuth } from "@/lib/auth-server";
 import { SlugPageClient } from "./client";
-import { getFirestore } from "firebase-admin/firestore";
+import { adminDb } from "@/lib/firebase-admin";
 import { notFound } from "next/navigation";
 import { UserData } from "@/types/user";
 
@@ -16,8 +16,7 @@ export default async function SlugPage({ params }: PageProps) {
   const { slug } = await params;
 
   // ユーザー情報を取得
-  const db = getFirestore();
-  const userRef = db.collection("users").doc(slug);
+  const userRef = adminDb.collection("users").doc(slug);
   const userDoc = await userRef.get();
 
   if (!userDoc.exists) {
