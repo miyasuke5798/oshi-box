@@ -1,7 +1,10 @@
 import { ShareMenu } from "@/components/layout/share_menu";
 import { Card, CardContent } from "@/components/ui/card";
+import { requireAuth } from "@/lib/auth-server";
 
-export default function PostsPage() {
+export default async function PostsPage() {
+  await requireAuth();
+
   return (
     <div className="mt-3 mb-16">
       <ShareMenu />
