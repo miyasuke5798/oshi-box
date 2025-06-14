@@ -4,11 +4,13 @@ import { getFirestore } from "firebase-admin/firestore";
 import { notFound } from "next/navigation";
 import { UserData } from "@/types/user";
 
-export default async function SlugPage({
-  params,
-}: {
-  params: { slug: string };
-}) {
+interface PageProps {
+  params: Promise<{
+    slug: string;
+  }>;
+}
+
+export default async function SlugPage({ params }: PageProps) {
   // 認証チェックとセッション情報の取得
   const session = await requireAuth();
   const { slug } = await params;

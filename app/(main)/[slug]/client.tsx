@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import Image from "next/image";
 import { ShareMenu } from "@/components/layout/share_menu";
 import { Card, CardContent } from "@/components/ui/card";
 import { UserIcon } from "@/components/svg/UserIcon";
@@ -26,9 +27,11 @@ export function SlugPageClient({
         <CardContent className="flex flex-row justify-items-start items-center gap-4 py-5 px-6">
           {userData?.photoURL ? (
             // TODO: 画像はFirebase Storageから取得
-            <img
+            <Image
               src={userData.photoURL}
               alt={userData.displayName || "ユーザー"}
+              width={96}
+              height={96}
               className="w-24 h-24 min-w-24 min-h-24 border border-gray-300 rounded-full object-cover"
             />
           ) : (
