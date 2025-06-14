@@ -82,8 +82,24 @@ export function SettingsProfileClient({
 
   const onSubmit = async (data: ProfileFormData) => {
     try {
+      const response = await fetch(`/api/users/${userData.uid}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: data.name,
+          bio: data.bio,
+          oshiName: data.oshiName,
+          snsLink: data.snsLink,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("プロフィールの更新に失敗しました");
+      }
+
       toast.success("プロフィールを保存しました", { icon: <SuccessCircle /> });
-      console.log("Profile data:", data);
     } catch (error) {
       toast.error("エラーが発生しました。もう一度お試しください。", {
         icon: <AlertCircle />,
@@ -104,7 +120,11 @@ export function SettingsProfileClient({
             </Link>
             などで公開される情報です。
           </p>
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="space-y-6"
+            noValidate
+          >
             <div className="space-y-2">
               <p className="text-sm mb-1">プロフィール画像</p>
               <div className="flex flex-col space-y-4">
