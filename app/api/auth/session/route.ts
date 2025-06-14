@@ -1,18 +1,18 @@
 import { cookies } from "next/headers";
-import { NextResponse } from "next/server";
-import { auth } from "@/lib/firebase";
 import { getAuth } from "firebase-admin/auth";
+import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
-  const { idToken } = await request.json();
-
   try {
-    const expiresIn = 60 * 60 * 24 * 5 * 1000; // 5 days
+    const { idToken } = await request.json();
+    const expiresIn = 60 * 60 * 24 * 7 * 1000; // 7日間
+
     const sessionCookie = await getAuth().createSessionCookie(idToken, {
       expiresIn,
     });
 
-    cookies().set("session", sessionCookie, {
+    const cookieStore = await cookies();
+    cookieStore.set("session", sessionCookie, {
       maxAge: expiresIn,
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
@@ -21,14 +21,27 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ status: "success" });
   } catch (error) {
+    console.error("セッション作成エラー:", error);
     return NextResponse.json(
-      { error: "Unauthorized request" },
+      { error: "セッションの作成に失敗しました" },
       { status: 401 }
     );
   }
 }
 
 export async function DELETE() {
-  cookies().delete("session");
-  return NextResponse.json({ status: "success" });
+  try {
+    const cookieStore = await cookies();
+    cookieStore.set("session", "", {
+      maxAge: 0,
+      path: "/",
+    });
+    return NextResponse.json({ status: "success" });
+  } catch (error) {
+    console.error("セッション削除エラー:", error);
+    return NextResponse.json(
+      { error: "セッションの削除に失敗しました" },
+      { status: 500 }
+    );
+  }
 }

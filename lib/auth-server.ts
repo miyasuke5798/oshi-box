@@ -37,7 +37,7 @@ export async function requireAuth(redirectTo: string = "/session/new") {
   const session = await getSession();
 
   if (!session) {
-    redirect(redirectTo);
+    redirect(`${redirectTo}?req=auth`);
   }
 
   return session;

@@ -38,7 +38,9 @@ export const XButton = () => {
             createdAt: new Date(),
             updatedAt: new Date(),
           });
-          toast.success("登録に成功しました", { icon: <SuccessCircle /> });
+          setTimeout(() => {
+            toast.success("登録に成功しました", { icon: <SuccessCircle /> });
+          }, 500);
         } else {
           // 既存ユーザーの場合
           await setDoc(
@@ -49,7 +51,23 @@ export const XButton = () => {
             },
             { merge: true }
           );
-          toast.success("ログインしました", { icon: <SuccessCircle /> });
+          setTimeout(() => {
+            toast.success("ログインしました", { icon: <SuccessCircle /> });
+          }, 500);
+        }
+
+        // セッションクッキーを設定
+        const idToken = await result.user.getIdToken();
+        const response = await fetch("/api/auth/session", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ idToken }),
+        });
+
+        if (!response.ok) {
+          throw new Error("セッションの設定に失敗しました");
         }
 
         router.push(`/${result.user.uid}`);

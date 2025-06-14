@@ -13,8 +13,21 @@ export const Footer = () => {
 
   const handleSignOut = async () => {
     try {
+      // セッションクッキーを削除
+      const response = await fetch("/api/auth/session", {
+        method: "DELETE",
+      });
+      if (!response.ok) {
+        throw new Error("セッションの削除に失敗しました");
+      }
+
+      // Firebase認証からログアウト
       await signOut();
-      toast.success("ログアウトしました", { icon: <SuccessCircle /> });
+
+      setTimeout(() => {
+        toast.success("ログアウトしました", { icon: <SuccessCircle /> });
+      }, 500);
+
       router.push("/");
     } catch (error) {
       console.error("ログアウトエラー:", error);
@@ -53,7 +66,7 @@ export const Footer = () => {
             <ul className="text-sm my-3 space-y-4">
               <li>
                 <Link
-                  href={user ? `/${user.uid}` : "/"}
+                  href={user ? `/${user.uid}` : "/session/new?req=auth"}
                   className="text-[#71717a]"
                 >
                   マイページ

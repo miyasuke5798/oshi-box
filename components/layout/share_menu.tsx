@@ -14,7 +14,7 @@ export const ShareMenu: React.FC = () => {
   const menuItems = [
     {
       label: "マイページ",
-      href: user ? `/${user.uid}` : "/",
+      href: user ? `/${user.uid}` : "/session/new?req=auth",
       icon: <HiHome size={26} color="#3ebff5" />,
     },
     {
