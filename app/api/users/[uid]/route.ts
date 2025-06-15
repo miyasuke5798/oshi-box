@@ -4,21 +4,21 @@ import { requireAuth } from "@/lib/auth-server";
 
 export async function PUT(
   request: Request,
-  { params }: { params: { uid: string } }
+  { params }: { params: Promise<{ uid: string }> }
 ) {
   try {
+    const { uid } = await params;
     const session = await requireAuth();
 
     // 自分のプロフィールのみ更新可能
-    if (session.uid !== params.uid) {
+    if (session.uid !== uid) {
       return NextResponse.json({ error: "権限がありません" }, { status: 403 });
     }
 
-    const data = await request.json();
-    const { name, bio, oshiName, snsLink } = data;
+    const { name, bio, oshiName, snsLink } = await request.json();
 
     // プロフィール情報を更新
-    await adminDb?.collection("users").doc(params.uid).update({
+    await adminDb?.collection("users").doc(uid).update({
       displayName: name,
       bio,
       oshiName,

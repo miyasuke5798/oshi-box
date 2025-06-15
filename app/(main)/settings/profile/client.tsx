@@ -82,6 +82,22 @@ export function SettingsProfileClient({
 
   const onSubmit = async (data: ProfileFormData) => {
     try {
+      // プロフィール画像のアップロード
+      if (data.image) {
+        const formData = new FormData();
+        formData.append("file", data.image);
+
+        const imageResponse = await fetch(`/api/users/${userData.uid}/avatar`, {
+          method: "POST",
+          body: formData,
+        });
+
+        if (!imageResponse.ok) {
+          throw new Error("プロフィール画像のアップロードに失敗しました");
+        }
+      }
+
+      // プロフィール情報の更新
       const response = await fetch(`/api/users/${userData.uid}`, {
         method: "PUT",
         headers: {
@@ -102,7 +118,7 @@ export function SettingsProfileClient({
       toast.success("プロフィールを保存しました", { icon: <SuccessCircle /> });
     } catch (error) {
       toast.error("エラーが発生しました。もう一度お試しください。", {
-        icon: <AlertCircle />,
+        icon: <AlertCircle className="w-5 h-5 text-red-500" />,
       });
       console.error("Error:", error);
     }
