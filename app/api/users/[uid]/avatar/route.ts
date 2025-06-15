@@ -2,6 +2,13 @@ import { NextResponse } from "next/server";
 import { adminDb, adminStorage } from "@/lib/firebase-admin";
 import { requireAuth } from "@/lib/auth-server";
 
+// Firebase Storageのエラー型を定義
+interface FirebaseStorageError {
+  code?: number;
+  message?: string;
+  status?: number;
+}
+
 export async function POST(
   request: Request,
   { params }: { params: Promise<{ uid: string }> }
@@ -96,6 +103,64 @@ export async function POST(
     console.error("プロフィール画像アップロードエラー:", error);
     return NextResponse.json(
       { error: "プロフィール画像のアップロードに失敗しました" },
+      { status: 500 }
+    );
+  }
+}
+
+export async function DELETE(
+  request: Request,
+  { params }: { params: Promise<{ uid: string }> }
+) {
+  try {
+    const { uid } = await params;
+    const session = await requireAuth();
+
+    // 自分のプロフィールのみ更新可能
+    if (session.uid !== uid) {
+      return NextResponse.json({ error: "権限がありません" }, { status: 403 });
+    }
+
+    if (!adminStorage) {
+      return NextResponse.json(
+        { error: "ストレージサービスが利用できません" },
+        { status: 503 }
+      );
+    }
+
+    const bucket = adminStorage.bucket(
+      process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET
+    );
+    const fileName = `avatars/${uid}/profile.jpg`;
+
+    try {
+      // 画像を削除
+      await bucket.file(fileName).delete();
+
+      // ユーザープロフィールを更新
+      await adminDb?.collection("users").doc(uid).update({
+        photoURL: null,
+        updatedAt: new Date(),
+      });
+
+      return NextResponse.json({ status: "success" });
+    } catch (error) {
+      // ファイルが存在しない場合は成功として扱う
+      const storageError = error as FirebaseStorageError;
+      if (storageError.code === 404) {
+        // ユーザープロフィールを更新
+        await adminDb?.collection("users").doc(uid).update({
+          photoURL: null,
+          updatedAt: new Date(),
+        });
+        return NextResponse.json({ status: "success" });
+      }
+      throw error;
+    }
+  } catch (error) {
+    console.error("プロフィール画像削除エラー:", error);
+    return NextResponse.json(
+      { error: "プロフィール画像の削除に失敗しました" },
       { status: 500 }
     );
   }

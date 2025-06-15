@@ -82,8 +82,9 @@ export function SettingsProfileClient({
 
   const onSubmit = async (data: ProfileFormData) => {
     try {
-      // プロフィール画像のアップロード
+      // プロフィール画像の処理
       if (data.image) {
+        // 新しい画像をアップロード
         const formData = new FormData();
         formData.append("file", data.image);
 
@@ -94,6 +95,18 @@ export function SettingsProfileClient({
 
         if (!imageResponse.ok) {
           throw new Error("プロフィール画像のアップロードに失敗しました");
+        }
+      } else if (!previewUrl && userData.photoURL) {
+        // 画像が削除された場合
+        const deleteResponse = await fetch(
+          `/api/users/${userData.uid}/avatar`,
+          {
+            method: "DELETE",
+          }
+        );
+
+        if (!deleteResponse.ok) {
+          throw new Error("プロフィール画像の削除に失敗しました");
         }
       }
 
