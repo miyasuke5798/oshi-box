@@ -26,14 +26,14 @@ export function SlugPageClient({
       <Card className="w-full mb-4">
         <CardContent className="flex flex-row justify-items-start items-center gap-4 py-5 px-6">
           {userData?.photoURL ? (
-            // TODO: 画像はFirebase Storageから取得
-            <Image
-              src={userData.photoURL}
-              alt={userData.displayName || "ユーザー"}
-              width={96}
-              height={96}
-              className="w-24 h-24 min-w-24 min-h-24 border border-gray-300 rounded-full object-cover"
-            />
+            <div className="relative w-24 h-24 min-w-24 min-h-24">
+              <Image
+                src={userData.photoURL}
+                alt={userData.displayName || "ユーザー"}
+                fill
+                className="border border-gray-300 rounded-full object-cover"
+              />
+            </div>
           ) : (
             <UserIcon className="w-24 h-24 min-w-24 min-h-24 border border-gray-300 rounded-full" />
           )}

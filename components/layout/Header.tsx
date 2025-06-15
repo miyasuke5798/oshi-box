@@ -17,7 +17,7 @@ import { useRouter } from "next/navigation";
 import { AlertCircle } from "lucide-react";
 
 export const Header = () => {
-  const { user, signOut } = useAuth();
+  const { user, userData, signOut } = useAuth();
   const router = useRouter();
 
   const handleSignOut = async () => {
@@ -64,7 +64,18 @@ export const Header = () => {
             <nav className="flex items-center space-x-4">
               <DropdownMenu>
                 <DropdownMenuTrigger className="focus:outline-none cursor-pointer">
-                  <UserIcon className="w-8 h-8" />
+                  {userData?.photoURL ? (
+                    <div className="relative w-8 h-8">
+                      <Image
+                        src={userData.photoURL}
+                        alt="Profile"
+                        fill
+                        className="object-cover rounded-full"
+                      />
+                    </div>
+                  ) : (
+                    <UserIcon className="w-8 h-8" />
+                  )}
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-56">
                   {user && (

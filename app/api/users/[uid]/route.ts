@@ -35,3 +35,32 @@ export async function PUT(
     );
   }
 }
+
+export async function GET(
+  request: Request,
+  { params }: { params: Promise<{ uid: string }> }
+) {
+  try {
+    const { uid } = await params;
+    //const session = await requireAuth();
+
+    // ユーザーデータを取得
+    const userDoc = await adminDb?.collection("users").doc(uid).get();
+
+    if (!userDoc?.exists) {
+      return NextResponse.json(
+        { error: "ユーザーが見つかりません" },
+        { status: 404 }
+      );
+    }
+
+    const userData = userDoc.data();
+    return NextResponse.json(userData);
+  } catch (error) {
+    console.error("ユーザーデータ取得エラー:", error);
+    return NextResponse.json(
+      { error: "ユーザーデータの取得に失敗しました" },
+      { status: 500 }
+    );
+  }
+}

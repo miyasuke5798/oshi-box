@@ -7,7 +7,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { UserIcon } from "@/components/svg/UserIcon";
-import { X, AlertCircle } from "lucide-react";
+import { X, AlertCircle, ChevronLeft } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -15,6 +15,7 @@ import { toast } from "sonner";
 import { SuccessCircle } from "@/components/svg/success_circle";
 import { Textarea } from "@/components/ui/textarea";
 import { UserData } from "@/types/user";
+import { useRouter } from "next/navigation";
 
 const profileSchema = z.object({
   name: z
@@ -42,6 +43,7 @@ interface SettingsProfileClientProps {
 export function SettingsProfileClient({
   userData,
 }: SettingsProfileClientProps) {
+  const router = useRouter();
   const [previewUrl, setPreviewUrl] = useState<string | null>(
     userData.photoURL || null
   );
@@ -139,7 +141,18 @@ export function SettingsProfileClient({
 
   return (
     <div className="mt-3 mb-16">
-      <ShareMenu />
+      <div className="flex items-center gap-2 mb-2">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => router.back()}
+          className="hover:bg-gray-100"
+        >
+          <ChevronLeft className="h-5 w-5" />
+          <p className="text-sm font-normal -ml-1">戻る</p>
+        </Button>
+        <ShareMenu />
+      </div>
       <Card className="w-full mb-4">
         <CardContent className="py-5 px-6">
           <h1 className="text-base font-bold mb-4">プロフィール</h1>
@@ -164,7 +177,7 @@ export function SettingsProfileClient({
                         src={previewUrl}
                         alt="Profile preview"
                         fill
-                        className="object-cover rounded-full"
+                        className="border border-gray-300 object-cover rounded-full"
                       />
                       <button
                         type="button"

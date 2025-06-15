@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import { User } from "firebase/auth";
 import { auth } from "@/lib/firebase";
+import { UserData } from "@/types/user";
 
 export const useAuth = () => {
   const [user, setUser] = useState<User | null>(null);
+  const [userData, setUserData] = useState<UserData | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -12,8 +14,24 @@ export const useAuth = () => {
       return;
     }
 
-    const unsubscribe = auth.onAuthStateChanged((user: User | null) => {
+    const unsubscribe = auth.onAuthStateChanged(async (user: User | null) => {
       setUser(user);
+
+      if (user) {
+        try {
+          // ユーザーデータを取得
+          const response = await fetch(`/api/users/${user.uid}`);
+          if (response.ok) {
+            const data = await response.json();
+            setUserData(data);
+          }
+        } catch (error) {
+          console.error("ユーザーデータの取得に失敗しました:", error);
+        }
+      } else {
+        setUserData(null);
+      }
+
       setLoading(false);
     });
 
@@ -33,5 +51,5 @@ export const useAuth = () => {
     }
   };
 
-  return { user, loading, signOut };
+  return { user, userData, loading, signOut };
 };
