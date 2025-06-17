@@ -1,10 +1,10 @@
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
 import { format } from "date-fns";
 import { ja } from "date-fns/locale";
 import { getCategories } from "@/lib/firebase/admin";
+import { DeleteCategoryDialog } from "./_components/delete-category-dialog";
 
 export default async function CategoriesDashboard() {
   const categories = await getCategories();
@@ -13,9 +13,11 @@ export default async function CategoriesDashboard() {
     <div className="mt-3 mb-16">
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-xl font-bold">カテゴリー一覧</h1>
-        <Button asChild>
-          <Link href="/admin/dashboard/categories/new">
-            <Plus className="h-4 w-4 mr-1" />
+        <Button variant="default" asChild>
+          <Link
+            href="/admin/dashboard/categories/new"
+            className="inline-flex items-center gap-2 px-4 py-2"
+          >
             新規作成
           </Link>
         </Button>
@@ -54,12 +56,18 @@ export default async function CategoriesDashboard() {
                           : "不明"}
                       </td>
                       <td className="p-4">
-                        <Link
-                          href={`/admin/dashboard/categories/${category.id}/edit`}
-                          className="rose_link"
-                        >
-                          編集
-                        </Link>
+                        <div className="flex items-center">
+                          <Link
+                            href={`/admin/dashboard/categories/${category.id}/edit`}
+                            className="rose_link"
+                          >
+                            編集
+                          </Link>
+                          <DeleteCategoryDialog
+                            categoryId={category.id}
+                            categoryName={category.name}
+                          />
+                        </div>
                       </td>
                     </tr>
                   ))

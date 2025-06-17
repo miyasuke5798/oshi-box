@@ -22,3 +22,19 @@ export async function PUT(
     );
   }
 }
+
+export async function DELETE(
+  request: Request,
+  { params }: { params: { id: string } }
+) {
+  try {
+    await db.collection("categories").doc(params.id).delete();
+    return NextResponse.json({ success: true }, { status: 200 });
+  } catch (error) {
+    console.error("Error deleting category:", error);
+    return NextResponse.json(
+      { error: "カテゴリーの削除に失敗しました" },
+      { status: 500 }
+    );
+  }
+}
