@@ -1,3 +1,5 @@
+import { UserData } from "./user";
+
 export interface Post {
   id: string;
   userId: string;
@@ -15,6 +17,7 @@ export interface Post {
     seconds: number;
     nanoseconds: number;
   } | null;
+  user: UserData;
 }
 
 export interface PostParams {

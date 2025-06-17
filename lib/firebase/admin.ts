@@ -78,30 +78,66 @@ export async function getCategories(): Promise<Category[]> {
   }
 }
 
-export async function getPosts() {
-  const postsSnapshot = await db
-    .collection("posts")
-    .orderBy("createdAt", "desc")
-    .get();
+export async function getPosts(): Promise<Post[]> {
+  try {
+    const postsSnapshot = await db
+      .collection("posts")
+      .orderBy("createdAt", "desc")
+      .get();
 
-  const posts = await Promise.all(
-    postsSnapshot.docs.map(async (doc) => {
-      const postData = doc.data();
-      const userDoc = await db.collection("users").doc(postData.userId).get();
-      const userData = userDoc.data();
-
+    const posts = postsSnapshot.docs.map((doc) => {
+      const data = doc.data();
       return {
         id: doc.id,
-        ...postData,
-        user: {
-          id: postData.userId,
-          name: userData?.displayName || "不明",
-        },
+        userId: data.userId,
+        title: data.title,
+        content: data.content,
+        visibility: data.visibility,
+        categories: data.categories,
+        oshiId: data.oshiId,
+        images: data.images,
+        createdAt: data.createdAt
+          ? {
+              seconds: data.createdAt.seconds,
+              nanoseconds: data.createdAt.nanoseconds,
+            }
+          : null,
+        updatedAt: data.updatedAt
+          ? {
+              seconds: data.updatedAt.seconds,
+              nanoseconds: data.updatedAt.nanoseconds,
+            }
+          : null,
       };
-    })
-  );
+    }) as Post[];
 
-  return posts;
+    // ユーザー情報を取得
+    const postsWithUser = await Promise.all(
+      posts.map(async (post) => {
+        const userDoc = await db.collection("users").doc(post.userId).get();
+        const userData = userDoc.data();
+        return {
+          ...post,
+          user: {
+            uid: post.userId,
+            displayName: userData?.displayName || null,
+            photoURL: userData?.photoURL || null,
+            email: userData?.email || null,
+            bio: userData?.bio || null,
+            oshiName: userData?.oshiName || null,
+            snsLink: userData?.snsLink || null,
+            createdAt: userData?.createdAt?.toDate() || new Date(),
+            updatedAt: userData?.updatedAt?.toDate() || new Date(),
+          },
+        };
+      })
+    );
+
+    return postsWithUser;
+  } catch (error) {
+    console.error("Error fetching posts:", error);
+    throw error;
+  }
 }
 
 export async function getUserBySlug(slug: string): Promise<UserData | null> {
@@ -178,6 +214,59 @@ export async function getUserPosts(userId: string): Promise<Post[]> {
     });
   } catch (error) {
     console.error("Error fetching user posts:", error);
+    throw error;
+  }
+}
+
+export async function getPostById(postId: string): Promise<Post | null> {
+  try {
+    const postDoc = await db.collection("posts").doc(postId).get();
+    if (!postDoc.exists) {
+      return null;
+    }
+
+    const data = postDoc.data();
+    const post = {
+      id: postDoc.id,
+      userId: data?.userId,
+      title: data?.title,
+      content: data?.content,
+      visibility: data?.visibility,
+      categories: data?.categories,
+      oshiId: data?.oshiId,
+      images: data?.images,
+      createdAt: data?.createdAt
+        ? {
+            seconds: data.createdAt.seconds,
+            nanoseconds: data.createdAt.nanoseconds,
+          }
+        : null,
+      updatedAt: data?.updatedAt
+        ? {
+            seconds: data.updatedAt.seconds,
+            nanoseconds: data.updatedAt.nanoseconds,
+          }
+        : null,
+    } as Post;
+
+    // ユーザー情報を取得
+    const userDoc = await db.collection("users").doc(post.userId).get();
+    const userData = userDoc.data();
+    post.user = {
+      uid: post.userId,
+      displayName: userData?.displayName || null,
+      photoURL: userData?.photoURL || null,
+      email: userData?.email || null,
+      bio: userData?.bio || null,
+      oshiName: userData?.oshiName || null,
+      snsLink: userData?.snsLink || null,
+      createdAt: userData?.createdAt?.toDate() || new Date(),
+      updatedAt: userData?.updatedAt?.toDate() || new Date(),
+    };
+
+    return post;
+  } catch (error) {
+    console.error("Error fetching post:", error);
     throw error;
   }
 }

@@ -100,7 +100,12 @@ export function SlugPageClient({
                 <div className="space-y-4">
                   {posts.map((post) => (
                     <div key={post.id} className="border-b pb-4">
-                      <h2 className="text-lg font-medium">{post.title}</h2>
+                      <Link
+                        href={`/users/posts/${post.id}`}
+                        className="rose_link"
+                      >
+                        <h2 className="text-lg font-medium">{post.title}</h2>
+                      </Link>
                       <p className="text-sm text-gray-600 mt-2">
                         {post.content}
                       </p>
