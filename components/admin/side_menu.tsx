@@ -3,7 +3,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { HiHome } from "react-icons/hi";
 import { FaUsers, FaList, FaTags } from "react-icons/fa";
-import { Menu } from "lucide-react";
+import { Menu, UsersRound } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -18,18 +18,23 @@ export const AdminSideMenu = () => {
   const menuItems = [
     {
       label: "ユーザー一覧",
-      href: "/admin/users",
+      href: "/admin/dashboard/users",
       icon: <FaUsers size={20} />,
     },
     {
       label: "投稿一覧",
-      href: "/admin/posts",
+      href: "/admin/dashboard/posts",
       icon: <FaList size={20} />,
     },
     {
       label: "カテゴリー一覧",
-      href: "/admin/categories",
+      href: "/admin/dashboard/categories",
       icon: <FaTags size={20} />,
+    },
+    {
+      label: "推し一覧",
+      href: "/admin/dashboard/oshis",
+      icon: <UsersRound size={20} />,
     },
   ];
 
@@ -46,7 +51,7 @@ export const AdminSideMenu = () => {
                   href={item.href}
                   className={`flex items-center gap-3 px-4 py-2 rounded-md transition-colors ${
                     isActive
-                      ? "bg-blue-50 text-blue-600"
+                      ? "bg-blue-50 text-blue-400"
                       : "text-gray-600 hover:bg-gray-50"
                   }`}
                 >

@@ -1,3 +1,5 @@
+import { Timestamp } from "firebase-admin/firestore";
+
 export interface UserData {
   uid: string;
   displayName: string | null;
@@ -12,4 +14,11 @@ export interface UserData {
 
 export interface UserParams {
   slug: string;
+}
+
+export interface AdminUser {
+  uid: string;
+  email: string | null;
+  displayName: string | null;
+  createdAt: Timestamp | null;
 }
