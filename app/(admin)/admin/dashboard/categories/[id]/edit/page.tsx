@@ -2,33 +2,31 @@ import { CategoryForm } from "../../_components/category-form";
 import { db } from "@/lib/firebase/admin";
 import { notFound } from "next/navigation";
 
-interface EditCategoryPageProps {
-  params: {
+interface PageProps {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
-export default async function EditCategoryPage({
-  params,
-}: EditCategoryPageProps) {
-  const { id } = params;
+export default async function EditCategoryPage({ params }: PageProps) {
+  const { id } = await params;
   const categoryDoc = await db.collection("categories").doc(id).get();
 
   if (!categoryDoc.exists) {
     notFound();
   }
 
-  const data = categoryDoc.data();
+  const categoryData = categoryDoc.data();
   const category = {
     id: categoryDoc.id,
-    name: data?.name || "",
-    createdAt: data?.createdAt
+    name: categoryData?.name || "",
+    createdAt: categoryData?.createdAt
       ? {
-          seconds: data.createdAt.seconds,
-          nanoseconds: data.createdAt.nanoseconds,
+          seconds: categoryData.createdAt.seconds,
+          nanoseconds: categoryData.createdAt.nanoseconds,
         }
       : null,
   };
 
-  return <CategoryForm category={category} mode="edit" />;
+  return <CategoryForm mode="edit" category={category} />;
 }
