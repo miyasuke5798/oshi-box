@@ -2,9 +2,9 @@ import { ShareMenu } from "@/components/layout/share_menu";
 import { Card, CardContent } from "@/components/ui/card";
 import { requireAuth } from "@/lib/auth-server";
 import { getPosts } from "@/lib/firebase/admin";
-import { format } from "date-fns";
-import { ja } from "date-fns/locale";
 import Link from "next/link";
+import Image from "next/image";
+import { UserIcon } from "@/components/svg/UserIcon";
 
 export default async function PostsPage() {
   await requireAuth();
@@ -17,37 +17,50 @@ export default async function PostsPage() {
         <CardContent className="py-5 px-6">
           <h1 className="text-xl font-bold mb-6">みんなの投稿</h1>
           {posts.length > 0 ? (
-            <div className="space-y-4">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
               {posts.map((post) => (
-                <div key={post.id} className="border-b pb-4">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Link
-                      href={`/${post.user.uid}`}
-                      className="text-sm text-gray-600 hover:underline"
-                    >
-                      {post.user.displayName || "不明"}
-                    </Link>
-                    <span className="text-xs text-gray-500">
-                      {post.createdAt
-                        ? format(
-                            new Date(
-                              post.createdAt.seconds * 1000 +
-                                post.createdAt.nanoseconds / 1000000
-                            ),
-                            "yyyy年MM月dd日",
-                            { locale: ja }
-                          )
-                        : "不明"}
-                    </span>
+                <Link
+                  key={post.id}
+                  href={`/users/posts/${post.id}`}
+                  className="group"
+                >
+                  <div className="relative aspect-square rounded-lg overflow-hidden bg-gray-100">
+                    {post.images && post.images.length > 0 ? (
+                      <Image
+                        src={post.images[0]}
+                        alt={post.title}
+                        fill
+                        className="object-cover group-hover:scale-105 transition-transform duration-300"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-gray-100">
+                        <UserIcon className="w-12 h-12 text-gray-400" />
+                      </div>
+                    )}
                   </div>
-                  <Link
-                    href={`/users/posts/${post.id}`}
-                    className="rose_link"
-                  >
-                    <h2 className="text-lg font-medium">{post.title}</h2>
-                  </Link>
-                  <p className="text-sm text-gray-600 mt-2">{post.content}</p>
-                </div>
+                  <div className="mt-2">
+                    <h2 className="text-sm font-medium line-clamp-2 group-hover:text-blue-400 transition-colors">
+                      {post.title}
+                    </h2>
+                    <div className="flex items-center gap-2 mt-1">
+                      <div className="relative w-6 h-6 rounded-full overflow-hidden">
+                        {post.user.photoURL ? (
+                          <Image
+                            src={post.user.photoURL}
+                            alt={post.user.displayName || "ユーザー"}
+                            fill
+                            className="object-cover"
+                          />
+                        ) : (
+                          <UserIcon className="w-full h-full text-gray-400" />
+                        )}
+                      </div>
+                      <span className="text-xs text-gray-600">
+                        {post.user.displayName || "不明"}
+                      </span>
+                    </div>
+                  </div>
+                </Link>
               ))}
             </div>
           ) : (
