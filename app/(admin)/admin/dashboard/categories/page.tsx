@@ -1,16 +1,24 @@
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Plus } from "lucide-react";
 import { format } from "date-fns";
 import { ja } from "date-fns/locale";
-import { Category } from "@/types/category";
+import { getCategories } from "@/lib/firebase/admin";
 
 export default async function CategoriesDashboard() {
-  const categories: Category[] = [];
+  const categories = await getCategories();
 
   return (
     <div className="mt-3 mb-16">
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-xl font-bold">カテゴリー一覧</h1>
+        <Button asChild>
+          <Link href="/admin/dashboard/categories/new">
+            <Plus className="h-4 w-4 mr-1" />
+            新規作成
+          </Link>
+        </Button>
       </div>
 
       <Card>
@@ -28,11 +36,7 @@ export default async function CategoriesDashboard() {
                 {categories.length > 0 ? (
                   categories.map((category) => (
                     <tr key={category.id} className="border-b">
-                      <td className="p-4 text-sm">
-                        <Link href={`/categories/${category.id}`}>
-                          {category.id}
-                        </Link>
-                      </td>
+                      <td className="p-4 text-sm">{category.id}</td>
                       <td className="p-4 text-sm">{category.name}</td>
                       <td className="p-4 text-sm">
                         {category.createdAt

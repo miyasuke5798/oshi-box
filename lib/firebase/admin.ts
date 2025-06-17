@@ -14,7 +14,7 @@ if (!getApps().length) {
   });
 }
 
-const db = getFirestore();
+export const db = getFirestore();
 const auth = getAuth();
 
 export interface AdminUser {
