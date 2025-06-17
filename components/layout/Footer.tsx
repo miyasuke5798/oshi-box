@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { XIcon } from "@/components/svg/x_icon";
+//import { XIcon } from "@/components/svg/x_icon";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { toast } from "sonner";
 import { SuccessCircle } from "@/components/svg/success_circle";
@@ -104,7 +104,7 @@ export const Footer = () => {
           </div>
         </div>
         <div className="mt-8 border-t border-gray-200">
-          <div className="mt-4 mb-6">
+          {/*<div className="mt-4 mb-6">
             <h3 className="text-[#3f3f46] text-sm font-semibold mb-2">
               公式アカウント
             </h3>
@@ -113,7 +113,7 @@ export const Footer = () => {
                 <XIcon width={23} height={23} className="text-[#9a9a9a]" />
               </Link>
             </div>
-          </div>
+          </div>*/}
           <div className="mt-4 mb-6">
             <h3 className="text-[#3f3f46] text-sm font-semibold mb-2">
               サポート
@@ -135,6 +135,22 @@ export const Footer = () => {
               <Link href="/terms/service" className="text-[#71717a] text-sm">
                 利用規約
               </Link>
+            </div>
+          </div>
+          <div className="mt-4 mb-6">
+            <h3 className="text-[#3f3f46] text-sm font-semibold mb-2">
+              運営元情報
+            </h3>
+            <div className="flex flex-col gap-2">
+              <p className="text-[#71717a] text-sm">
+                推しBOX 運営者：
+                <Link href="https://x.com/jun_mysk?s=21" target="_blank">
+                  @jun_mysk
+                </Link>
+              </p>
+              <p className="text-[#71717a] text-sm">
+                お問い合わせ先：oshibox.official@gmail.com
+              </p>
             </div>
           </div>
           <p className="text-base !text-[#d4d4d8]">©Oshi Box</p>
