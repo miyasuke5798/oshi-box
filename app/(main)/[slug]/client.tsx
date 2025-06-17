@@ -4,7 +4,7 @@ import Image from "next/image";
 import { ShareMenu } from "@/components/layout/share_menu";
 import { Card, CardContent } from "@/components/ui/card";
 import { UserIcon } from "@/components/svg/UserIcon";
-import { CircleUser, UsersRound, Link2 } from "lucide-react";
+import { UsersRound, Link2 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { UserData } from "@/types/user";
 
@@ -40,9 +40,9 @@ export function SlugPageClient({
           <h1 className="text-xl text-[#181818] mt-4 mb-2">
             {userData?.displayName || ""}
           </h1>
-          <p className="">{userData?.bio || ""}</p>
-          <p className="">{userData?.oshiName || ""}</p>
-          <p className="">
+          <p className="text-xs">{userData?.bio || ""}</p>
+          {/* <p className="">{userData?.oshiName || ""}</p> */}
+          <p className="text-xs">
             {userData?.snsLink ? (
               <Link
                 href={userData.snsLink}
@@ -50,7 +50,7 @@ export function SlugPageClient({
                 rel="noopener noreferrer"
                 className="rose_link flex items-center gap-1 no-underline w-fit"
               >
-                <Link2 className="w-4.5 h-4.5 transform rotate-[135deg]" />
+                <Link2 className="w-3.5 h-3.5 transform rotate-[135deg]" />
                 {userData.snsLink}
               </Link>
             ) : (
@@ -70,17 +70,8 @@ export function SlugPageClient({
       {isCurrentUser && (
         <Card className="w-full mb-4">
           <Link
-            href="/settings/profile"
-            className="bg-white hover:bg-gray-50 border-b rounded-t-[.5rem]"
-          >
-            <CardContent className="flex flex-row items-center gap-3 py-4 px-6">
-              <CircleUser strokeWidth={1.5} className="w-6 h-6" />
-              <p>プロフィール編集</p>
-            </CardContent>
-          </Link>
-          <Link
             href="/settings/oshi"
-            className="bg-white hover:bg-gray-50 rounded-b-[.5rem]"
+            className="bg-white hover:bg-gray-50 rounded-[.5rem]"
           >
             <CardContent className="flex flex-row items-center gap-3 py-4 px-6">
               <UsersRound strokeWidth={1.5} className="w-6 h-6" />

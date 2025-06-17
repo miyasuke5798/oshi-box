@@ -131,7 +131,7 @@ export function SettingsProfileClient({
       }
 
       toast.success("プロフィールを保存しました", { icon: <SuccessCircle /> });
-      router.refresh();
+      router.push(`/${userData.uid}`);
     } catch (error) {
       toast.error("エラーが発生しました。もう一度お試しください。", {
         icon: <AlertCircle className="w-5 h-5 text-red-500" />,
