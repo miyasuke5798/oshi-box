@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import { ShareMenu } from "@/components/layout/share_menu";
 import { Card, CardContent } from "@/components/ui/card";
@@ -29,18 +29,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-
-// TODO: カテゴリーをFirestoreから取得
-const categories = [
-  { id: "live", label: "ライブ" },
-  { id: "goods", label: "グッズ" },
-  { id: "oshi", label: "推し語り" },
-  { id: "vtuber", label: "Vtuber" },
-  { id: "game", label: "ゲーム" },
-  { id: "idol", label: "アイドル" },
-  { id: "illust", label: "イラスト" },
-  { id: "cosplay", label: "コスプレ" },
-] as const;
+import { Category } from "@/types/category";
 
 const usersPostSchema = z.object({
   title: z
@@ -59,18 +48,7 @@ const usersPostSchema = z.object({
       { message: "画像は最大4枚までアップロードできます" }
     )
     .optional(),
-  categories: z.array(
-    z.enum([
-      "live",
-      "goods",
-      "oshi",
-      "vtuber",
-      "game",
-      "idol",
-      "illust",
-      "cosplay",
-    ])
-  ),
+  categories: z.array(z.string()),
   oshi: z.string().nullable(),
 });
 
@@ -80,6 +58,9 @@ export default function UsersPostsPage() {
   const [error, setError] = useState<string>("");
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
   const {
     register,
     handleSubmit,
@@ -95,6 +76,28 @@ export default function UsersPostsPage() {
       oshi: null,
     },
   });
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await fetch("/api/categories");
+        if (!response.ok) {
+          throw new Error("カテゴリーの取得に失敗しました");
+        }
+        const data = await response.json();
+        setCategories(data);
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+        toast.error("カテゴリーの取得に失敗しました", {
+          icon: <AlertCircle className="h-5 w-5 text-red-500" />,
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchCategories();
+  }, []);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
@@ -226,39 +229,47 @@ export default function UsersPostsPage() {
             </div>
             <div className="space-y-2">
               <label className="text-sm font-medium">カテゴリー</label>
-              <div className="flex flex-wrap gap-4">
-                {categories.map((category) => (
-                  <div
-                    key={category.id}
-                    className="flex items-center space-x-2"
-                  >
-                    <Checkbox
-                      id={category.id}
-                      checked={watch("categories")?.includes(category.id)}
-                      onCheckedChange={(checked) => {
-                        const currentCategories = watch("categories") || [];
-                        if (checked) {
-                          setValue("categories", [
-                            ...currentCategories,
-                            category.id,
-                          ]);
-                        } else {
-                          setValue(
-                            "categories",
-                            currentCategories.filter((id) => id !== category.id)
-                          );
-                        }
-                      }}
-                    />
-                    <Label
-                      htmlFor={category.id}
-                      className="text-sm font-normal cursor-pointer"
+              {isLoading ? (
+                <p className="text-sm text-gray-500">
+                  カテゴリーを読み込み中...
+                </p>
+              ) : (
+                <div className="flex flex-wrap gap-4">
+                  {categories.map((category) => (
+                    <div
+                      key={category.id}
+                      className="flex items-center space-x-2"
                     >
-                      {category.label}
-                    </Label>
-                  </div>
-                ))}
-              </div>
+                      <Checkbox
+                        id={category.id}
+                        checked={watch("categories")?.includes(category.id)}
+                        onCheckedChange={(checked) => {
+                          const currentCategories = watch("categories") || [];
+                          if (checked) {
+                            setValue("categories", [
+                              ...currentCategories,
+                              category.id,
+                            ]);
+                          } else {
+                            setValue(
+                              "categories",
+                              currentCategories.filter(
+                                (id) => id !== category.id
+                              )
+                            );
+                          }
+                        }}
+                      />
+                      <Label
+                        htmlFor={category.id}
+                        className="text-sm font-normal cursor-pointer"
+                      >
+                        {category.name}
+                      </Label>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
             <div className="space-y-2">
               <label className="text-sm font-medium">推し選択</label>
