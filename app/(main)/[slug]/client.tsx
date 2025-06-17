@@ -7,6 +7,9 @@ import { UserIcon } from "@/components/svg/UserIcon";
 import { UsersRound, Link2 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { UserData } from "@/types/user";
+import { Post } from "@/types/post";
+import { format } from "date-fns";
+import { ja } from "date-fns/locale";
 
 interface SlugPageClientProps {
   params: {
@@ -14,11 +17,13 @@ interface SlugPageClientProps {
   };
   userData: UserData;
   isCurrentUser: boolean;
+  posts: Post[];
 }
 
 export function SlugPageClient({
   userData,
   isCurrentUser,
+  posts,
 }: SlugPageClientProps) {
   return (
     <div className="mt-3 mb-16">
@@ -91,11 +96,40 @@ export function SlugPageClient({
               <TabsTrigger value="oshi3">推し３</TabsTrigger>
             </TabsList>
             <TabsContent value="all" className="mt-6">
-              <p>
-                まだ投稿がありません。
-                <br />
-                あなたの「推し活」をシェアしてみましょう！
-              </p>
+              {posts.length > 0 ? (
+                <div className="space-y-4">
+                  {posts.map((post) => (
+                    <div key={post.id} className="border-b pb-4">
+                      <h2 className="text-lg font-medium">{post.title}</h2>
+                      <p className="text-sm text-gray-600 mt-2">
+                        {post.content}
+                      </p>
+                      {/* TODO: 公開範囲を考慮する */}
+                      <p>{post.visibility}</p>
+                      <div className="flex items-center gap-2 mt-2">
+                        <span className="text-xs text-gray-500">
+                          {post.createdAt
+                            ? format(
+                                new Date(
+                                  post.createdAt.seconds * 1000 +
+                                    post.createdAt.nanoseconds / 1000000
+                                ),
+                                "yyyy年MM月dd日",
+                                { locale: ja }
+                              )
+                            : "不明"}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p>
+                  まだ投稿がありません。
+                  <br />
+                  あなたの「推し活」をシェアしてみましょう！
+                </p>
+              )}
             </TabsContent>
             <TabsContent value="oshi1" className="mt-6">
               <p>推し１の投稿</p>

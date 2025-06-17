@@ -2,6 +2,8 @@ import { initializeApp, getApps, cert } from "firebase-admin/app";
 import { getFirestore } from "firebase-admin/firestore";
 import { getAuth } from "firebase-admin/auth";
 import { Category } from "@/types/category";
+import { Post } from "@/types/post";
+import { UserData } from "@/types/user";
 
 // Firebase Admin SDKの初期化
 if (!getApps().length) {
@@ -100,4 +102,82 @@ export async function getPosts() {
   );
 
   return posts;
+}
+
+export async function getUserBySlug(slug: string): Promise<UserData | null> {
+  try {
+    const userDoc = await db.collection("users").doc(slug).get();
+    if (!userDoc.exists) {
+      return null;
+    }
+
+    const data = userDoc.data();
+    return {
+      uid: userDoc.id,
+      displayName: data?.displayName || null,
+      photoURL: data?.photoURL || null,
+      email: data?.email || null,
+      bio: data?.bio || null,
+      oshiName: data?.oshiName || null,
+      snsLink: data?.snsLink || null,
+      createdAt: data?.createdAt?.toDate() || new Date(),
+      updatedAt: data?.updatedAt?.toDate() || new Date(),
+    };
+  } catch (error) {
+    console.error("Error fetching user by slug:", error);
+    throw error;
+  }
+}
+
+export async function getUserPosts(userId: string): Promise<Post[]> {
+  try {
+    const postsSnapshot = await db
+      .collection("posts")
+      .where("userId", "==", userId)
+      .get();
+
+    const posts = postsSnapshot.docs.map((doc) => {
+      const data = doc.data();
+      return {
+        id: doc.id,
+        userId: data.userId,
+        title: data.title,
+        content: data.content,
+        visibility: data.visibility,
+        categories: data.categories,
+        oshiId: data.oshiId,
+        images: data.images,
+        createdAt: data.createdAt
+          ? {
+              seconds: data.createdAt.seconds,
+              nanoseconds: data.createdAt.nanoseconds,
+            }
+          : null,
+        updatedAt: data.updatedAt
+          ? {
+              seconds: data.updatedAt.seconds,
+              nanoseconds: data.updatedAt.nanoseconds,
+            }
+          : null,
+      };
+    }) as Post[];
+
+    // メモリ上でソート
+    return posts.sort((a, b) => {
+      const aDate = a.createdAt
+        ? new Date(
+            a.createdAt.seconds * 1000 + a.createdAt.nanoseconds / 1000000
+          )
+        : new Date(0);
+      const bDate = b.createdAt
+        ? new Date(
+            b.createdAt.seconds * 1000 + b.createdAt.nanoseconds / 1000000
+          )
+        : new Date(0);
+      return bDate.getTime() - aDate.getTime();
+    });
+  } catch (error) {
+    console.error("Error fetching user posts:", error);
+    throw error;
+  }
 }
