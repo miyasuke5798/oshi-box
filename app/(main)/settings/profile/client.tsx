@@ -141,18 +141,7 @@ export function SettingsProfileClient({
 
   return (
     <div className="mt-3 mb-16">
-      <div className="flex items-center gap-2 mb-2">
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => router.back()}
-          className="hover:bg-gray-100"
-        >
-          <ChevronLeft className="h-5 w-5" />
-          <p className="text-sm font-normal -ml-1">戻る</p>
-        </Button>
-        <ShareMenu />
-      </div>
+      <ShareMenu />
       <Card className="w-full mb-4">
         <CardContent className="py-5 px-6">
           <h1 className="text-base font-bold mb-4">プロフィール</h1>
@@ -241,9 +230,20 @@ export function SettingsProfileClient({
                 <p className="text-sm text-red-500">{errors.snsLink.message}</p>
               )}
             </div>
-            <Button type="submit" className="w-full" disabled={isSubmitting}>
-              {isSubmitting ? "保存中..." : "保存"}
-            </Button>
+            <div className="flex justify-between gap-6">
+              <Button
+                type="button"
+                variant="gray"
+                onClick={() => router.back()}
+                className="w-1/2"
+              >
+                <ChevronLeft className="h-5 w-5" />
+                <p className="text-sm font-normal -ml-1">戻る</p>
+              </Button>
+              <Button type="submit" className="w-1/2" disabled={isSubmitting}>
+                {isSubmitting ? "保存中..." : "保存"}
+              </Button>
+            </div>
           </form>
         </CardContent>
       </Card>
