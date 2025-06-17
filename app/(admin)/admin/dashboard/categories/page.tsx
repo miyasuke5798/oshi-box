@@ -30,6 +30,7 @@ export default async function CategoriesDashboard() {
                   <th className="text-left p-4 font-medium">ID</th>
                   <th className="text-left p-4 font-medium">カテゴリー名</th>
                   <th className="text-left p-4 font-medium">作成日</th>
+                  <th className="text-left p-4 font-medium">操作</th>
                 </tr>
               </thead>
               <tbody>
@@ -41,7 +42,10 @@ export default async function CategoriesDashboard() {
                       <td className="p-4 text-sm">
                         {category.createdAt
                           ? format(
-                              category.createdAt.toDate(),
+                              new Date(
+                                category.createdAt.seconds * 1000 +
+                                  category.createdAt.nanoseconds / 1000000
+                              ),
                               "yyyy年MM月dd日",
                               {
                                 locale: ja,
@@ -49,12 +53,20 @@ export default async function CategoriesDashboard() {
                             )
                           : "不明"}
                       </td>
+                      <td className="p-4">
+                        <Link
+                          href={`/admin/dashboard/categories/${category.id}/edit`}
+                          className="rose_link"
+                        >
+                          編集
+                        </Link>
+                      </td>
                     </tr>
                   ))
                 ) : (
                   <tr>
                     <td
-                      colSpan={3}
+                      colSpan={4}
                       className="p-4 text-sm text-center text-gray-500"
                     >
                       カテゴリーがありません

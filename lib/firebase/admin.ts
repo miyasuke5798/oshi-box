@@ -60,7 +60,12 @@ export async function getCategories(): Promise<Category[]> {
       categories.push({
         id: doc.id,
         name: categoryData.name,
-        createdAt: categoryData.createdAt || null,
+        createdAt: categoryData.createdAt
+          ? {
+              seconds: categoryData.createdAt.seconds,
+              nanoseconds: categoryData.createdAt.nanoseconds,
+            }
+          : null,
       });
     }
 
