@@ -30,6 +30,8 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Category } from "@/types/category";
+import { useAuth } from "@/lib/hooks/useAuth";
+import { useRouter } from "next/navigation";
 
 const usersPostSchema = z.object({
   title: z
@@ -55,6 +57,8 @@ const usersPostSchema = z.object({
 type usersPostFormData = z.infer<typeof usersPostSchema>;
 
 export default function UsersPostsPage() {
+  const router = useRouter();
+  const { user } = useAuth();
   const [error, setError] = useState<string>("");
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -102,7 +106,7 @@ export default function UsersPostsPage() {
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
     if (files.length > 0) {
-      // ファイル形式のチェック
+      // TODO: プロフィール画像とファイル形式のチェックを共通化する
       const allowedTypes = [
         "image/jpeg",
         "image/jpg",
@@ -151,11 +155,61 @@ export default function UsersPostsPage() {
 
   const onSubmit = async (data: usersPostFormData) => {
     try {
+      if (!user) {
+        toast.error("ログインが必要です", {
+          icon: <AlertCircle className="h-5 w-5 text-red-500" />,
+        });
+        return;
+      }
+
       setError("");
+      const formData = {
+        ...data,
+        oshiId: data.oshi,
+      };
+
+      // 画像をBase64に変換
+      const imageFiles = formData.images as File[];
+      const base64Images: string[] = [];
+
+      if (imageFiles && imageFiles.length > 0) {
+        for (const file of imageFiles) {
+          const reader = new FileReader();
+          const base64Promise = new Promise<string>((resolve) => {
+            reader.onload = (e) => {
+              if (e.target?.result) {
+                resolve(e.target.result as string);
+              }
+            };
+          });
+          reader.readAsDataURL(file);
+          base64Images.push(await base64Promise);
+        }
+      }
+
+      const response = await fetch("/api/posts", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ...formData,
+          images: base64Images,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("投稿の作成に失敗しました");
+      }
+
       toast.success("投稿しました", { icon: <SuccessCircle /> });
-      console.log("Post data:", data);
-    } catch {
+      router.push(`/${user.uid}`);
+    } catch (error) {
+      console.error("Error creating post:", error);
       setError("エラーが発生しました。もう一度お試しください。");
+      toast.error("投稿の作成に失敗しました", {
+        icon: <AlertCircle className="h-5 w-5 text-red-500" />,
+      });
     }
   };
 
