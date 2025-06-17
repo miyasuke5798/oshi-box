@@ -1,6 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { requireAuth } from "@/lib/auth-server";
-import { getPostById } from "@/lib/firebase/admin";
+import { getPostById, getCategories } from "@/lib/firebase/admin";
 import { format } from "date-fns";
 import { ja } from "date-fns/locale";
 import Link from "next/link";
@@ -16,11 +16,20 @@ interface PageProps {
 export default async function PostDetailPage({ params }: PageProps) {
   await requireAuth();
   const { uid } = await params;
-  const post = await getPostById(uid);
+  const [post, categories] = await Promise.all([
+    getPostById(uid),
+    getCategories(),
+  ]);
 
   if (!post) {
     notFound();
   }
+
+  // カテゴリーIDから名前を取得する関数
+  const getCategoryName = (categoryId: string) => {
+    const category = categories.find((cat) => cat.id === categoryId);
+    return category?.name || categoryId;
+  };
 
   return (
     <div className="mt-3 mb-16">
@@ -47,6 +56,18 @@ export default async function PostDetailPage({ params }: PageProps) {
             </span>
           </div>
           <h1 className="text-2xl font-bold mb-4">{post.title}</h1>
+          {post.categories && post.categories.length > 0 && (
+            <div className="flex flex-wrap gap-2 mb-4">
+              {post.categories.map((categoryId) => (
+                <span
+                  key={categoryId}
+                  className="px-2 py-1 text-xs bg-gray-100 text-gray-700 rounded-full"
+                >
+                  {getCategoryName(categoryId)}
+                </span>
+              ))}
+            </div>
+          )}
           <div className="prose max-w-none">
             <p className="whitespace-pre-wrap">{post.content}</p>
           </div>
