@@ -15,13 +15,13 @@ export async function PUT(
       return NextResponse.json({ error: "権限がありません" }, { status: 403 });
     }
 
-    const { name, bio, oshiName, snsLink } = await request.json();
+    const { name, bio, snsLink } = await request.json();
 
     // プロフィール情報を更新
     await adminDb?.collection("users").doc(uid).update({
       displayName: name,
       bio,
-      oshiName,
+      //oshiName,
       snsLink,
       updatedAt: new Date(),
     });

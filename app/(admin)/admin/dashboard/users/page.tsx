@@ -19,7 +19,7 @@ export default async function AdminDashboard() {
             <table className="w-full">
               <thead>
                 <tr className="border-b">
-                  <th className="text-left p-4 font-medium">ユーザーID</th>
+                  <th className="text-left p-4 font-medium">ID</th>
                   <th className="text-left p-4 font-medium">名前</th>
                   <th className="text-left p-4 font-medium">メールアドレス</th>
                   <th className="text-left p-4 font-medium">登録日</th>
@@ -28,11 +28,11 @@ export default async function AdminDashboard() {
               <tbody>
                 {users.map((user) => (
                   <tr key={user.uid} className="border-b">
+                    <td className="p-4 text-sm">{user.uid}</td>
                     <td className="p-4 text-sm">
-                      <Link href={`/${user.uid}`}>{user.uid}</Link>
-                    </td>
-                    <td className="p-4 text-sm">
-                      {user.displayName || "未設定"}
+                      <Link href={`/${user.uid}`} className="rose_link">
+                        {user.displayName || "未設定"}
+                      </Link>
                     </td>
                     <td className="p-4 text-sm">{user.email}</td>
                     <td className="p-4 text-sm">

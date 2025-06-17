@@ -24,7 +24,7 @@ const profileSchema = z.object({
     .max(50, "50文字以内で入力してください"),
   image: z.any().optional(),
   bio: z.string().max(500, "500文字以内で入力してください").optional(),
-  oshiName: z.string().max(50, "50文字以内で入力してください").optional(),
+  //oshiName: z.string().max(50, "50文字以内で入力してください").optional(),
   snsLink: z
     .string()
     .max(100, "100文字以内で入力してください")
@@ -57,7 +57,7 @@ export function SettingsProfileClient({
     defaultValues: {
       name: userData.displayName || "",
       bio: userData.bio || "",
-      oshiName: userData.oshiName || "",
+      //oshiName: userData.oshiName || "",
       snsLink: userData.snsLink || "",
       image: null,
     },
@@ -121,7 +121,7 @@ export function SettingsProfileClient({
         body: JSON.stringify({
           name: data.name,
           bio: data.bio,
-          oshiName: data.oshiName,
+          //oshiName: data.oshiName,
           snsLink: data.snsLink,
         }),
       });
@@ -211,7 +211,7 @@ export function SettingsProfileClient({
                 <p className="text-sm text-red-500">{errors.bio.message}</p>
               )}
             </div>
-            <div className="space-y-2">
+            {/*<div className="space-y-2">
               <label htmlFor="oshiName" className="text-sm font-medium">
                 推し
               </label>
@@ -221,7 +221,7 @@ export function SettingsProfileClient({
                   {errors.oshiName.message}
                 </p>
               )}
-            </div>
+            </div>*/}
             <div className="space-y-2">
               <label htmlFor="snsLink" className="text-sm font-medium">
                 SNSリンク

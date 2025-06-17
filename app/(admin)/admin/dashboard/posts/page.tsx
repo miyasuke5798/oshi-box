@@ -1,9 +1,11 @@
+import Link from "next/link";
 import { getPosts } from "@/lib/firebase/admin";
 import { getCategories } from "@/lib/firebase/admin";
 import { format } from "date-fns";
 import { ja } from "date-fns/locale";
 import { Card, CardContent } from "@/components/ui/card";
 import { Post } from "@/types/post";
+import { Badge } from "@/components/ui/badge";
 
 type PostWithUser = Post & {
   user: {
@@ -33,6 +35,7 @@ export default async function PostsDashboard() {
             <table className="w-full">
               <thead>
                 <tr className="border-b">
+                  <th className="text-left p-4 font-medium">ID</th>
                   <th className="text-left p-4 font-medium">タイトル</th>
                   <th className="text-left p-4 font-medium">投稿者</th>
                   <th className="text-left p-4 font-medium">カテゴリー</th>
@@ -44,16 +47,26 @@ export default async function PostsDashboard() {
                 {posts.length > 0 ? (
                   (posts as PostWithUser[]).map((post) => (
                     <tr key={post.id} className="border-b">
+                      <td className="p-4 text-sm">{post.id}</td>
                       <td className="p-4 text-sm">
-                        <div className="font-medium">{post.title}</div>
+                        <Link
+                          href={`/users/posts/${post.id}`}
+                          className="rose_link"
+                        >
+                          <div className="font-medium">{post.title}</div>
+                        </Link>
                       </td>
                       <td className="p-4 text-sm">{post.user.name}</td>
                       <td className="p-4 text-sm">
                         <div className="flex flex-wrap gap-2">
                           {post.categories.map((categoryId) => (
-                            <span key={categoryId} className="text-xs">
+                            <Badge
+                              key={categoryId}
+                              variant="secondary"
+                              className="text-xs"
+                            >
                               {getCategoryName(categoryId)}
-                            </span>
+                            </Badge>
                           ))}
                         </div>
                       </td>

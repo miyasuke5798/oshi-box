@@ -22,13 +22,14 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { CirclePlus, X } from "lucide-react";
+import { CirclePlus, X, ChevronLeft } from "lucide-react";
 import Image from "next/image";
 import { toast } from "sonner";
 import { AlertCircle } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { useRouter } from "next/navigation";
 
 const postSchema = z.object({
   title: z
@@ -77,7 +78,7 @@ export function PostForm({
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [categories, setCategories] = useState<Category[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-
+  const router = useRouter();
   const {
     register,
     handleSubmit,
@@ -370,10 +371,20 @@ export function PostForm({
           </div>
         </RadioGroup>
       </div>
-
-      <Button type="submit" disabled={isSubmitting} className="w-full">
+      <div className="flex justify-between gap-6">
+              <Button
+                type="button"
+                variant="gray"
+                onClick={() => router.back()}
+                className="w-1/2"
+              >
+                <ChevronLeft className="h-5 w-5" />
+                <p className="text-sm font-normal -ml-1">戻る</p>
+              </Button>
+      <Button type="submit" disabled={isSubmitting} className="w-1/2">
         {isSubmitting ? "送信中..." : submitLabel}
       </Button>
+      </div>
     </form>
   );
 }

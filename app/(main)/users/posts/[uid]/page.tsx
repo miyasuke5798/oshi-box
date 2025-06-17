@@ -6,6 +6,8 @@ import { ja } from "date-fns/locale";
 import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
+import { Badge } from "@/components/ui/badge";
+import { ShareMenu } from "@/components/layout/share_menu";
 
 interface PageProps {
   params: Promise<{
@@ -14,7 +16,7 @@ interface PageProps {
 }
 
 export default async function PostDetailPage({ params }: PageProps) {
-  await requireAuth();
+  const session = await requireAuth();
   const { uid } = await params;
   const [post, categories] = await Promise.all([
     getPostById(uid),
@@ -25,6 +27,8 @@ export default async function PostDetailPage({ params }: PageProps) {
     notFound();
   }
 
+  const isCurrentUser = session.uid === post.userId;
+
   // カテゴリーIDから名前を取得する関数
   const getCategoryName = (categoryId: string) => {
     const category = categories.find((cat) => cat.id === categoryId);
@@ -33,6 +37,7 @@ export default async function PostDetailPage({ params }: PageProps) {
 
   return (
     <div className="mt-3 mb-16">
+      <ShareMenu />
       <Card className="w-full mb-4">
         <CardContent className="py-5 px-6">
           <div className="flex items-center gap-2 mb-4">
@@ -54,17 +59,22 @@ export default async function PostDetailPage({ params }: PageProps) {
                   )
                 : "不明"}
             </span>
+            {isCurrentUser && (
+              <Link
+                href={`/users/posts/${post.id}/edit`}
+                className="ml-auto rounded-full border border-gray-300 hover:bg-gray-50 px-4 py-1"
+              >
+                編集
+              </Link>
+            )}
           </div>
           <h1 className="text-2xl font-bold mb-4">{post.title}</h1>
           {post.categories && post.categories.length > 0 && (
             <div className="flex flex-wrap gap-2 mb-4">
               {post.categories.map((categoryId) => (
-                <span
-                  key={categoryId}
-                  className="px-2 py-1 text-xs bg-gray-100 text-gray-700 rounded-full"
-                >
+                <Badge key={categoryId} variant="secondary" className="text-xs">
                   {getCategoryName(categoryId)}
-                </span>
+                </Badge>
               ))}
             </div>
           )}

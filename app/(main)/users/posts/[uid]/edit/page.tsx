@@ -3,6 +3,7 @@ import { requireAuth } from "@/lib/auth-server";
 import { getPostById } from "@/lib/firebase/admin";
 import { notFound } from "next/navigation";
 import { EditPostForm } from "./edit-form";
+import { ShareMenu } from "@/components/layout/share_menu";
 
 interface PageProps {
   params: Promise<{
@@ -10,6 +11,7 @@ interface PageProps {
   }>;
 }
 
+// TODO: 他人の投稿を編集できないようにする
 export default async function EditPostPage({ params }: PageProps) {
   await requireAuth();
   const { uid } = await params;
@@ -21,6 +23,7 @@ export default async function EditPostPage({ params }: PageProps) {
 
   return (
     <div className="mt-3 mb-16">
+      <ShareMenu />
       <Card className="w-full mb-4">
         <CardContent className="py-5 px-6">
           <h1 className="text-xl font-bold mb-6">投稿を編集</h1>

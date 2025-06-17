@@ -3,6 +3,8 @@
 import { PostForm } from "@/components/posts/post-form";
 import { Post } from "@/types/post";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import { SuccessCircle } from "@/components/svg/success_circle";
 
 interface EditPostFormProps {
   post: Post;
@@ -33,6 +35,7 @@ export function EditPostForm({ post }: EditPostFormProps) {
       }
 
       router.push(`/users/posts/${post.id}`);
+      toast.success("更新しました", { icon: <SuccessCircle /> });
     } catch (error) {
       console.error("Error updating post:", error);
       throw error;

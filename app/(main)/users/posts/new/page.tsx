@@ -10,7 +10,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { SuccessCircle } from "@/components/svg/success_circle";
-import { X, AlertCircle, CirclePlus } from "lucide-react";
+import { X, AlertCircle, CirclePlus, ChevronLeft } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -403,13 +403,24 @@ export default function UsersPostsPage() {
               </RadioGroup>
             </div>
             {error && <p className="text-sm text-red-500">{error}</p>}
-            <Button
-              type="submit"
-              className="w-full mt-4"
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? "作成中..." : "作成"}
-            </Button>
+            <div className="flex justify-between gap-6">
+              <Button
+                type="button"
+                variant="gray"
+                onClick={() => router.back()}
+                className="w-1/2"
+              >
+                <ChevronLeft className="h-5 w-5" />
+                <p className="text-sm font-normal -ml-1">戻る</p>
+              </Button>
+              <Button
+                type="submit"
+                className="w-1/2"
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? "作成中..." : "作成"}
+              </Button>
+            </div>
           </form>
         </CardContent>
       </Card>
