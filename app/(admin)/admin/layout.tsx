@@ -5,3 +5,4 @@ export default async function AdminLayout({
 }>) {
   return <>{children}</>;
 }
+// TODO: レイアウトをレスポンシブルに

@@ -75,3 +75,29 @@ export async function getCategories(): Promise<Category[]> {
     throw error;
   }
 }
+
+export async function getPosts() {
+  const postsSnapshot = await db
+    .collection("posts")
+    .orderBy("createdAt", "desc")
+    .get();
+
+  const posts = await Promise.all(
+    postsSnapshot.docs.map(async (doc) => {
+      const postData = doc.data();
+      const userDoc = await db.collection("users").doc(postData.userId).get();
+      const userData = userDoc.data();
+
+      return {
+        id: doc.id,
+        ...postData,
+        user: {
+          id: postData.userId,
+          name: userData?.displayName || "不明",
+        },
+      };
+    })
+  );
+
+  return posts;
+}
