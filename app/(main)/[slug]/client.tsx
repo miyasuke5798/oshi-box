@@ -4,7 +4,7 @@ import Image from "next/image";
 import { ShareMenu } from "@/components/layout/share_menu";
 import { Card, CardContent } from "@/components/ui/card";
 import { UserIcon } from "@/components/svg/UserIcon";
-import { CircleUser, UsersRound } from "lucide-react";
+import { CircleUser, UsersRound, Link2 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { UserData } from "@/types/user";
 
@@ -24,7 +24,7 @@ export function SlugPageClient({
     <div className="mt-3 mb-16">
       <ShareMenu />
       <Card className="w-full mb-4">
-        <CardContent className="flex flex-row justify-items-start items-center gap-4 py-5 px-6">
+        <CardContent className="relative py-5 px-6">
           {userData?.photoURL ? (
             <div className="relative w-24 h-24 min-w-24 min-h-24">
               <Image
@@ -40,6 +40,31 @@ export function SlugPageClient({
           <h1 className="text-xl text-[#181818] mt-4 mb-2">
             {userData?.displayName || ""}
           </h1>
+          <p className="">{userData?.bio || ""}</p>
+          <p className="">{userData?.oshiName || ""}</p>
+          <p className="">
+            {userData?.snsLink ? (
+              <Link
+                href={userData.snsLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="rose_link flex items-center gap-1 no-underline w-fit"
+              >
+                <Link2 className="w-4.5 h-4.5 transform rotate-[135deg]" />
+                {userData.snsLink}
+              </Link>
+            ) : (
+              <Link2 className="w-4.5 h-4.5 transform rotate-[135deg]" />
+            )}
+          </p>
+          {isCurrentUser && (
+            <Link
+              href="/settings/profile"
+              className="absolute top-5 right-5 rounded-full border border-gray-300 hover:bg-gray-50 px-4 py-1"
+            >
+              編集
+            </Link>
+          )}
         </CardContent>
       </Card>
       {isCurrentUser && (
