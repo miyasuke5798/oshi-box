@@ -20,6 +20,7 @@ export function EditPostForm({ post }: EditPostFormProps) {
     categories: string[];
     oshiId: string | null;
     images: string[];
+    deletedImages?: string[];
   }) => {
     try {
       const response = await fetch(`/api/posts/${post.id}`, {

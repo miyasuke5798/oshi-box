@@ -63,6 +63,7 @@ interface PostFormProps {
     categories: string[];
     oshiId: string | null;
     images: string[];
+    deletedImages?: string[];
   }) => Promise<void>;
   submitLabel: string;
 }
@@ -78,6 +79,7 @@ export function PostForm({
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [categories, setCategories] = useState<Category[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [deletedImages, setDeletedImages] = useState<string[]>([]);
   const router = useRouter();
   const {
     register,
@@ -208,6 +210,12 @@ export function PostForm({
         (_: string, i: number) => i !== index
       );
       setValue("images", updatedExistingImages);
+
+      // 削除された画像のパスを記録
+      const deletedImagePath = existingImages[index];
+      if (deletedImagePath) {
+        setDeletedImages((prev) => [...prev, deletedImagePath]);
+      }
     } else {
       // 新しい画像ファイルを削除
       const newImageIndex = index - existingImages.length;
@@ -257,6 +265,7 @@ export function PostForm({
         categories: data.categories,
         oshiId: data.oshi,
         images: allImages,
+        deletedImages: deletedImages,
       });
     } catch (error) {
       console.error("Error submitting post:", error);
