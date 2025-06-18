@@ -5,6 +5,7 @@ import { getPosts } from "@/lib/firebase/admin";
 import Link from "next/link";
 import Image from "next/image";
 import { UserIcon } from "@/components/svg/UserIcon";
+import { Image as ImageIcon } from "lucide-react";
 
 export default async function PostsPage() {
   await requireAuth();
@@ -34,12 +35,12 @@ export default async function PostsPage() {
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center bg-gray-100">
-                        <UserIcon className="w-12 h-12 text-gray-400" />
+                        <ImageIcon className="w-12 h-12 text-gray-400" />
                       </div>
                     )}
                   </div>
                   <div className="mt-2">
-                    <h2 className="text-sm font-medium line-clamp-2 group-hover:text-blue-400 transition-colors">
+                    <h2 className="text-sm font-medium group-hover:text-blue-400 transition-colors">
                       {post.title}
                     </h2>
                     <div className="flex items-center gap-2 mt-1">

@@ -4,7 +4,7 @@ import Image from "next/image";
 import { ShareMenu } from "@/components/layout/share_menu";
 import { Card, CardContent } from "@/components/ui/card";
 import { UserIcon } from "@/components/svg/UserIcon";
-import { UsersRound, Link2 } from "lucide-react";
+import { UsersRound, Link2, Image as ImageIcon } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { UserData } from "@/types/user";
 import { Post } from "@/types/post";
@@ -102,30 +102,50 @@ export function SlugPageClient({
                 <div className="space-y-4">
                   {posts.map((post) => (
                     <div key={post.id} className="border-b pb-4">
-                      <Link
-                        href={`/users/posts/${post.id}`}
-                        className="rose_link"
-                      >
-                        <h2 className="text-lg font-medium">{post.title}</h2>
-                      </Link>
-                      <p className="text-sm text-gray-600 mt-2">
-                        {post.content}
-                      </p>
-                      {/* TODO: 公開範囲を考慮する */}
-                      <p>{post.visibility}</p>
-                      <div className="flex items-center gap-2 mt-2">
-                        <span className="text-xs text-gray-500">
-                          {post.createdAt
-                            ? format(
-                                new Date(
-                                  post.createdAt.seconds * 1000 +
-                                    post.createdAt.nanoseconds / 1000000
-                                ),
-                                "yyyy年MM月dd日",
-                                { locale: ja }
-                              )
-                            : "不明"}
-                        </span>
+                      <div className="flex gap-4">
+                        <div className="relative w-24 h-24 min-w-24 min-h-24 rounded-lg overflow-hidden bg-gray-100">
+                          {post.images && post.images.length > 0 ? (
+                            <Image
+                              src={post.images[0]}
+                              alt={post.title}
+                              fill
+                              className="object-cover"
+                            />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center">
+                              <ImageIcon className="w-12 h-12 text-gray-400" />
+                            </div>
+                          )}
+                        </div>
+                        <div className="flex-1">
+                          <Link
+                            href={`/users/posts/${post.id}`}
+                            className="rose_link"
+                          >
+                            <h2 className="text-lg font-medium">
+                              {post.title}
+                            </h2>
+                          </Link>
+                          <p className="text-sm text-gray-600 mt-2">
+                            {post.content}
+                          </p>
+                          {/* TODO: 公開範囲を考慮する */}
+                          <p>{post.visibility}</p>
+                          <div className="flex items-center gap-2 mt-2">
+                            <span className="text-xs text-gray-500">
+                              {post.createdAt
+                                ? format(
+                                    new Date(
+                                      post.createdAt.seconds * 1000 +
+                                        post.createdAt.nanoseconds / 1000000
+                                    ),
+                                    "yyyy年MM月dd日",
+                                    { locale: ja }
+                                  )
+                                : "不明"}
+                            </span>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   ))}
