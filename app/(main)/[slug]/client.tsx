@@ -30,9 +30,9 @@ export function SlugPageClient({
       <ShareMenu />
       <Card className="w-full mb-4">
         <CardContent className="relative py-5 px-6">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 mb-3">
             {userData?.photoURL ? (
-              <div className="relative w-24 h-24 min-w-24 min-h-24">
+              <div className="relative w-20 h-20 min-w-20 min-h-20">
                 <Image
                   src={userData.photoURL}
                   alt={userData.displayName || "ユーザー"}
@@ -41,15 +41,15 @@ export function SlugPageClient({
                 />
               </div>
             ) : (
-              <UserIcon className="w-24 h-24 min-w-24 min-h-24 border border-gray-300 rounded-full" />
+              <UserIcon className="w-20 h-20 min-w-20 min-h-20 border border-gray-300 rounded-full" />
             )}
             <h1 className="text-xl text-[#181818] mt-4 mb-2">
               {userData?.displayName || ""}
             </h1>
           </div>
-          <p className="text-xs">{userData?.bio || ""}</p>
+          <p className="text-xs mb-2">{userData?.bio || ""}</p>
           {/* <p className="">{userData?.oshiName || ""}</p> */}
-          <p className="text-xs">
+          <p className="text-xs mb-2">
             {userData?.snsLink ? (
               <Link
                 href={userData.snsLink}

@@ -37,7 +37,7 @@ const postSchema = z.object({
     .min(1, "入力してください")
     .max(100, "100文字以内で入力してください"),
   content: z.string().max(1000, "1000文字以内で入力してください"),
-  visibility: z.enum(["public", "followers", "private"]),
+  visibility: z.enum(["public", "private"]),
   images: z
     .any()
     .refine(
@@ -59,7 +59,7 @@ interface PostFormProps {
   onSubmit: (data: {
     title: string;
     content: string;
-    visibility: "public" | "followers" | "private";
+    visibility: "public" | "private";
     categories: string[];
     oshiId: string | null;
     images: string[];
@@ -419,17 +419,13 @@ export function PostForm({
         <RadioGroup
           defaultValue={initialData?.visibility || "public"}
           onValueChange={(value) =>
-            setValue("visibility", value as "public" | "followers" | "private")
+            setValue("visibility", value as "public" | "private")
           }
           className="flex flex-row flex-wrap space-x-2"
         >
           <div className="flex items-center space-x-2">
             <RadioGroupItem value="public" id="public" />
             <Label htmlFor="public">全体公開</Label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="followers" id="followers" />
-            <Label htmlFor="followers">フォロワー限定</Label>
           </div>
           <div className="flex items-center space-x-2">
             <RadioGroupItem value="private" id="private" />

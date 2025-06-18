@@ -5,7 +5,7 @@ export interface Post {
   userId: string;
   title: string;
   content: string;
-  visibility: "public" | "followers" | "private";
+  visibility: "public" | "private";
   categories: string[];
   oshiId: string | null;
   images: string[];
@@ -24,7 +24,7 @@ export interface PostParams {
   userId: string;
   title: string;
   content: string;
-  visibility: "public" | "followers" | "private";
+  visibility: "public" | "private";
   categories: string[];
   oshiId: string | null;
   images: string[];

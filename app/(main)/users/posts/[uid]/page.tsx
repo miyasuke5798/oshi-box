@@ -51,7 +51,7 @@ export default async function PostDetailPage({ params }: PageProps) {
                         src={post.user.photoURL}
                         alt={post.user.displayName || "ユーザー"}
                         fill
-                        className="object-cover"
+                        className="object-cover border-[0.5px] border-gray-300 rounded-full"
                       />
                     ) : (
                       <UserIcon className="w-full h-full text-gray-400" />

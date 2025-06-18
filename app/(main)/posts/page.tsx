@@ -44,13 +44,13 @@ export default async function PostsPage() {
                       {post.title}
                     </h2>
                     <div className="flex items-center gap-2 mt-1">
-                      <div className="relative w-6 h-6 rounded-full overflow-hidden">
+                      <div className="relative w-6 h-6 overflow-hidden">
                         {post.user.photoURL ? (
                           <Image
                             src={post.user.photoURL}
                             alt={post.user.displayName || "ユーザー"}
                             fill
-                            className="object-cover"
+                            className="object-cover border-[0.5px] border-gray-300 rounded-full"
                           />
                         ) : (
                           <UserIcon className="w-full h-full text-gray-400" />

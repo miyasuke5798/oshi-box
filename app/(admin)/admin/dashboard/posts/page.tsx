@@ -75,8 +75,6 @@ export default async function PostsDashboard() {
                           <span>
                             {post.visibility === "public"
                               ? "全体公開"
-                              : post.visibility === "followers"
-                              ? "フォロワー限定"
                               : "非公開"}
                           </span>
                         </div>

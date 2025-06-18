@@ -70,7 +70,7 @@ export const Header = () => {
                         src={userData.photoURL}
                         alt="Profile"
                         fill
-                        className="object-cover rounded-full"
+                        className="object-cover border-[0.5px] border-gray-300 rounded-full"
                       />
                     </div>
                   ) : (
