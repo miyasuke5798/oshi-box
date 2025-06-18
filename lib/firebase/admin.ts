@@ -1,6 +1,7 @@
 import { initializeApp, getApps, cert } from "firebase-admin/app";
 import { getFirestore } from "firebase-admin/firestore";
 import { getAuth } from "firebase-admin/auth";
+import { getStorage } from "firebase-admin/storage";
 import { Category } from "@/types/category";
 import { Post } from "@/types/post";
 import { UserData } from "@/types/user";
@@ -13,11 +14,13 @@ if (!getApps().length) {
       clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
       privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, "\n"),
     }),
+    storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
   });
 }
 
 export const db = getFirestore();
 const auth = getAuth();
+const storage = getStorage();
 
 export interface AdminUser {
   uid: string;
@@ -111,13 +114,38 @@ export async function getPosts(): Promise<Post[]> {
       };
     }) as Post[];
 
-    // ユーザー情報を取得
+    // ユーザー情報と画像URLを取得
     const postsWithUser = await Promise.all(
       posts.map(async (post) => {
         const userDoc = await db.collection("users").doc(post.userId).get();
         const userData = userDoc.data();
+
+        // 画像URLを取得
+        let imageUrls: string[] = [];
+        if (post.images && post.images.length > 0) {
+          imageUrls = await Promise.all(
+            post.images.map(async (imagePath) => {
+              try {
+                const bucket = storage.bucket(
+                  process.env.FIREBASE_STORAGE_BUCKET
+                );
+                const file = bucket.file(imagePath);
+                const [url] = await file.getSignedUrl({
+                  action: "read",
+                  expires: Date.now() + 24 * 60 * 60 * 1000, // 24時間
+                });
+                return url;
+              } catch (error) {
+                console.error("Error getting signed URL for image:", error);
+                return "";
+              }
+            })
+          );
+        }
+
         return {
           ...post,
+          images: imageUrls,
           user: {
             uid: post.userId,
             displayName: userData?.displayName || null,
@@ -198,20 +226,54 @@ export async function getUserPosts(userId: string): Promise<Post[]> {
       };
     }) as Post[];
 
-    // メモリ上でソート
-    return posts.sort((a, b) => {
-      const aDate = a.createdAt
-        ? new Date(
-            a.createdAt.seconds * 1000 + a.createdAt.nanoseconds / 1000000
-          )
-        : new Date(0);
-      const bDate = b.createdAt
-        ? new Date(
-            b.createdAt.seconds * 1000 + b.createdAt.nanoseconds / 1000000
-          )
-        : new Date(0);
-      return bDate.getTime() - aDate.getTime();
-    });
+    // ユーザー情報と画像URLを取得
+    const postsWithUser = await Promise.all(
+      posts.map(async (post) => {
+        const userDoc = await db.collection("users").doc(post.userId).get();
+        const userData = userDoc.data();
+
+        // 画像URLを取得
+        let imageUrls: string[] = [];
+        if (post.images && post.images.length > 0) {
+          imageUrls = await Promise.all(
+            post.images.map(async (imagePath) => {
+              try {
+                const bucket = storage.bucket(
+                  process.env.FIREBASE_STORAGE_BUCKET
+                );
+                const file = bucket.file(imagePath);
+                const [url] = await file.getSignedUrl({
+                  action: "read",
+                  expires: Date.now() + 24 * 60 * 60 * 1000, // 24時間
+                });
+                return url;
+              } catch (error) {
+                console.error("Error getting signed URL for image:", error);
+                return "";
+              }
+            })
+          );
+        }
+
+        return {
+          ...post,
+          images: imageUrls,
+          user: {
+            uid: post.userId,
+            displayName: userData?.displayName || null,
+            photoURL: userData?.photoURL || null,
+            email: userData?.email || null,
+            bio: userData?.bio || null,
+            oshiName: userData?.oshiName || null,
+            snsLink: userData?.snsLink || null,
+            createdAt: userData?.createdAt?.toDate() || new Date(),
+            updatedAt: userData?.updatedAt?.toDate() || new Date(),
+          },
+        };
+      })
+    );
+
+    return postsWithUser;
   } catch (error) {
     console.error("Error fetching user posts:", error);
     throw error;
@@ -263,6 +325,27 @@ export async function getPostById(postId: string): Promise<Post | null> {
       createdAt: userData?.createdAt?.toDate() || new Date(),
       updatedAt: userData?.updatedAt?.toDate() || new Date(),
     };
+
+    // 画像URLを取得
+    if (post.images && post.images.length > 0) {
+      const imageUrls = await Promise.all(
+        post.images.map(async (imagePath) => {
+          try {
+            const bucket = storage.bucket(process.env.FIREBASE_STORAGE_BUCKET);
+            const file = bucket.file(imagePath);
+            const [url] = await file.getSignedUrl({
+              action: "read",
+              expires: Date.now() + 24 * 60 * 60 * 1000, // 24時間
+            });
+            return url;
+          } catch (error) {
+            console.error("Error getting signed URL for image:", error);
+            return "";
+          }
+        })
+      );
+      post.images = imageUrls;
+    }
 
     return post;
   } catch (error) {

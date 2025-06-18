@@ -157,11 +157,26 @@ export function PostForm({
 
   const removeImage = (index: number) => {
     setPreviewUrls((prev) => prev.filter((_, i) => i !== index));
-    const currentImages = (watch("images") as File[]) || [];
-    setValue(
-      "images",
-      currentImages.filter((_, i) => i !== index)
-    );
+
+    // 既存の画像URLと新しい画像ファイルを区別して削除
+    const currentImages = watch("images") || [];
+    const existingImages = initialData?.images || [];
+
+    if (index < existingImages.length) {
+      // 既存の画像URLを削除
+      const updatedExistingImages = existingImages.filter(
+        (_: string, i: number) => i !== index
+      );
+      setValue("images", updatedExistingImages);
+    } else {
+      // 新しい画像ファイルを削除
+      const newImageIndex = index - existingImages.length;
+      const currentNewImages = currentImages.slice(existingImages.length);
+      const updatedNewImages = currentNewImages.filter(
+        (_: File | string, i: number) => i !== newImageIndex
+      );
+      setValue("images", [...existingImages, ...updatedNewImages]);
+    }
   };
 
   const handleFormSubmit = async (data: PostFormData) => {
@@ -169,6 +184,10 @@ export function PostForm({
       const imageFiles = data.images as File[];
       const base64Images: string[] = [];
 
+      // 既存の画像URLを保持
+      const existingImages = initialData?.images || [];
+
+      // 新しい画像ファイルのみBase64に変換
       if (imageFiles && imageFiles.length > 0) {
         for (const file of imageFiles) {
           const reader = new FileReader();
@@ -184,13 +203,16 @@ export function PostForm({
         }
       }
 
+      // 既存の画像URLと新しいBase64画像を結合
+      const allImages = [...existingImages, ...base64Images];
+
       await onSubmit({
         title: data.title,
         content: data.content,
         visibility: data.visibility,
         categories: data.categories,
         oshiId: data.oshi,
-        images: base64Images,
+        images: allImages,
       });
     } catch (error) {
       console.error("Error submitting post:", error);
@@ -372,18 +394,18 @@ export function PostForm({
         </RadioGroup>
       </div>
       <div className="flex justify-between gap-6">
-              <Button
-                type="button"
-                variant="gray"
-                onClick={() => router.back()}
-                className="w-1/2"
-              >
-                <ChevronLeft className="h-5 w-5" />
-                <p className="text-sm font-normal -ml-1">戻る</p>
-              </Button>
-      <Button type="submit" disabled={isSubmitting} className="w-1/2">
-        {isSubmitting ? "送信中..." : submitLabel}
-      </Button>
+        <Button
+          type="button"
+          variant="gray"
+          onClick={() => router.back()}
+          className="w-1/2"
+        >
+          <ChevronLeft className="h-5 w-5" />
+          <p className="text-sm font-normal -ml-1">戻る</p>
+        </Button>
+        <Button type="submit" disabled={isSubmitting} className="w-1/2">
+          {isSubmitting ? "送信中..." : submitLabel}
+        </Button>
       </div>
     </form>
   );

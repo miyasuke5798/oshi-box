@@ -31,7 +31,7 @@ export default async function PostsPage() {
                         src={post.images[0]}
                         alt={post.title}
                         fill
-                        className="object-cover group-hover:scale-105 transition-transform duration-300"
+                        className="object-cover"
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center bg-gray-100">
