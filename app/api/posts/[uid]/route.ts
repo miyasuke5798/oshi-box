@@ -2,6 +2,27 @@ import { db } from "@/lib/firebase/admin";
 import { NextResponse } from "next/server";
 import { getStorage } from "firebase-admin/storage";
 
+// 署名付きURLからファイルパスを抽出する関数
+function extractFilePathFromSignedUrl(signedUrl: string): string | null {
+  try {
+    // Firebase Storageの署名付きURLの形式を解析
+    const url = new URL(signedUrl);
+
+    // パスからファイルパスを抽出
+    // 例: /posts/userId/filename.jpg から posts/userId/filename.jpg を取得
+    const pathParts = url.pathname.split("/");
+    if (pathParts.length >= 3) {
+      // 最初の空文字列を除いて、posts/userId/filename.jpg の部分を取得
+      return pathParts.slice(1).join("/");
+    }
+
+    return null;
+  } catch (error) {
+    console.error("Error extracting file path from signed URL:", error);
+    return null;
+  }
+}
+
 export async function PUT(
   request: Request,
   { params }: { params: Promise<{ uid: string }> }
@@ -35,8 +56,15 @@ export async function PUT(
 
           imageUrls.push(fileName); // パスを保存
         } else if (image.startsWith("http")) {
-          // 既存のURLの場合、そのまま保持
-          imageUrls.push(image);
+          // 既存のURLの場合、署名付きURLかどうかをチェック
+          const filePath = extractFilePathFromSignedUrl(image);
+          if (filePath) {
+            // 署名付きURLの場合はファイルパスを保存
+            imageUrls.push(filePath);
+          } else {
+            // 通常のURLの場合はそのまま保持
+            imageUrls.push(image);
+          }
         } else {
           // ファイルパスの場合、そのまま保持
           imageUrls.push(image);

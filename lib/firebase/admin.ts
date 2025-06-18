@@ -280,7 +280,10 @@ export async function getUserPosts(userId: string): Promise<Post[]> {
   }
 }
 
-export async function getPostById(postId: string): Promise<Post | null> {
+export async function getPostById(
+  postId: string,
+  forEdit: boolean = false
+): Promise<Post | null> {
   try {
     const postDoc = await db.collection("posts").doc(postId).get();
     if (!postDoc.exists) {
@@ -328,23 +331,49 @@ export async function getPostById(postId: string): Promise<Post | null> {
 
     // 画像URLを取得
     if (post.images && post.images.length > 0) {
-      const imageUrls = await Promise.all(
-        post.images.map(async (imagePath) => {
-          try {
-            const bucket = storage.bucket(process.env.FIREBASE_STORAGE_BUCKET);
-            const file = bucket.file(imagePath);
-            const [url] = await file.getSignedUrl({
-              action: "read",
-              expires: Date.now() + 24 * 60 * 60 * 1000, // 24時間
-            });
-            return url;
-          } catch (error) {
-            console.error("Error getting signed URL for image:", error);
-            return "";
+      if (forEdit) {
+        // 編集用の場合は元のファイルパスを保持
+        // 署名付きURLの場合はファイルパスを抽出
+        post.images = post.images.map((imagePath) => {
+          if (imagePath.startsWith("http")) {
+            // 署名付きURLからファイルパスを抽出
+            try {
+              const url = new URL(imagePath);
+              const pathParts = url.pathname.split("/");
+              if (pathParts.length >= 3) {
+                return pathParts.slice(1).join("/");
+              }
+            } catch (error) {
+              console.error(
+                "Error extracting file path from signed URL:",
+                error
+              );
+            }
           }
-        })
-      );
-      post.images = imageUrls;
+          return imagePath;
+        });
+      } else {
+        // 表示用の場合は署名付きURLを生成
+        const imageUrls = await Promise.all(
+          post.images.map(async (imagePath) => {
+            try {
+              const bucket = storage.bucket(
+                process.env.FIREBASE_STORAGE_BUCKET
+              );
+              const file = bucket.file(imagePath);
+              const [url] = await file.getSignedUrl({
+                action: "read",
+                expires: Date.now() + 24 * 60 * 60 * 1000, // 24時間
+              });
+              return url;
+            } catch (error) {
+              console.error("Error getting signed URL for image:", error);
+              return "";
+            }
+          })
+        );
+        post.images = imageUrls;
+      }
     }
 
     return post;

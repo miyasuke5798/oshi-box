@@ -15,7 +15,7 @@ interface PageProps {
 export default async function EditPostPage({ params }: PageProps) {
   await requireAuth();
   const { uid } = await params;
-  const post = await getPostById(uid);
+  const post = await getPostById(uid, true);
 
   if (!post) {
     notFound();

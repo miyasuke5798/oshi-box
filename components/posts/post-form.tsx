@@ -119,6 +119,43 @@ export function PostForm({
     fetchCategories();
   }, []);
 
+  // 初期データの画像URLをプレビューURLに設定
+  useEffect(() => {
+    if (initialData?.images) {
+      // 編集時は既存の画像パスを署名付きURLに変換してプレビュー表示
+      const convertToSignedUrls = async () => {
+        try {
+          const signedUrls = await Promise.all(
+            initialData.images.map(async (imagePath) => {
+              if (imagePath.startsWith("http")) {
+                // 既に署名付きURLの場合はそのまま使用
+                return imagePath;
+              } else {
+                // ファイルパスの場合は署名付きURLを生成
+                const response = await fetch(
+                  `/api/images/signed-url?path=${encodeURIComponent(imagePath)}`
+                );
+                if (response.ok) {
+                  const data = await response.json();
+                  return data.url;
+                }
+                return imagePath;
+              }
+            })
+          );
+          setPreviewUrls(signedUrls);
+        } catch (error) {
+          console.error("Error converting to signed URLs:", error);
+          setPreviewUrls(initialData.images);
+        }
+      };
+
+      convertToSignedUrls();
+      // フォームの値には元のパスを保持
+      setValue("images", initialData.images);
+    }
+  }, [initialData, setValue]);
+
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
     if (files.length > 0) {
@@ -140,6 +177,7 @@ export function PostForm({
       }
 
       const currentImages = watch("images") || [];
+      const existingImages = initialData?.images || [];
 
       if (currentImages.length + files.length > 4) {
         toast.error("画像は最大4枚までアップロードできます", {
@@ -148,19 +186,21 @@ export function PostForm({
         return;
       }
 
-      setValue("images", [...currentImages, ...files]);
+      // 既存の画像URLと新しい画像ファイルを結合
+      setValue("images", [...existingImages, ...files]);
 
+      // プレビューURLを更新（既存の画像URL + 新しい画像のプレビュー）
       const newPreviewUrls = files.map((file) => URL.createObjectURL(file));
       setPreviewUrls((prev) => [...prev, ...newPreviewUrls]);
     }
   };
 
   const removeImage = (index: number) => {
-    setPreviewUrls((prev) => prev.filter((_, i) => i !== index));
-
-    // 既存の画像URLと新しい画像ファイルを区別して削除
     const currentImages = watch("images") || [];
     const existingImages = initialData?.images || [];
+
+    // プレビューURLを削除
+    setPreviewUrls((prev) => prev.filter((_, i) => i !== index));
 
     if (index < existingImages.length) {
       // 既存の画像URLを削除
@@ -181,25 +221,29 @@ export function PostForm({
 
   const handleFormSubmit = async (data: PostFormData) => {
     try {
-      const imageFiles = data.images as File[];
+      const imageFiles = data.images as (File | string)[];
       const base64Images: string[] = [];
+      const existingImages: string[] = [];
 
-      // 既存の画像URLを保持
-      const existingImages = initialData?.images || [];
-
-      // 新しい画像ファイルのみBase64に変換
+      // 既存の画像URLと新しい画像ファイルを区別
       if (imageFiles && imageFiles.length > 0) {
-        for (const file of imageFiles) {
-          const reader = new FileReader();
-          const base64Promise = new Promise<string>((resolve) => {
-            reader.onload = (e) => {
-              if (e.target?.result) {
-                resolve(e.target.result as string);
-              }
-            };
-          });
-          reader.readAsDataURL(file);
-          base64Images.push(await base64Promise);
+        for (const item of imageFiles) {
+          if (typeof item === "string") {
+            // 既存の画像URLの場合
+            existingImages.push(item);
+          } else if (item instanceof File) {
+            // 新しい画像ファイルの場合、Base64に変換
+            const reader = new FileReader();
+            const base64Promise = new Promise<string>((resolve) => {
+              reader.onload = (e) => {
+                if (e.target?.result) {
+                  resolve(e.target.result as string);
+                }
+              };
+            });
+            reader.readAsDataURL(item);
+            base64Images.push(await base64Promise);
+          }
         }
       }
 
