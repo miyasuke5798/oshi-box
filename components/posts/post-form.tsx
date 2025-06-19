@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Post } from "@/types/post";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Category } from "@/types/category";
 import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -80,6 +80,7 @@ export function PostForm({
   const [categories, setCategories] = useState<Category[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [deletedImages, setDeletedImages] = useState<string[]>([]);
+  const deletedImagesRef = useRef<string[]>([]);
   const router = useRouter();
   const {
     register,
@@ -155,6 +156,10 @@ export function PostForm({
       convertToSignedUrls();
       // フォームの値には元のパスを保持
       setValue("images", initialData.images);
+      // 削除された画像の状態をリセット
+      setDeletedImages([]);
+      deletedImagesRef.current = [];
+      console.log("Reset deletedImages state for new initial data");
     }
   }, [initialData, setValue]);
 
@@ -201,20 +206,37 @@ export function PostForm({
     const currentImages = watch("images") || [];
     const existingImages = initialData?.images || [];
 
+    console.log("removeImage called with index:", index);
+    console.log("Current images:", currentImages);
+    console.log("Existing images:", existingImages);
+
     // プレビューURLを削除
     setPreviewUrls((prev) => prev.filter((_, i) => i !== index));
 
     if (index < existingImages.length) {
       // 既存の画像URLを削除
-      const updatedExistingImages = existingImages.filter(
+      // 現在のフォームの値から削除された画像を除外
+      const updatedImages = currentImages.filter(
         (_: string, i: number) => i !== index
       );
-      setValue("images", updatedExistingImages);
+
+      console.log("Updated images (from current form value):", updatedImages);
+      setValue("images", updatedImages);
 
       // 削除された画像のパスを記録
       const deletedImagePath = existingImages[index];
       if (deletedImagePath) {
-        setDeletedImages((prev) => [...prev, deletedImagePath]);
+        setDeletedImages((prev) => {
+          const newDeletedImages = [...prev, deletedImagePath];
+          console.log("Updated deletedImages:", newDeletedImages);
+          return newDeletedImages;
+        });
+        deletedImagesRef.current = [
+          ...deletedImagesRef.current,
+          deletedImagePath,
+        ];
+        console.log("Deleted image path:", deletedImagePath);
+        console.log("Updated deletedImagesRef:", deletedImagesRef.current);
       }
     } else {
       // 新しい画像ファイルを削除
@@ -225,11 +247,32 @@ export function PostForm({
       );
       setValue("images", [...existingImages, ...updatedNewImages]);
     }
+
+    // フォームの値が正しく更新されたか確認
+    setTimeout(() => {
+      const updatedImages = watch("images");
+      console.log("Form images after removal:", updatedImages);
+    }, 0);
   };
 
   const handleFormSubmit = async (data: PostFormData) => {
     try {
-      const imageFiles = data.images as (File | string)[];
+      const currentDeletedImages = deletedImagesRef.current;
+      const currentFormImages = watch("images");
+
+      console.log("Form submission - deletedImages (state):", deletedImages);
+      console.log(
+        "Form submission - deletedImages (ref):",
+        currentDeletedImages
+      );
+      console.log("Form submission - data.images:", data.images);
+      console.log(
+        "Form submission - currentFormImages (watch):",
+        currentFormImages
+      );
+
+      // watch("images")を使用してフォームの最新の値を取得
+      const imageFiles = currentFormImages as (File | string)[];
       const base64Images: string[] = [];
       const existingImages: string[] = [];
 
@@ -258,6 +301,9 @@ export function PostForm({
       // 既存の画像URLと新しいBase64画像を結合
       const allImages = [...existingImages, ...base64Images];
 
+      console.log("Final images to save:", allImages);
+      console.log("Images to delete (ref):", currentDeletedImages);
+
       await onSubmit({
         title: data.title,
         content: data.content,
@@ -265,7 +311,7 @@ export function PostForm({
         categories: data.categories,
         oshiId: data.oshi,
         images: allImages,
-        deletedImages: deletedImages,
+        deletedImages: currentDeletedImages,
       });
     } catch (error) {
       console.error("Error submitting post:", error);

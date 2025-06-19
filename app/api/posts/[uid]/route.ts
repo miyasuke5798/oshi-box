@@ -43,6 +43,13 @@ export async function PUT(
     const session = await requireAuth();
     const data = await request.json();
 
+    console.log("API - Received data:", {
+      title: data.title,
+      imagesCount: data.images?.length || 0,
+      deletedImagesCount: data.deletedImages?.length || 0,
+      deletedImages: data.deletedImages,
+    });
+
     // 投稿の所有者かチェック
     const postDoc = await db.collection("posts").doc(uid).get();
     if (!postDoc.exists) {
@@ -57,20 +64,24 @@ export async function PUT(
       return NextResponse.json({ error: "権限がありません" }, { status: 403 });
     }
 
+    console.log("API - Current post images:", postData.images);
+
     const storage = getStorage();
     const bucket = storage.bucket(process.env.FIREBASE_STORAGE_BUCKET);
 
     // 削除された画像をFirebase Storageから削除
     if (data.deletedImages && data.deletedImages.length > 0) {
+      console.log("API - Deleting images from storage:", data.deletedImages);
       const deletePromises = data.deletedImages.map(
         async (imagePath: string) => {
           try {
             const normalizedPath = normalizeFilePath(imagePath);
+            console.log(`API - Deleting storage file: ${normalizedPath}`);
             const file = bucket.file(normalizedPath);
             await file.delete();
-            console.log(`Deleted image: ${normalizedPath}`);
+            console.log(`API - Successfully deleted image: ${normalizedPath}`);
           } catch (error) {
-            console.error(`Error deleting image ${imagePath}:`, error);
+            console.error(`API - Error deleting image ${imagePath}:`, error);
             // 削除に失敗しても処理を続行
           }
         }
@@ -82,6 +93,7 @@ export async function PUT(
     // 画像の処理
     const imageUrls: string[] = [];
     if (data.images && data.images.length > 0) {
+      console.log("API - Processing images:", data.images);
       for (const image of data.images) {
         if (image.startsWith("data:image/")) {
           // Base64画像の場合、Firebase Storageに保存
@@ -100,24 +112,38 @@ export async function PUT(
           });
 
           imageUrls.push(fileName); // パスを保存
+          console.log(`API - Added new image: ${fileName}`);
         } else if (image.startsWith("http")) {
           // 既存のURLの場合、署名付きURLかどうかをチェック
           const filePath = extractFilePathFromSignedUrl(image);
           if (filePath) {
             // 署名付きURLの場合はファイルパスを保存
             imageUrls.push(filePath);
+            console.log(
+              `API - Added existing image (from signed URL): ${filePath}`
+            );
           } else {
             // 通常のURLの場合はそのまま保持
             imageUrls.push(image);
+            console.log(`API - Added existing image (external URL): ${image}`);
           }
         } else {
           // ファイルパスの場合、そのまま保持
           imageUrls.push(image);
+          console.log(`API - Added existing image (file path): ${image}`);
         }
       }
     }
 
-    await db.collection("posts").doc(uid).update({
+    console.log("API - Final images to save to Firestore:", imageUrls);
+    console.log("API - Images count comparison:", {
+      original: postData.images?.length || 0,
+      final: imageUrls.length,
+      deleted: data.deletedImages?.length || 0,
+    });
+
+    // Firestoreの更新データを準備
+    const updateData = {
       title: data.title,
       content: data.content,
       visibility: data.visibility,
@@ -125,7 +151,13 @@ export async function PUT(
       oshiId: data.oshiId,
       images: imageUrls,
       updatedAt: new Date(),
-    });
+    };
+
+    console.log("API - Updating Firestore with data:", updateData);
+
+    await db.collection("posts").doc(uid).update(updateData);
+
+    console.log("API - Successfully updated post in Firestore");
 
     return NextResponse.json({ success: true });
   } catch (error) {
