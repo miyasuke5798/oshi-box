@@ -58,7 +58,7 @@ export function DeletePostDialog({
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <button className="rounded-full border border-red-300 text-red-400 hover:bg-red-50 px-3 py-1.5 cursor-pointer">
+        <button className="w-1/2 text-center rounded-full border border-red-300 text-red-400 hover:bg-red-50 px-3 py-1.5 cursor-pointer">
           削除
         </button>
       </DialogTrigger>

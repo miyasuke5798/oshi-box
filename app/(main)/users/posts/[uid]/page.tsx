@@ -48,7 +48,8 @@ export default async function PostDetailPage({ params }: PageProps) {
       <ShareMenu />
       <Card className="w-full mb-4">
         <CardContent className="py-5 px-6">
-          <div className="flex items-center gap-2 mb-4">
+          <BackButton />
+          <div className="flex items-center gap-2 my-6">
             {post.user && (
               <Link href={`/${post.user.uid}`}>
                 <div className="flex items-center gap-2 mt-1">
@@ -110,24 +111,21 @@ export default async function PostDetailPage({ params }: PageProps) {
           <div className="prose max-w-none">
             <p className="whitespace-pre-wrap">{post.content}</p>
           </div>
-          <div className="flex justify-between items-center mt-12">
-            <BackButton />
-            {isCurrentUser && (
-              <div className="flex items-center gap-2">
-                <Link
-                  href={`/users/posts/${post.id}/edit`}
-                  className="ml-auto rounded-full border border-gray-300 hover:bg-gray-50 px-3 py-1.5"
-                >
-                  編集
-                </Link>
-                <DeletePostDialog
-                  postId={post.id}
-                  postTitle={post.title}
-                  postUserId={post.userId}
-                />
-              </div>
-            )}
-          </div>
+          {isCurrentUser && (
+            <div className="flex items-center gap-6 mt-12 w-full">
+              <Link
+                href={`/users/posts/${post.id}/edit`}
+                className="w-1/2 text-center rounded-full border border-gray-300 hover:bg-gray-50 px-3 py-1.5"
+              >
+                編集
+              </Link>
+              <DeletePostDialog
+                postId={post.id}
+                postTitle={post.title}
+                postUserId={post.userId}
+              />
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>
