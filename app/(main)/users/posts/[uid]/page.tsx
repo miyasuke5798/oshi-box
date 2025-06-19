@@ -6,6 +6,7 @@ import { ja } from "date-fns/locale";
 import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
+import { BackButton } from "@/components/ui/back-button";
 import { Badge } from "@/components/ui/badge";
 import { ShareMenu } from "@/components/layout/share_menu";
 import { UserIcon } from "lucide-react";
@@ -63,14 +64,6 @@ export default async function PostDetailPage({ params }: PageProps) {
                 </div>
               </Link>
             )}
-            {isCurrentUser && (
-              <Link
-                href={`/users/posts/${post.id}/edit`}
-                className="ml-auto rounded-full border border-gray-300 hover:bg-gray-50 px-4 py-1"
-              >
-                編集
-              </Link>
-            )}
           </div>
           <div className="text-xs text-gray-500">
             {post.createdAt
@@ -110,6 +103,25 @@ export default async function PostDetailPage({ params }: PageProps) {
           )}
           <div className="prose max-w-none">
             <p className="whitespace-pre-wrap">{post.content}</p>
+          </div>
+          <div className="flex justify-between items-center mt-12">
+            <BackButton />
+            {isCurrentUser && (
+              <div className="flex items-center gap-2">
+                <Link
+                  href={`/users/posts/${post.id}/edit`}
+                  className="ml-auto rounded-full border border-gray-300 hover:bg-gray-50 px-3 py-1.5"
+                >
+                  編集
+                </Link>
+                <Link
+                  href=""
+                  className="ml-auto rounded-full border border-red-300 text-red-400 hover:bg-red-50 px-3 py-1.5"
+                >
+                  削除
+                </Link>
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>
