@@ -33,13 +33,14 @@ export function DeletePostDialog({
     console.log("delete post", postId);
     try {
       setIsDeleting(true);
-      // const response = await fetch(`/api/posts/${postId}`, {
-      //   method: "DELETE",
-      // });
+      const response = await fetch(`/api/posts/${postId}`, {
+        method: "DELETE",
+      });
 
-      // if (!response.ok) {
-      //   throw new Error("投稿の削除に失敗しました");
-      // }
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "投稿の削除に失敗しました");
+      }
 
       toast.success("投稿を削除しました", { icon: <SuccessCircle /> });
       setIsOpen(false);
