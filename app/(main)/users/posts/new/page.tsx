@@ -10,28 +10,15 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { SuccessCircle } from "@/components/svg/success_circle";
-import { X, AlertCircle, CirclePlus, ChevronLeft } from "lucide-react";
+import { X, AlertCircle, ChevronLeft } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { toast } from "sonner";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
 import { Category } from "@/types/category";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { useRouter } from "next/navigation";
+import { OshiSelector } from "@/components/posts/oshi-selector";
 
 const usersPostSchema = z.object({
   title: z
@@ -61,7 +48,6 @@ export default function UsersPostsPage() {
   const { user } = useAuth();
   const [error, setError] = useState<string>("");
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [categories, setCategories] = useState<Category[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -327,64 +313,17 @@ export default function UsersPostsPage() {
             </div>
             <div className="space-y-2">
               <label className="text-sm font-medium">推し選択</label>
-              <div className="flex gap-2">
-                <div className="flex-1">
-                  <Select
-                    onValueChange={(value) =>
-                      setValue("oshi", value === "none" ? null : value)
-                    }
-                    value={watch("oshi") || "none"}
-                  >
-                    <SelectTrigger className="w-full">
-                      <SelectValue placeholder="推しを選択してください" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="none">未選択</SelectItem>
-                      <SelectItem value="oshi1">推し１</SelectItem>
-                      <SelectItem value="oshi2">推し２</SelectItem>
-                      <SelectItem value="oshi3">推し３</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                  <DialogTrigger asChild>
-                    <Button
-                      variant="outline"
-                      className="shrink-0 font-normal py-0"
-                    >
-                      <CirclePlus className="h-5 w-5" />
-                      <span className="">新規登録</span>
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent onOpenAutoFocus={(e) => e.preventDefault()}>
-                    <DialogHeader>
-                      <DialogTitle>推しを新規登録</DialogTitle>
-                    </DialogHeader>
-                    <div className="space-y-4 py-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="oshiName">名前</Label>
-                        <Input id="oshiName" placeholder="推しの名前を入力" />
-                      </div>
-                      <Button
-                        className="w-full"
-                        onClick={() => setIsDialogOpen(false)}
-                      >
-                        登録
-                      </Button>
-                    </div>
-                  </DialogContent>
-                </Dialog>
-              </div>
+              <OshiSelector
+                value={watch("oshi") || null}
+                onValueChange={(oshi) => setValue("oshi", oshi)}
+              />
             </div>
             <div className="space-y-2">
               <label className="text-sm font-medium">公開範囲</label>
               <RadioGroup
                 defaultValue="public"
                 onValueChange={(value) =>
-                  setValue(
-                    "visibility",
-                    value as "public" | "private"
-                  )
+                  setValue("visibility", value as "public" | "private")
                 }
                 className="flex flex-row flex-wrap space-x-2"
               >
@@ -409,11 +348,7 @@ export default function UsersPostsPage() {
                 <ChevronLeft className="h-5 w-5" />
                 <p className="text-sm font-normal -ml-1">戻る</p>
               </Button>
-              <Button
-                type="submit"
-                className="w-1/2"
-                disabled={isSubmitting}
-              >
+              <Button type="submit" className="w-1/2" disabled={isSubmitting}>
                 {isSubmitting ? "作成中..." : "作成"}
               </Button>
             </div>
