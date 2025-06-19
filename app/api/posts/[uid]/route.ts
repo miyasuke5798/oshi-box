@@ -94,9 +94,24 @@ export async function PUT(
     const imageUrls: string[] = [];
     if (data.images && data.images.length > 0) {
       console.log("API - Processing images:", data.images);
-      for (const image of data.images) {
+      console.log("API - Images count:", data.images.length);
+
+      for (let i = 0; i < data.images.length; i++) {
+        const image = data.images[i];
+        console.log(`API - Processing image ${i + 1}/${data.images.length}:`, {
+          type: typeof image,
+          isBase64:
+            typeof image === "string" && image.startsWith("data:image/"),
+          isUrl: typeof image === "string" && image.startsWith("http"),
+          isPath:
+            typeof image === "string" &&
+            !image.startsWith("data:image/") &&
+            !image.startsWith("http"),
+        });
+
         if (image.startsWith("data:image/")) {
           // Base64画像の場合、Firebase Storageに保存
+          console.log(`API - Converting base64 image ${i + 1} to storage`);
           const base64Data = image.replace(/^data:image\/\w+;base64,/, "");
           const buffer = Buffer.from(base64Data, "base64");
 

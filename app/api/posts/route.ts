@@ -9,6 +9,12 @@ export async function POST(request: Request) {
     const { title, content, visibility, categories, oshiId, images } =
       await request.json();
 
+    console.log("API - Creating new post with images:", {
+      title,
+      imagesCount: images?.length || 0,
+      images: images,
+    });
+
     if (!adminStorage || !adminDb) {
       return NextResponse.json(
         { error: "Firebaseの初期化に失敗しています" },
@@ -23,7 +29,16 @@ export async function POST(request: Request) {
         process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET
       );
 
-      for (const image of images) {
+      console.log("API - Processing images for new post:", images.length);
+
+      for (let i = 0; i < images.length; i++) {
+        const image = images[i];
+        console.log(`API - Processing image ${i + 1}/${images.length}:`, {
+          type: typeof image,
+          isBase64:
+            typeof image === "string" && image.startsWith("data:image/"),
+        });
+
         // Base64画像データをバッファに変換
         const base64Data = image.split(",")[1];
         const buffer = Buffer.from(base64Data, "base64");
@@ -32,6 +47,8 @@ export async function POST(request: Request) {
         const fileName = `posts/${session.uid}/${Date.now()}-${Math.random()
           .toString(36)
           .substring(7)}.jpg`;
+
+        console.log(`API - Uploading image ${i + 1} to: ${fileName}`);
 
         // 画像をアップロード
         await bucket.file(fileName).save(buffer, {
@@ -47,8 +64,11 @@ export async function POST(request: Request) {
         });
 
         uploadedImageUrls.push(url);
+        console.log(`API - Successfully uploaded image ${i + 1}: ${fileName}`);
       }
     }
+
+    console.log("API - Final uploaded image URLs:", uploadedImageUrls);
 
     // 投稿データを作成
     const postData: PostParams = {
@@ -67,6 +87,8 @@ export async function POST(request: Request) {
       createdAt: new Date(),
       updatedAt: null,
     });
+
+    console.log("API - Successfully created post with ID:", docRef.id);
 
     return NextResponse.json({ id: docRef.id }, { status: 201 });
   } catch (error) {

@@ -166,6 +166,8 @@ export function PostForm({
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
     if (files.length > 0) {
+      console.log("handleImageChange - selected files:", files);
+
       const allowedTypes = [
         "image/jpeg",
         "image/jpg",
@@ -186,6 +188,9 @@ export function PostForm({
       const currentImages = watch("images") || [];
       const existingImages = initialData?.images || [];
 
+      console.log("handleImageChange - current images:", currentImages);
+      console.log("handleImageChange - existing images:", existingImages);
+
       if (currentImages.length + files.length > 4) {
         toast.error("画像は最大4枚までアップロードできます", {
           icon: <AlertCircle className="h-5 w-5 text-red-500" />,
@@ -193,11 +198,14 @@ export function PostForm({
         return;
       }
 
-      // 既存の画像URLと新しい画像ファイルを結合
-      setValue("images", [...existingImages, ...files]);
+      // 現在のフォームの値に新しい画像ファイルを追加
+      const updatedImages = [...currentImages, ...files];
+      console.log("handleImageChange - updated images:", updatedImages);
+      setValue("images", updatedImages);
 
       // プレビューURLを更新（既存の画像URL + 新しい画像のプレビュー）
       const newPreviewUrls = files.map((file) => URL.createObjectURL(file));
+      console.log("handleImageChange - new preview URLs:", newPreviewUrls);
       setPreviewUrls((prev) => [...prev, ...newPreviewUrls]);
     }
   };
@@ -276,14 +284,22 @@ export function PostForm({
       const base64Images: string[] = [];
       const existingImages: string[] = [];
 
+      console.log("Form submission - processing imageFiles:", imageFiles);
+
       // 既存の画像URLと新しい画像ファイルを区別
       if (imageFiles && imageFiles.length > 0) {
         for (const item of imageFiles) {
+          console.log("Form submission - processing item:", item, typeof item);
           if (typeof item === "string") {
             // 既存の画像URLの場合
             existingImages.push(item);
+            console.log("Form submission - added existing image:", item);
           } else if (item instanceof File) {
             // 新しい画像ファイルの場合、Base64に変換
+            console.log(
+              "Form submission - converting file to base64:",
+              item.name
+            );
             const reader = new FileReader();
             const base64Promise = new Promise<string>((resolve) => {
               reader.onload = (e) => {
@@ -293,7 +309,9 @@ export function PostForm({
               };
             });
             reader.readAsDataURL(item);
-            base64Images.push(await base64Promise);
+            const base64Result = await base64Promise;
+            base64Images.push(base64Result);
+            console.log("Form submission - added base64 image:", item.name);
           }
         }
       }
@@ -301,6 +319,11 @@ export function PostForm({
       // 既存の画像URLと新しいBase64画像を結合
       const allImages = [...existingImages, ...base64Images];
 
+      console.log("Form submission - existing images:", existingImages);
+      console.log(
+        "Form submission - base64 images count:",
+        base64Images.length
+      );
       console.log("Final images to save:", allImages);
       console.log("Images to delete (ref):", currentDeletedImages);
 
