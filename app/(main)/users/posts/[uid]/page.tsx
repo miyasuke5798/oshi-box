@@ -10,6 +10,7 @@ import { BackButton } from "@/components/ui/back-button";
 import { Badge } from "@/components/ui/badge";
 import { ShareMenu } from "@/components/layout/share_menu";
 import { UserIcon } from "lucide-react";
+import { DeletePostDialog } from "./delete-post-dialog";
 
 interface PageProps {
   params: Promise<{
@@ -114,12 +115,11 @@ export default async function PostDetailPage({ params }: PageProps) {
                 >
                   編集
                 </Link>
-                <Link
-                  href=""
-                  className="ml-auto rounded-full border border-red-300 text-red-400 hover:bg-red-50 px-3 py-1.5"
-                >
-                  削除
-                </Link>
+                <DeletePostDialog
+                  postId={post.id}
+                  postTitle={post.title}
+                  postUserId={post.userId}
+                />
               </div>
             )}
           </div>
