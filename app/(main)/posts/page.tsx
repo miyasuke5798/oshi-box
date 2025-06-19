@@ -18,7 +18,7 @@ export default async function PostsPage() {
         <CardContent className="py-5 px-6">
           <h1 className="text-xl font-bold mb-6">みんなの投稿</h1>
           {posts.length > 0 ? (
-            <div className="columns-2 md:columns-3 lg:columns-4 xl:columns-5 gap-4">
+            <div className="columns-2 md:columns-3 gap-4">
               {posts.map((post) => (
                 <Link
                   key={post.id}
