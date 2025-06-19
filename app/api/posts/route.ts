@@ -25,9 +25,7 @@ export async function POST(request: Request) {
     // 画像のアップロード処理
     const uploadedImageUrls: string[] = [];
     if (images && images.length > 0) {
-      const bucket = adminStorage.bucket(
-        process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET
-      );
+      const bucket = adminStorage.bucket(process.env.FIREBASE_STORAGE_BUCKET);
 
       console.log("API - Processing images for new post:", images.length);
 
@@ -57,13 +55,8 @@ export async function POST(request: Request) {
           },
         });
 
-        // 公開URLを取得
-        const [url] = await bucket.file(fileName).getSignedUrl({
-          action: "read",
-          expires: "03-01-2500",
-        });
-
-        uploadedImageUrls.push(url);
+        // ファイルパスを保存（署名付きURLではなく）
+        uploadedImageUrls.push(fileName);
         console.log(`API - Successfully uploaded image ${i + 1}: ${fileName}`);
       }
     }

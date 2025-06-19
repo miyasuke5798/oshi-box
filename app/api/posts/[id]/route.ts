@@ -41,9 +41,7 @@ export async function DELETE(
 
     // 画像がある場合はStorageから削除
     if (postData?.images && postData.images.length > 0) {
-      const bucket = adminStorage.bucket(
-        process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET
-      );
+      const bucket = adminStorage.bucket(process.env.FIREBASE_STORAGE_BUCKET);
 
       console.log(
         "API - Deleting images from storage:",
