@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -22,6 +22,7 @@ import { SuccessCircle } from "@/components/svg/success_circle";
 import { CirclePlus } from "lucide-react";
 import { z } from "zod";
 import { toast } from "sonner";
+import { Oshi } from "@/types/oshi";
 
 // 推し名のバリデーションスキーマ
 const oshiNameSchema = z.object({
@@ -46,19 +47,68 @@ export function OshiSelector({
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [newOshiName, setNewOshiName] = useState("");
   const [error, setError] = useState<string>("");
+  const [oshiList, setOshiList] = useState<Oshi[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isCreating, setIsCreating] = useState(false);
 
-  const handleRegister = () => {
+  // 推し一覧を取得
+  const fetchOshiList = async () => {
     try {
+      setIsLoading(true);
+      const response = await fetch("/api/oshi");
+
+      if (!response.ok) {
+        throw new Error("推し一覧の取得に失敗しました");
+      }
+
+      const data = await response.json();
+      setOshiList(data.oshiList || []);
+    } catch (error) {
+      console.error("Error fetching oshi list:", error);
+      toast.error("推し一覧の取得に失敗しました");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // コンポーネントマウント時に推し一覧を取得
+  useEffect(() => {
+    fetchOshiList();
+  }, []);
+
+  const handleRegister = async () => {
+    try {
+      setIsCreating(true);
+
       // バリデーション実行
       const validatedData = oshiNameSchema.parse({ name: newOshiName });
 
-      // TODO: 実際の推し登録APIを呼び出す
-      console.log("Registering new oshi:", validatedData.name);
+      // 推し登録APIを呼び出し
+      const response = await fetch("/api/oshi", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(validatedData),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "推しの登録に失敗しました");
+      }
 
       // 成功時の処理
       setNewOshiName("");
       setError("");
       setIsDialogOpen(false);
+
+      // 推し一覧を再取得
+      await fetchOshiList();
+
+      // 新しく作成された推しを選択
+      onValueChange(data.oshiId);
+
       toast.success("推しを登録しました", {
         icon: <SuccessCircle />,
       });
@@ -67,7 +117,13 @@ export function OshiSelector({
         const errorMessage =
           error.errors[0]?.message || "入力内容を確認してください";
         setError(errorMessage);
+      } else if (error instanceof Error) {
+        setError(error.message);
+      } else {
+        setError("推しの登録に失敗しました");
       }
+    } finally {
+      setIsCreating(false);
     }
   };
 
@@ -88,15 +144,20 @@ export function OshiSelector({
             onValueChange(value === "none" ? null : value)
           }
           value={value || "none"}
+          disabled={isLoading}
         >
           <SelectTrigger className="w-full">
-            <SelectValue placeholder={placeholder} />
+            <SelectValue
+              placeholder={isLoading ? "読み込み中..." : placeholder}
+            />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="none">未選択</SelectItem>
-            <SelectItem value="oshi1">推し１</SelectItem>
-            <SelectItem value="oshi2">推し２</SelectItem>
-            <SelectItem value="oshi3">推し３</SelectItem>
+            {oshiList.map((oshi) => (
+              <SelectItem key={oshi.id} value={oshi.id}>
+                {oshi.name}
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
       </div>
@@ -130,6 +191,7 @@ export function OshiSelector({
                   }
                 }}
                 maxLength={50}
+                disabled={isCreating}
               />
               {error && <p className="text-sm text-red-500">{error}</p>}
             </div>
@@ -138,11 +200,16 @@ export function OshiSelector({
                 variant="outline"
                 className="w-1/2"
                 onClick={() => handleDialogOpenChange(false)}
+                disabled={isCreating}
               >
                 キャンセル
               </Button>
-              <Button className="w-1/2" onClick={handleRegister}>
-                登録
+              <Button
+                className="w-1/2"
+                onClick={handleRegister}
+                disabled={isCreating}
+              >
+                {isCreating ? "登録中..." : "登録"}
               </Button>
             </div>
           </div>
