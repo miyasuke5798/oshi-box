@@ -83,10 +83,7 @@ export async function getCategories(): Promise<Category[]> {
 
 export async function getPosts(): Promise<Post[]> {
   try {
-    const postsSnapshot = await db
-      .collection("posts")
-      .orderBy("createdAt", "desc")
-      .get();
+    const postsSnapshot = await db.collection("posts").get();
 
     const posts = postsSnapshot.docs.map((doc) => {
       const data = doc.data();
@@ -114,9 +111,17 @@ export async function getPosts(): Promise<Post[]> {
       };
     }) as Post[];
 
+    // visibilityが"private"の投稿を除外し、作成日時でソート
+    const filteredPosts = posts
+      .filter((post) => post.visibility !== "private")
+      .sort((a, b) => {
+        if (!a.createdAt || !b.createdAt) return 0;
+        return b.createdAt.seconds - a.createdAt.seconds;
+      });
+
     // ユーザー情報と画像URLを取得
     const postsWithUser = await Promise.all(
-      posts.map(async (post) => {
+      filteredPosts.map(async (post) => {
         const userDoc = await db.collection("users").doc(post.userId).get();
         const userData = userDoc.data();
 
@@ -193,7 +198,10 @@ export async function getUserBySlug(slug: string): Promise<UserData | null> {
   }
 }
 
-export async function getUserPosts(userId: string): Promise<Post[]> {
+export async function getUserPosts(
+  userId: string,
+  currentUserId?: string
+): Promise<Post[]> {
   try {
     const postsSnapshot = await db
       .collection("posts")
@@ -226,9 +234,15 @@ export async function getUserPosts(userId: string): Promise<Post[]> {
       };
     }) as Post[];
 
+    // 現在のユーザーではない場合はプライベート投稿を除外
+    const filteredPosts =
+      currentUserId && currentUserId !== userId
+        ? posts.filter((post) => post.visibility !== "private")
+        : posts;
+
     // ユーザー情報と画像URLを取得
     const postsWithUser = await Promise.all(
-      posts.map(async (post) => {
+      filteredPosts.map(async (post) => {
         const userDoc = await db.collection("users").doc(post.userId).get();
         const userData = userDoc.data();
 

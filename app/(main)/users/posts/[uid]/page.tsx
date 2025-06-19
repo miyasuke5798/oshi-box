@@ -5,7 +5,7 @@ import { format } from "date-fns";
 import { ja } from "date-fns/locale";
 import Link from "next/link";
 import Image from "next/image";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { BackButton } from "@/components/ui/back-button";
 import { Badge } from "@/components/ui/badge";
 import { ShareMenu } from "@/components/layout/share_menu";
@@ -31,6 +31,11 @@ export default async function PostDetailPage({ params }: PageProps) {
   }
 
   const isCurrentUser = session.uid === post.userId;
+
+  // プライベート投稿へのアクセス制御
+  if (post.visibility === "private" && !isCurrentUser) {
+    redirect("/");
+  }
 
   // カテゴリーIDから名前を取得する関数
   const getCategoryName = (categoryId: string) => {

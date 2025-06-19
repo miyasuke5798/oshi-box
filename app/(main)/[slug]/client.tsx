@@ -118,6 +118,13 @@ export function SlugPageClient({
                           )}
                         </div>
                         <div className="flex-1">
+                          {isCurrentUser && (
+                            <p className="text-sm text-gray-500">
+                              {post.visibility && post.visibility === "public"
+                                ? "全体公開"
+                                : "非公開"}
+                            </p>
+                          )}
                           <Link
                             href={`/users/posts/${post.id}`}
                             className="rose_link"
@@ -129,8 +136,6 @@ export function SlugPageClient({
                           <p className="text-sm text-gray-600 mt-2">
                             {post.content}
                           </p>
-                          {/* TODO: 公開範囲を考慮する */}
-                          <p>{post.visibility}</p>
                           <div className="flex items-center gap-2 mt-2">
                             <span className="text-xs text-gray-500">
                               {post.createdAt

@@ -19,7 +19,7 @@ export default async function SlugPage({ params }: PageProps) {
     notFound();
   }
 
-  const posts = await getUserPosts(userData.uid);
+  const posts = await getUserPosts(userData.uid, session.uid);
   const isCurrentUser = session.uid === userData.uid;
 
   return (
