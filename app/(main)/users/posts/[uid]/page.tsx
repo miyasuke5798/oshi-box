@@ -92,7 +92,7 @@ export default async function PostDetailPage({ params }: PageProps) {
               ))}
             </div>
           )}
-          <h1 className="text-2xl font-bold mb-4">{post.title}</h1>
+          <h1 className="text-2xl font-bold my-4">{post.title}</h1>
           {post.categories && post.categories.length > 0 && (
             <div className="flex flex-wrap gap-2 mb-4">
               {post.categories.map((categoryId) => (
