@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { getPosts } from "@/lib/firebase/admin";
+import { getPostsForAdmin } from "@/lib/firebase/admin";
 import { getCategories } from "@/lib/firebase/admin";
 import { format } from "date-fns";
 import { ja } from "date-fns/locale";
@@ -9,13 +9,23 @@ import { Badge } from "@/components/ui/badge";
 
 type PostWithUser = Post & {
   user: {
-    id: string;
-    name: string;
+    uid: string;
+    displayName: string | null;
+    email: string | null;
+    photoURL: string | null;
+    bio: string | null;
+    oshiName: string | null;
+    snsLink: string | null;
+    createdAt: Date;
+    updatedAt: Date;
   };
 };
 
 export default async function PostsDashboard() {
-  const [posts, categories] = await Promise.all([getPosts(), getCategories()]);
+  const [posts, categories] = await Promise.all([
+    getPostsForAdmin(),
+    getCategories(),
+  ]);
 
   // カテゴリーIDから名前を取得する関数
   const getCategoryName = (categoryId: string) => {
@@ -39,6 +49,7 @@ export default async function PostsDashboard() {
                   <th className="text-left p-4 font-medium">タイトル</th>
                   <th className="text-left p-4 font-medium">投稿者</th>
                   <th className="text-left p-4 font-medium">カテゴリー</th>
+                  <th className="text-left p-4 font-medium">推し</th>
                   <th className="text-left p-4 font-medium">公開範囲</th>
                   <th className="text-left p-4 font-medium">作成日</th>
                 </tr>
@@ -47,7 +58,7 @@ export default async function PostsDashboard() {
                 {posts.length > 0 ? (
                   (posts as PostWithUser[]).map((post) => (
                     <tr key={post.id} className="border-b">
-                      <td className="p-4 text-sm">{post.id}</td>
+                      <td className="p-4 text-sm font-mono">{post.id}</td>
                       <td className="p-4 text-sm">
                         <Link
                           href={`/users/posts/${post.id}`}
@@ -56,7 +67,18 @@ export default async function PostsDashboard() {
                           <div className="font-medium">{post.title}</div>
                         </Link>
                       </td>
-                      <td className="p-4 text-sm">{post.user.name}</td>
+                      <td className="p-4 text-sm">
+                        <div>
+                          <div className="font-medium">
+                            <Link
+                              href={`/${post.user.uid}`}
+                              className="rose_link"
+                            >
+                              {post.user.displayName || "名前未設定"}
+                            </Link>
+                          </div>
+                        </div>
+                      </td>
                       <td className="p-4 text-sm">
                         <div className="flex flex-wrap gap-2">
                           {post.categories.map((categoryId) => (
@@ -71,12 +93,27 @@ export default async function PostsDashboard() {
                         </div>
                       </td>
                       <td className="p-4 text-sm">
+                        {post.oshi ? (
+                          <Badge variant="outline" className="text-xs">
+                            {post.oshi.name}
+                          </Badge>
+                        ) : (
+                          <span className="text-gray-500 text-xs">未選択</span>
+                        )}
+                      </td>
+                      <td className="p-4 text-sm">
                         <div className="flex items-center gap-2">
-                          <span>
+                          <Badge
+                            variant={
+                              post.visibility === "public"
+                                ? "default"
+                                : "secondary"
+                            }
+                          >
                             {post.visibility === "public"
                               ? "全体公開"
                               : "非公開"}
-                          </span>
+                          </Badge>
                         </div>
                       </td>
                       <td className="p-4 text-sm">
@@ -96,7 +133,7 @@ export default async function PostsDashboard() {
                 ) : (
                   <tr>
                     <td
-                      colSpan={5}
+                      colSpan={7}
                       className="p-4 text-sm text-center text-gray-500"
                     >
                       投稿がありません

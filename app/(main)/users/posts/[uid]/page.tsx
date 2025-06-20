@@ -1,6 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { requireAuth } from "@/lib/auth-server";
-import { getPostById, getCategories } from "@/lib/firebase/admin";
+import { getPostById, getCategories, getOshiById } from "@/lib/firebase/admin";
 import { format } from "date-fns";
 import { ja } from "date-fns/locale";
 import Link from "next/link";
@@ -35,6 +35,12 @@ export default async function PostDetailPage({ params }: PageProps) {
   // プライベート投稿へのアクセス制御
   if (post.visibility === "private" && !isCurrentUser) {
     redirect("/");
+  }
+
+  // 推しの情報を取得
+  let oshi = null;
+  if (post.oshiId) {
+    oshi = await getOshiById(post.userId, post.oshiId);
   }
 
   // カテゴリーIDから名前を取得する関数
@@ -99,13 +105,27 @@ export default async function PostDetailPage({ params }: PageProps) {
             </div>
           )}
           <h1 className="text-2xl font-bold my-4">{post.title}</h1>
-          {post.categories && post.categories.length > 0 && (
-            <div className="flex flex-wrap gap-2 mb-4">
-              {post.categories.map((categoryId) => (
-                <Badge key={categoryId} variant="secondary" className="text-xs">
-                  {getCategoryName(categoryId)}
-                </Badge>
-              ))}
+          <div className="flex flex-wrap gap-4 mb-4">
+            {post.categories && post.categories.length > 0 && (
+              <div className="flex flex-wrap gap-2">
+                {post.categories.map((categoryId) => (
+                  <Badge
+                    key={categoryId}
+                    variant="secondary"
+                    className="text-xs"
+                  >
+                    {getCategoryName(categoryId)}
+                  </Badge>
+                ))}
+              </div>
+            )}
+          </div>
+          {oshi && (
+            <div className="flex items-center gap-2 mb-4">
+              <span className="text-sm text-gray-500">推し:</span>
+              <Badge variant="outline" className="text-xs">
+                {oshi.name}
+              </Badge>
             </div>
           )}
           <div className="prose max-w-none">

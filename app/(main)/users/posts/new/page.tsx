@@ -149,13 +149,25 @@ export default function UsersPostsPage() {
       }
 
       setError("");
+
+      // 推しIDを正しく設定（nullの場合はnullのまま）
       const formData = {
-        ...data,
-        oshiId: data.oshi,
+        title: data.title,
+        content: data.content,
+        visibility: data.visibility,
+        categories: data.categories,
+        oshiId: data.oshi, // 推しIDを設定（nullの場合はnull）
+        images: [],
       };
 
+      console.log("Submitting post with data:", {
+        title: formData.title,
+        oshiId: formData.oshiId,
+        categoriesCount: formData.categories.length,
+      });
+
       // 画像をBase64に変換
-      const imageFiles = formData.images as File[];
+      const imageFiles = data.images as File[];
       const base64Images: string[] = [];
 
       if (imageFiles && imageFiles.length > 0) {
@@ -185,8 +197,12 @@ export default function UsersPostsPage() {
       });
 
       if (!response.ok) {
-        throw new Error("投稿の作成に失敗しました");
+        const errorData = await response.json();
+        throw new Error(errorData.error || "投稿の作成に失敗しました");
       }
+
+      const result = await response.json();
+      console.log("Post created successfully:", result);
 
       toast.success("投稿しました", { icon: <SuccessCircle /> });
       router.push(`/${user.uid}`);

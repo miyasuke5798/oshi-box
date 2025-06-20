@@ -9,10 +9,11 @@ export async function POST(request: Request) {
     const { title, content, visibility, categories, oshiId, images } =
       await request.json();
 
-    console.log("API - Creating new post with images:", {
+    console.log("API - Creating new post:", {
       title,
+      oshiId,
       imagesCount: images?.length || 0,
-      images: images,
+      categoriesCount: categories?.length || 0,
     });
 
     if (!adminStorage || !adminDb) {
@@ -20,6 +21,23 @@ export async function POST(request: Request) {
         { error: "Firebaseの初期化に失敗しています" },
         { status: 500 }
       );
+    }
+
+    // 推しIDの検証（存在する場合）
+    if (oshiId) {
+      const oshiDoc = await adminDb
+        .collection("users")
+        .doc(session.uid)
+        .collection("oshi")
+        .doc(oshiId)
+        .get();
+
+      if (!oshiDoc.exists) {
+        return NextResponse.json(
+          { error: "指定された推しが見つかりません" },
+          { status: 400 }
+        );
+      }
     }
 
     // 画像のアップロード処理
@@ -81,7 +99,11 @@ export async function POST(request: Request) {
       updatedAt: null,
     });
 
-    console.log("API - Successfully created post with ID:", docRef.id);
+    console.log("API - Successfully created post:", {
+      postId: docRef.id,
+      oshiId,
+      userId: session.uid,
+    });
 
     return NextResponse.json({ id: docRef.id }, { status: 201 });
   } catch (error) {

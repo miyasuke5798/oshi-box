@@ -6,6 +6,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { UserIcon } from "@/components/svg/UserIcon";
 import { Image as ImageIcon } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
 export default async function PostsPage() {
   await requireAuth();
@@ -49,7 +50,7 @@ export default async function PostsPage() {
                       <h2 className="text-sm font-medium group-hover:text-blue-400 transition-colors line-clamp-2 mb-2">
                         {post.title}
                       </h2>
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2 mb-2">
                         <div className="relative w-6 h-6 overflow-hidden rounded-full">
                           {post.user.photoURL ? (
                             <Image
@@ -66,6 +67,14 @@ export default async function PostsPage() {
                           {post.user.displayName || "不明"}
                         </span>
                       </div>
+                      {post.oshi && (
+                        <div className="flex items-center gap-1 mb-2">
+                          <span className="text-xs text-gray-500">推し:</span>
+                          <Badge variant="outline" className="text-xs">
+                            {post.oshi.name}
+                          </Badge>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </Link>

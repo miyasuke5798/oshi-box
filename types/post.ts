@@ -1,4 +1,5 @@
 import { UserData } from "./user";
+import { Oshi } from "./oshi";
 
 export interface Post {
   id: string;
@@ -8,6 +9,7 @@ export interface Post {
   visibility: "public" | "private";
   categories: string[];
   oshiId: string | null;
+  oshi?: Oshi | null;
   images: string[];
   createdAt: {
     seconds: number;
