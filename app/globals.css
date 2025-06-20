@@ -86,6 +86,15 @@
   .rose_link {
     @apply text-[#3ebff5] hover:text-[#6ad0fb] underline;
   }
+
+  /* スクロールバーを非表示にするクラス */
+  .scrollbar-hide {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none; /* Chrome, Safari and Opera */
+  }
 }
 
 body {

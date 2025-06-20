@@ -1,15 +1,16 @@
 "use client";
 import Link from "next/link";
 import Image from "next/image";
+import { useState, useEffect } from "react";
 import { ShareMenu } from "@/components/layout/share_menu";
 import { Card, CardContent } from "@/components/ui/card";
 import { UserIcon } from "@/components/svg/UserIcon";
-import { UsersRound, Link2, Image as ImageIcon } from "lucide-react";
+import { UsersRound, Link2 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { UserData } from "@/types/user";
 import { Post } from "@/types/post";
-import { format } from "date-fns";
-import { ja } from "date-fns/locale";
+import { Oshi } from "@/types/oshi";
+import PostList from "./components/PostList";
 
 interface SlugPageClientProps {
   params: {
@@ -25,6 +26,55 @@ export function SlugPageClient({
   isCurrentUser,
   posts,
 }: SlugPageClientProps) {
+  const [oshis, setOshis] = useState<Oshi[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  // 推し一覧を取得
+  useEffect(() => {
+    const fetchOshis = async () => {
+      try {
+        const response = await fetch("/api/oshi");
+        if (response.ok) {
+          const data = await response.json();
+          setOshis(data.oshiList || []);
+        }
+      } catch (error) {
+        console.error("Error fetching oshis:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (isCurrentUser) {
+      fetchOshis();
+    } else {
+      setLoading(false);
+    }
+  }, [isCurrentUser]);
+
+  // 推しごとの投稿をフィルタリングする関数
+  const getPostsByOshi = (oshiId: string) => {
+    return posts.filter((post) => post.oshiId === oshiId);
+  };
+
+  // タブの動的生成
+  const generateTabs = () => {
+    const tabs = [{ value: "all", label: "すべて" }];
+
+    if (isCurrentUser && !loading) {
+      oshis.forEach((oshi) => {
+        tabs.push({
+          value: oshi.id,
+          label: oshi.name,
+        });
+      });
+    }
+
+    return tabs;
+  };
+
+  const tabs = generateTabs();
+
   return (
     <div className="mt-3 mb-16">
       <ShareMenu />
@@ -91,87 +141,38 @@ export function SlugPageClient({
         <CardContent className="py-5 px-6">
           <h1 className="text-xl font-bold mb-6">投稿一覧</h1>
           <Tabs defaultValue="all" className="w-full">
-            <TabsList className="grid w-full grid-cols-4">
-              <TabsTrigger value="all">すべて</TabsTrigger>
-              <TabsTrigger value="oshi1">推し１</TabsTrigger>
-              <TabsTrigger value="oshi2">推し２</TabsTrigger>
-              <TabsTrigger value="oshi3">推し３</TabsTrigger>
+            <TabsList
+              className="flex justify-start w-full overflow-x-auto gap-1 p-1 scrollbar-hide"
+              style={{
+                scrollbarWidth: "none",
+                msOverflowStyle: "none",
+              }}
+            >
+              {tabs.map((tab) => (
+                <TabsTrigger
+                  key={tab.value}
+                  value={tab.value}
+                  className="whitespace-nowrap flex-shrink-0 min-w-fit"
+                >
+                  {tab.label}
+                </TabsTrigger>
+              ))}
             </TabsList>
+
             <TabsContent value="all" className="mt-6">
-              {posts.length > 0 ? (
-                <div className="space-y-4">
-                  {posts.map((post) => (
-                    <div key={post.id} className="border-b pb-4">
-                      <div className="flex gap-4">
-                        <div className="relative w-24 h-24 min-w-24 min-h-24 rounded-lg overflow-hidden bg-gray-100">
-                          {post.images && post.images.length > 0 ? (
-                            <Image
-                              src={post.images[0]}
-                              alt={post.title}
-                              fill
-                              className="object-cover"
-                            />
-                          ) : (
-                            <div className="w-full h-full flex items-center justify-center">
-                              <ImageIcon className="w-12 h-12 text-gray-400" />
-                            </div>
-                          )}
-                        </div>
-                        <div className="flex-1">
-                          {isCurrentUser && (
-                            <p className="text-sm text-gray-500">
-                              {post.visibility && post.visibility === "public"
-                                ? "全体公開"
-                                : "非公開"}
-                            </p>
-                          )}
-                          <Link
-                            href={`/users/posts/${post.id}`}
-                            className="rose_link"
-                          >
-                            <h2 className="text-lg font-medium">
-                              {post.title}
-                            </h2>
-                          </Link>
-                          <p className="text-sm text-gray-600 mt-2">
-                            {post.content}
-                          </p>
-                          <div className="flex items-center gap-2 mt-2">
-                            <span className="text-xs text-gray-500">
-                              {post.createdAt
-                                ? format(
-                                    new Date(
-                                      post.createdAt.seconds * 1000 +
-                                        post.createdAt.nanoseconds / 1000000
-                                    ),
-                                    "yyyy年MM月dd日",
-                                    { locale: ja }
-                                  )
-                                : "不明"}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <p>
-                  まだ投稿がありません。
-                  <br />
-                  あなたの「推し活」をシェアしてみましょう！
-                </p>
-              )}
+              <PostList posts={posts} isCurrentUser={isCurrentUser} />
             </TabsContent>
-            <TabsContent value="oshi1" className="mt-6">
-              <p>推し１の投稿</p>
-            </TabsContent>
-            <TabsContent value="oshi2" className="mt-6">
-              <p>推し２の投稿</p>
-            </TabsContent>
-            <TabsContent value="oshi3" className="mt-6">
-              <p>推し３の投稿</p>
-            </TabsContent>
+
+            {isCurrentUser &&
+              !loading &&
+              oshis.map((oshi) => (
+                <TabsContent key={oshi.id} value={oshi.id} className="mt-6">
+                  <PostList
+                    posts={getPostsByOshi(oshi.id)}
+                    isCurrentUser={isCurrentUser}
+                  />
+                </TabsContent>
+              ))}
           </Tabs>
         </CardContent>
       </Card>
