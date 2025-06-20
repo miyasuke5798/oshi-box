@@ -17,6 +17,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
 import { OshiSelector } from "./oshi-selector";
+import { useAuth } from "@/lib/hooks/useAuth";
 
 const postSchema = z.object({
   title: z
@@ -68,6 +69,7 @@ export function PostForm({
   const [deletedImages, setDeletedImages] = useState<string[]>([]);
   const deletedImagesRef = useRef<string[]>([]);
   const router = useRouter();
+  const { user } = useAuth();
   const {
     register,
     handleSubmit,
@@ -460,11 +462,11 @@ export function PostForm({
         <Button
           type="button"
           variant="gray"
-          onClick={() => router.back()}
+          onClick={() => router.push(`/${user?.uid}`)}
           className="w-1/2"
         >
           <ChevronLeft className="h-5 w-5" />
-          <p className="text-sm font-normal -ml-1">戻る</p>
+          <p className="text-sm font-normal -ml-1">キャンセル</p>
         </Button>
         <Button type="submit" disabled={isSubmitting} className="w-1/2">
           {isSubmitting ? "送信中..." : submitLabel}

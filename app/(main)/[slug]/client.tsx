@@ -29,14 +29,16 @@ export function SlugPageClient({
   const [oshis, setOshis] = useState<Oshi[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // 推し一覧を取得
   useEffect(() => {
     const fetchOshis = async () => {
       try {
-        const response = await fetch("/api/oshi");
+        const response = await fetch(`/api/user-oshis/${userData.uid}`);
+
         if (response.ok) {
           const data = await response.json();
           setOshis(data.oshiList || []);
+        } else {
+          console.error("API error:", response.status, response.statusText);
         }
       } catch (error) {
         console.error("Error fetching oshis:", error);
@@ -45,12 +47,12 @@ export function SlugPageClient({
       }
     };
 
-    if (isCurrentUser) {
+    if (userData.uid) {
       fetchOshis();
     } else {
       setLoading(false);
     }
-  }, [isCurrentUser]);
+  }, [userData.uid]);
 
   // 推しごとの投稿をフィルタリングする関数
   const getPostsByOshi = (oshiId: string) => {
@@ -61,7 +63,7 @@ export function SlugPageClient({
   const generateTabs = () => {
     const tabs = [{ value: "all", label: "すべて" }];
 
-    if (isCurrentUser && !loading) {
+    if (!loading) {
       oshis.forEach((oshi) => {
         tabs.push({
           value: oshi.id,
@@ -69,7 +71,6 @@ export function SlugPageClient({
         });
       });
     }
-
     return tabs;
   };
 
@@ -163,16 +164,19 @@ export function SlugPageClient({
               <PostList posts={posts} isCurrentUser={isCurrentUser} />
             </TabsContent>
 
-            {isCurrentUser &&
-              !loading &&
-              oshis.map((oshi) => (
-                <TabsContent key={oshi.id} value={oshi.id} className="mt-6">
-                  <PostList
-                    posts={getPostsByOshi(oshi.id)}
-                    isCurrentUser={isCurrentUser}
-                  />
-                </TabsContent>
-              ))}
+            {!loading &&
+              (() => {
+                return oshis.map((oshi) => {
+                  return (
+                    <TabsContent key={oshi.id} value={oshi.id} className="mt-6">
+                      <PostList
+                        posts={getPostsByOshi(oshi.id)}
+                        isCurrentUser={isCurrentUser}
+                      />
+                    </TabsContent>
+                  );
+                });
+              })()}
           </Tabs>
         </CardContent>
       </Card>

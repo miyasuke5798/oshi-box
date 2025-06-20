@@ -358,11 +358,11 @@ export default function UsersPostsPage() {
               <Button
                 type="button"
                 variant="gray"
-                onClick={() => router.back()}
+                onClick={() => router.push(`/${user?.uid}`)}
                 className="w-1/2"
               >
                 <ChevronLeft className="h-5 w-5" />
-                <p className="text-sm font-normal -ml-1">戻る</p>
+                <p className="text-sm font-normal -ml-1">キャンセル</p>
               </Button>
               <Button type="submit" className="w-1/2" disabled={isSubmitting}>
                 {isSubmitting ? "作成中..." : "作成"}
