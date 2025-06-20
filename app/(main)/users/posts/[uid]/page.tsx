@@ -46,7 +46,7 @@ export default async function PostDetailPage({ params }: PageProps) {
   // カテゴリーIDから名前を取得する関数
   const getCategoryName = (categoryId: string) => {
     const category = categories.find((cat) => cat.id === categoryId);
-    return category?.name || categoryId;
+    return category?.name || null;
   };
 
   return (
@@ -108,15 +108,14 @@ export default async function PostDetailPage({ params }: PageProps) {
           <div className="flex flex-wrap gap-4 mb-4">
             {post.categories && post.categories.length > 0 && (
               <div className="flex flex-wrap gap-2">
-                {post.categories.map((categoryId) => (
-                  <Badge
-                    key={categoryId}
-                    variant="secondary"
-                    className="text-xs"
-                  >
-                    {getCategoryName(categoryId)}
-                  </Badge>
-                ))}
+                {post.categories
+                  .map((categoryId) => getCategoryName(categoryId))
+                  .filter((categoryName) => categoryName !== null)
+                  .map((categoryName, index) => (
+                    <Badge key={index} variant="secondary" className="text-xs">
+                      {categoryName}
+                    </Badge>
+                  ))}
               </div>
             )}
           </div>
