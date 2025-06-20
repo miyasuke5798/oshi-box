@@ -4,11 +4,12 @@ import { requireAuth } from "@/lib/auth-server";
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await requireAuth();
-    const oshiId = params.id;
+    const { id } = await params;
+    const oshiId = id;
 
     if (!adminDb) {
       return NextResponse.json(
