@@ -44,7 +44,9 @@ export function DeleteOshiDialog({
       onDelete(); // 親コンポーネントの一覧更新を呼び出し
     } catch (error) {
       console.error("Error deleting oshi:", error);
-      toast.error("推しの削除に失敗しました", {
+      const errorMessage =
+        error instanceof Error ? error.message : "推しの削除に失敗しました";
+      toast.error(errorMessage, {
         icon: <AlertCircle className="w-5 h-5 text-red-500" />,
       });
     } finally {

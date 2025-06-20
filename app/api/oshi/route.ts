@@ -66,6 +66,20 @@ export async function POST(request: Request) {
     // バリデーション実行
     const validatedData = oshiNameSchema.parse(data);
 
+    // ユーザーの推し数をチェック（3つまで）
+    const existingOshisSnapshot = await adminDb
+      .collection("users")
+      .doc(session.uid)
+      .collection("oshi")
+      .get();
+
+    if (existingOshisSnapshot.size >= 3) {
+      return NextResponse.json(
+        { error: "推しは3つまでしか作成できません" },
+        { status: 400 }
+      );
+    }
+
     // ユーザーが既に同じ名前の推しを持っているかチェック
     const existingOshiQuery = await adminDb
       .collection("users")

@@ -7,9 +7,19 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { SuccessCircle } from "@/components/svg/success_circle";
 import { toast } from "sonner";
-import { Plus } from "lucide-react";
+import { Plus, AlertCircle } from "lucide-react";
 import { Oshi } from "@/types/oshi";
 import { DeleteOshiDialog } from "./delete-oshi-dialog";
+import { z } from "zod";
+
+// 推し名のバリデーションスキーマ
+const oshiNameSchema = z.object({
+  name: z
+    .string()
+    .min(1, "推しの名前を入力してください")
+    .max(50, "推しの名前は50文字以内で入力してください")
+    .trim(),
+});
 
 export default function SettingsOshiPage() {
   const [oshis, setOshis] = useState<Oshi[]>([]);
@@ -40,6 +50,23 @@ export default function SettingsOshiPage() {
   const handleAddOshi = async () => {
     if (!newOshiName.trim()) return;
 
+    let validatedName: string;
+    try {
+      // バリデーション実行
+      const validatedData = oshiNameSchema.parse({ name: newOshiName });
+      validatedName = validatedData.name;
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        const errorMessage =
+          error.errors[0]?.message || "入力内容を確認してください";
+        toast.error(errorMessage, {
+          icon: <AlertCircle className="w-5 h-5 text-red-500" />,
+        });
+        return;
+      }
+      return;
+    }
+
     setIsAdding(true);
     try {
       const response = await fetch("/api/oshi", {
@@ -47,7 +74,7 @@ export default function SettingsOshiPage() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ name: newOshiName.trim() }),
+        body: JSON.stringify({ name: validatedName }),
       });
 
       if (response.ok) {
@@ -56,7 +83,9 @@ export default function SettingsOshiPage() {
         toast.success("作成しました", { icon: <SuccessCircle /> });
       } else {
         const errorData = await response.json();
-        toast.error(errorData.error || "推しの追加に失敗しました");
+        toast.error(errorData.error || "推しの追加に失敗しました", {
+          icon: <AlertCircle className="w-5 h-5 text-red-500" />,
+        });
       }
     } catch (error) {
       console.error("Error adding oshi:", error);
@@ -83,6 +112,7 @@ export default function SettingsOshiPage() {
                 onChange={(e) => setNewOshiName(e.target.value)}
                 onKeyPress={(e) => e.key === "Enter" && handleAddOshi()}
                 className="flex-1"
+                maxLength={50}
               />
               <Button
                 onClick={handleAddOshi}
