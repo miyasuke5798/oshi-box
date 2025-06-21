@@ -42,26 +42,6 @@ export const Footer = () => {
       <div className="container px-3 sm:px-0 pt-8">
         <div className="grid sm:grid-cols-2 gap-y-6">
           <div>
-            <h3 className="text-[#3f3f46] font-semibold">サンプルリンク</h3>
-            <ul className="text-sm my-3 space-y-4">
-              <li>
-                <Link href="/admin" className="text-[#71717a]">
-                  admin
-                </Link>
-              </li>
-            </ul>
-          </div>
-          <div>
-            <h3 className="text-[#3f3f46] font-semibold">サンプルリンク</h3>
-            <ul className="text-sm my-3 space-y-4">
-              <li>
-                <Link href="/#" className="text-[#71717a]">
-                  サンプルリンク
-                </Link>
-              </li>
-            </ul>
-          </div>
-          <div>
             <h3 className="text-[#3f3f46] font-semibold">あなたのページ</h3>
             <ul className="text-sm my-3 space-y-4">
               <li>
