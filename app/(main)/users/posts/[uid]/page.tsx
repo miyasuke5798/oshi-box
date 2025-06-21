@@ -26,7 +26,7 @@ export async function generateMetadata({
   params,
 }: PageProps): Promise<Metadata> {
   const { uid } = await params;
-  const post = await getPostById(uid);
+  const post = await getPostById(uid, false); // 署名付きURLを生成するためfalseを指定
 
   if (!post) {
     return {
@@ -92,7 +92,7 @@ export async function generateMetadata({
 export default async function PostDetailPage({ params }: PageProps) {
   const { uid } = await params;
   const [post, categories] = await Promise.all([
-    getPostById(uid),
+    getPostById(uid, false), // 署名付きURLを生成するためfalseを指定
     getCategories(),
   ]);
 
@@ -120,6 +120,10 @@ export default async function PostDetailPage({ params }: PageProps) {
     const category = categories.find((cat) => cat.id === categoryId);
     return category?.name || null;
   };
+
+  // 画像URLを取得
+  const imageUrl =
+    post.images && post.images.length > 0 ? post.images[0] : undefined;
 
   return (
     <div className="mt-3 mb-16">
@@ -210,6 +214,7 @@ export default async function PostDetailPage({ params }: PageProps) {
               title={post.title}
               content={post.content}
               url={`/users/posts/${post.id}`}
+              imageUrl={imageUrl}
             />
           </div>
           {isCurrentUser && (
