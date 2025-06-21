@@ -13,11 +13,80 @@ import { XShareButton } from "@/components/ui/x-share-button";
 import { UserIcon } from "lucide-react";
 import { DeletePostDialog } from "./delete-post-dialog";
 import { HashtagText } from "@/lib/utils/hashtag";
+import { Metadata } from "next";
 
 interface PageProps {
   params: Promise<{
     uid: string;
   }>;
+}
+
+// 動的なメタデータを生成する関数
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
+  const { uid } = await params;
+  const post = await getPostById(uid);
+
+  if (!post) {
+    return {
+      title: "投稿が見つかりません | 推しBox",
+      description: "指定された投稿が見つかりませんでした。",
+    };
+  }
+
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+  const postUrl = `${baseUrl}/users/posts/${post.id}`;
+  const imageUrl =
+    post.images && post.images.length > 0 ? post.images[0] : undefined;
+
+  // 投稿内容からハッシュタグを除去したテキストを作成
+  const contentWithoutHashtags = post.content
+    .replace(/[#＃][^\s#＃]+/g, "")
+    .trim();
+  const description =
+    contentWithoutHashtags.length > 0
+      ? contentWithoutHashtags.substring(0, 160) +
+        (contentWithoutHashtags.length > 160 ? "..." : "")
+      : "推しBoxで投稿された推し活の記録です。";
+
+  return {
+    title: `${post.title} | 推しBox`,
+    description: description,
+    openGraph: {
+      title: post.title,
+      description: description,
+      type: "article",
+      url: postUrl,
+      images: imageUrl
+        ? [
+            {
+              url: imageUrl,
+              width: 1200,
+              height: 630,
+              alt: post.title,
+            },
+          ]
+        : [
+            {
+              url: "/oshi_box_logo.png",
+              width: 1200,
+              height: 630,
+              alt: "推しBox",
+            },
+          ],
+      siteName: "推しBox",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: post.title,
+      description: description,
+      images: imageUrl ? [imageUrl] : ["/oshi_box_logo.png"],
+    },
+    alternates: {
+      canonical: postUrl,
+    },
+  };
 }
 
 export default async function PostDetailPage({ params }: PageProps) {

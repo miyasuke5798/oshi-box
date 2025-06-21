@@ -17,6 +17,29 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "推しBox",
   description: "推しBoxの説明文です。",
+  openGraph: {
+    title: "推しBox",
+    description: "推しBoxの説明文です。",
+    type: "website",
+    images: [
+      {
+        url: "/oshi_box_logo.png",
+        width: 1200,
+        height: 630,
+        alt: "推しBox",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "推しBox",
+    description: "推しBoxの説明文です。",
+    images: ["/oshi_box_logo.png"],
+  },
+  icons: {
+    icon: "/oshi_box_logo.png",
+    apple: "/oshi_box_logo.png",
+  },
 };
 
 export default function RootLayout({
