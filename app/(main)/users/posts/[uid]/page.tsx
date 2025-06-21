@@ -9,6 +9,7 @@ import { notFound, redirect } from "next/navigation";
 import { BackButton } from "@/components/ui/back-button";
 import { Badge } from "@/components/ui/badge";
 import { ShareMenu } from "@/components/layout/share_menu";
+import { XIcon } from "@/components/svg/x_icon";
 import { UserIcon } from "lucide-react";
 import { DeletePostDialog } from "./delete-post-dialog";
 import { HashtagText } from "@/lib/utils/hashtag";
@@ -133,8 +134,11 @@ export default async function PostDetailPage({ params }: PageProps) {
               <HashtagText text={post.content} />
             </p>
           </div>
+          <div className="mt-10">
+            <XIcon />
+          </div>
           {isCurrentUser && (
-            <div className="flex items-center gap-6 mt-12 w-full">
+            <div className="flex items-center gap-6 mt-10 w-full">
               <Link
                 href={`/users/posts/${post.id}/edit`}
                 className="w-1/2 text-center rounded-full border border-gray-300 hover:bg-gray-50 px-3 py-1.5"
