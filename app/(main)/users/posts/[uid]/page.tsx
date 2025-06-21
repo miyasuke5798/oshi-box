@@ -1,19 +1,19 @@
-import { Card, CardContent } from "@/components/ui/card";
-import { requireAuth } from "@/lib/auth-server";
-import { getPostById, getCategories, getOshiById } from "@/lib/firebase/admin";
-import { format } from "date-fns";
-import { ja } from "date-fns/locale";
 import Link from "next/link";
 import Image from "next/image";
+import { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
+import { Card, CardContent } from "@/components/ui/card";
 import { BackButton } from "@/components/ui/back-button";
 import { Badge } from "@/components/ui/badge";
 import { ShareMenu } from "@/components/layout/share_menu";
 import { XShareButton } from "@/components/ui/x-share-button";
 import { UserIcon } from "lucide-react";
+import { format } from "date-fns";
+import { ja } from "date-fns/locale";
 import { DeletePostDialog } from "./delete-post-dialog";
 import { HashtagText } from "@/lib/utils/hashtag";
-import { Metadata } from "next";
+import { getSession } from "@/lib/auth-server";
+import { getPostById, getCategories, getOshiById } from "@/lib/firebase/admin";
 
 interface PageProps {
   params: Promise<{
@@ -90,7 +90,6 @@ export async function generateMetadata({
 }
 
 export default async function PostDetailPage({ params }: PageProps) {
-  const session = await requireAuth();
   const { uid } = await params;
   const [post, categories] = await Promise.all([
     getPostById(uid),
@@ -101,7 +100,9 @@ export default async function PostDetailPage({ params }: PageProps) {
     notFound();
   }
 
-  const isCurrentUser = session.uid === post.userId;
+  // セッションを取得（ログインしていない場合はnull）
+  const session = await getSession();
+  const isCurrentUser = session?.uid === post.userId;
 
   // プライベート投稿へのアクセス制御
   if (post.visibility === "private" && !isCurrentUser) {

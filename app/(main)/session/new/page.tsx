@@ -1,5 +1,5 @@
 "use client";
-import { Suspense } from "react";
+import { Suspense, useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { AlertCircle } from "lucide-react";
@@ -11,12 +11,15 @@ function SessionNewContent() {
   const req = searchParams.get("req");
   const router = useRouter();
 
-  if (req === "auth") {
-    toast.error("ログインが必要です", {
-      icon: <AlertCircle className="h-5 w-5 text-yellow-500" />,
-    });
-    router.replace("/session/new");
-  }
+  useEffect(() => {
+    if (req === "auth") {
+      toast.error("ログインが必要です", {
+        icon: <AlertCircle className="h-5 w-5 text-yellow-500" />,
+      });
+      // URLからreqパラメータを削除してリダイレクト
+      router.replace("/session/new");
+    }
+  }, [req, router]);
 
   return (
     <div className="mt-3 mb-16">
