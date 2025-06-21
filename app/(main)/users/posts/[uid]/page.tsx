@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { ShareMenu } from "@/components/layout/share_menu";
 import { UserIcon } from "lucide-react";
 import { DeletePostDialog } from "./delete-post-dialog";
+import { HashtagText } from "@/lib/utils/hashtag";
 
 interface PageProps {
   params: Promise<{
@@ -128,7 +129,9 @@ export default async function PostDetailPage({ params }: PageProps) {
             </div>
           )}
           <div className="prose max-w-none">
-            <p className="whitespace-pre-wrap">{post.content}</p>
+            <p className="whitespace-pre-wrap">
+              <HashtagText text={post.content} />
+            </p>
           </div>
           {isCurrentUser && (
             <div className="flex items-center gap-6 mt-12 w-full">

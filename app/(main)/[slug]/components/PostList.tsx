@@ -4,6 +4,7 @@ import { ImageIcon } from "lucide-react";
 import { format } from "date-fns";
 import { ja } from "date-fns/locale";
 import { Post } from "@/types/post";
+import { HashtagText } from "@/lib/utils/hashtag";
 
 interface PostListProps {
   posts: Post[];
@@ -66,7 +67,9 @@ export default function PostList({
               <Link href={`/users/posts/${post.id}`} className="rose_link">
                 <h2 className="text-lg font-medium">{post.title}</h2>
               </Link>
-              <p className="text-sm text-gray-600 mt-2">{post.content}</p>
+              <p className="text-sm text-gray-600 line-clamp-2 mt-2">
+                <HashtagText text={post.content} />
+              </p>
               <div className="flex items-center gap-2 mt-2">
                 <span className="text-xs text-gray-500">
                   {post.createdAt
