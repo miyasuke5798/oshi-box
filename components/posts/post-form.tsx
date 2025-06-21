@@ -335,6 +335,16 @@ export function PostForm({
   return (
     <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6">
       <div className="space-y-2">
+        <Label>推し選択</Label>
+        <p className="text-xs text-gray-500 mt-0.5">
+          ※推しは最大3人まで登録できます
+        </p>
+        <OshiSelector
+          value={watch("oshi") || null}
+          onValueChange={(oshi) => setValue("oshi", oshi)}
+        />
+      </div>
+      <div className="space-y-2">
         <Label htmlFor="title">タイトル</Label>
         <Input
           id="title"
@@ -429,14 +439,6 @@ export function PostForm({
             ))}
           </div>
         )}
-      </div>
-
-      <div className="space-y-2">
-        <Label>推し選択</Label>
-        <OshiSelector
-          value={watch("oshi") || null}
-          onValueChange={(oshi) => setValue("oshi", oshi)}
-        />
       </div>
 
       <div className="space-y-2">

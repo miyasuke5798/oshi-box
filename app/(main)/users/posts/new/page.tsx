@@ -223,6 +223,16 @@ export default function UsersPostsPage() {
           <h1 className="text-xl font-bold mb-6">投稿する</h1>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             <div className="space-y-2">
+              <label className="text-sm font-medium">推し選択</label>
+              <p className="text-xs text-gray-500 mt-0.5">
+                ※推しは最大3人まで登録できます
+              </p>
+              <OshiSelector
+                value={watch("oshi") || null}
+                onValueChange={(oshi) => setValue("oshi", oshi)}
+              />
+            </div>
+            <div className="space-y-2">
               <label htmlFor="title" className="text-sm font-medium">
                 タイトル
               </label>
@@ -326,13 +336,6 @@ export default function UsersPostsPage() {
                   ))}
                 </div>
               )}
-            </div>
-            <div className="space-y-2">
-              <label className="text-sm font-medium">推し選択</label>
-              <OshiSelector
-                value={watch("oshi") || null}
-                onValueChange={(oshi) => setValue("oshi", oshi)}
-              />
             </div>
             <div className="space-y-2">
               <label className="text-sm font-medium">公開範囲</label>

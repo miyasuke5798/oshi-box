@@ -4,7 +4,7 @@ import { usePathname } from "next/navigation";
 import { HiHome } from "react-icons/hi";
 import { FaUsers, FaList, FaTags } from "react-icons/fa";
 import { Menu, UsersRound } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { useState } from "react";
 import {
   Sheet,
   SheetContent,
@@ -14,6 +14,7 @@ import {
 
 export const AdminSideMenu = () => {
   const pathname = usePathname();
+  const [isOpen, setIsOpen] = useState(false);
 
   const menuItems = [
     {
@@ -49,6 +50,7 @@ export const AdminSideMenu = () => {
               <li key={item.href}>
                 <Link
                   href={item.href}
+                  onClick={() => setIsOpen(false)}
                   className={`flex items-center gap-3 px-4 py-2 rounded-md transition-colors ${
                     isActive
                       ? "bg-blue-50 text-blue-400"
@@ -66,6 +68,7 @@ export const AdminSideMenu = () => {
       <div className="mt-8 pt-4 border-t">
         <Link
           href="/"
+          onClick={() => setIsOpen(false)}
           className="flex items-center gap-3 px-4 py-2 text-gray-600 hover:bg-gray-50 rounded-md transition-colors"
         >
           <HiHome size={20} />
@@ -79,15 +82,11 @@ export const AdminSideMenu = () => {
     <>
       {/* スマホサイズ用のシートメニュー */}
       <div className="sm:hidden">
-        <Sheet>
+        <Sheet open={isOpen} onOpenChange={setIsOpen}>
           <SheetTrigger asChild>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="fixed top-4 left-4 z-50"
-            >
+            <button className="fixed top-4 left-4 z-50 bg-white hover:bg-white rounded-full shadow-md p-2 cursor-pointer">
               <Menu className="h-6 w-6" />
-            </Button>
+            </button>
           </SheetTrigger>
           <SheetContent side="left" className="p-0 w-64">
             <SheetTitle className="sr-only">管理メニュー</SheetTitle>
