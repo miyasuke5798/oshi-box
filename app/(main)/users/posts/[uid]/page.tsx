@@ -9,7 +9,7 @@ import { notFound, redirect } from "next/navigation";
 import { BackButton } from "@/components/ui/back-button";
 import { Badge } from "@/components/ui/badge";
 import { ShareMenu } from "@/components/layout/share_menu";
-import { XIcon } from "@/components/svg/x_icon";
+import { XShareButton } from "@/components/ui/x-share-button";
 import { UserIcon } from "lucide-react";
 import { DeletePostDialog } from "./delete-post-dialog";
 import { HashtagText } from "@/lib/utils/hashtag";
@@ -93,16 +93,17 @@ export default async function PostDetailPage({ params }: PageProps) {
               : "不明"}
           </div>
           {post.images && post.images.length > 0 && (
-            <div className="mt-4 grid grid-cols-2 gap-4">
+            <div className="mt-4 columns-2 gap-4 space-y-4">
               {post.images.map((image, index) => (
-                <Image
-                  key={index}
-                  src={image || ""}
-                  alt={`投稿画像 ${index + 1}`}
-                  width={100}
-                  height={100}
-                  className="w-full h-auto rounded-lg object-cover"
-                />
+                <div key={index} className="break-inside-avoid mb-4">
+                  <Image
+                    src={image || ""}
+                    alt={`投稿画像 ${index + 1}`}
+                    width={100}
+                    height={100}
+                    className="w-full h-auto rounded-lg object-cover"
+                  />
+                </div>
               ))}
             </div>
           )}
@@ -135,7 +136,11 @@ export default async function PostDetailPage({ params }: PageProps) {
             </p>
           </div>
           <div className="mt-10">
-            <XIcon />
+            <XShareButton
+              title={post.title}
+              content={post.content}
+              url={`/users/posts/${post.id}`}
+            />
           </div>
           {isCurrentUser && (
             <div className="flex items-center gap-6 mt-10 w-full">
