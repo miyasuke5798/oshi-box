@@ -1,16 +1,23 @@
 import { ShareMenu } from "@/components/layout/share_menu";
 import { Card, CardContent } from "@/components/ui/card";
 import { requireAuth } from "@/lib/auth-server";
-import { getPosts } from "@/lib/firebase/admin";
+import { getPosts, getCategories } from "@/lib/firebase/admin";
 import Link from "next/link";
 import Image from "next/image";
 import { UserIcon } from "@/components/svg/UserIcon";
 import { Image as ImageIcon } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { CategoryBadge } from "@/components/ui/category-badge";
 
 export default async function PostsPage() {
   await requireAuth();
-  const posts = await getPosts();
+  const [posts, categories] = await Promise.all([getPosts(), getCategories()]);
+
+  // カテゴリーIDから名前を取得する関数
+  const getCategoryName = (categoryId: string) => {
+    const category = categories.find((cat) => cat.id === categoryId);
+    return category?.name || null;
+  };
 
   return (
     <div className="mt-3 mb-16">
@@ -67,6 +74,26 @@ export default async function PostsPage() {
                           {post.user.displayName || "不明"}
                         </span>
                       </div>
+                      {/* カテゴリー表示 */}
+                      {post.categories && post.categories.length > 0 && (
+                        <div className="flex flex-wrap gap-1 mb-2">
+                          {post.categories
+                            .map((categoryId) => {
+                              const categoryName = getCategoryName(categoryId);
+                              return categoryName
+                                ? { id: categoryId, name: categoryName }
+                                : null;
+                            })
+                            .filter((category) => category !== null)
+                            .map((category, index) => (
+                              <CategoryBadge
+                                key={index}
+                                categoryId={category!.id}
+                                categoryName={category!.name}
+                              />
+                            ))}
+                        </div>
+                      )}
                       {post.oshi && (
                         <div className="flex items-center gap-1 mb-2">
                           <span className="text-xs text-gray-500">推し:</span>

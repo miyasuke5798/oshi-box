@@ -14,6 +14,7 @@ import { DeletePostDialog } from "./delete-post-dialog";
 import { HashtagText } from "@/lib/utils/hashtag";
 import { getSession } from "@/lib/auth-server";
 import { getPostById, getCategories, getOshiById } from "@/lib/firebase/admin";
+import { CategoryBadge } from "@/components/ui/category-badge";
 
 interface PageProps {
   params: Promise<{
@@ -186,12 +187,19 @@ export default async function PostDetailPage({ params }: PageProps) {
             {post.categories && post.categories.length > 0 && (
               <div className="flex flex-wrap gap-2">
                 {post.categories
-                  .map((categoryId) => getCategoryName(categoryId))
-                  .filter((categoryName) => categoryName !== null)
-                  .map((categoryName, index) => (
-                    <Badge key={index} variant="secondary" className="text-xs">
-                      {categoryName}
-                    </Badge>
+                  .map((categoryId) => {
+                    const categoryName = getCategoryName(categoryId);
+                    return categoryName
+                      ? { id: categoryId, name: categoryName }
+                      : null;
+                  })
+                  .filter((category) => category !== null)
+                  .map((category, index) => (
+                    <CategoryBadge
+                      key={index}
+                      categoryId={category!.id}
+                      categoryName={category!.name}
+                    />
                   ))}
               </div>
             )}

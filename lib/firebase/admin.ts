@@ -744,3 +744,109 @@ export async function getPostsByHashtag(hashtag: string): Promise<Post[]> {
     throw error;
   }
 }
+
+export async function getPostsByCategory(categoryId: string): Promise<Post[]> {
+  try {
+    const postsSnapshot = await db.collection("posts").get();
+
+    const posts = postsSnapshot.docs.map((doc) => {
+      const data = doc.data();
+      return {
+        id: doc.id,
+        userId: data.userId,
+        title: data.title,
+        content: data.content,
+        visibility: data.visibility,
+        categories: data.categories,
+        oshiId: data.oshiId,
+        images: data.images,
+        createdAt: data.createdAt
+          ? {
+              seconds: data.createdAt.seconds,
+              nanoseconds: data.createdAt.nanoseconds,
+            }
+          : null,
+        updatedAt: data.updatedAt
+          ? {
+              seconds: data.updatedAt.seconds,
+              nanoseconds: data.updatedAt.nanoseconds,
+            }
+          : null,
+      };
+    }) as Post[];
+
+    // カテゴリーでフィルタリング
+    const filteredPosts = posts.filter((post) => {
+      // プライベート投稿を除外
+      if (post.visibility === "private") return false;
+
+      // 投稿のカテゴリー配列に指定されたカテゴリーIDが含まれているかチェック
+      return post.categories && post.categories.includes(categoryId);
+    });
+
+    // 作成日時でソート（新しい順）
+    const sortedPosts = filteredPosts.sort((a, b) => {
+      if (!a.createdAt || !b.createdAt) return 0;
+      return b.createdAt.seconds - a.createdAt.seconds;
+    });
+
+    // ユーザー情報と画像URLを取得
+    const postsWithUser = await Promise.all(
+      sortedPosts.map(async (post) => {
+        const userDoc = await db.collection("users").doc(post.userId).get();
+        const userData = userDoc.data();
+
+        // 推しの情報を取得
+        let oshi = null;
+        if (post.oshiId) {
+          oshi = await getOshiById(post.userId, post.oshiId);
+        }
+
+        // 画像URLを取得
+        let imageUrls: string[] = [];
+        if (post.images && post.images.length > 0) {
+          imageUrls = await Promise.all(
+            post.images.map(async (imagePath) => {
+              try {
+                const bucket = storage.bucket(
+                  process.env.FIREBASE_STORAGE_BUCKET
+                );
+                const file = bucket.file(imagePath);
+                const [url] = await file.getSignedUrl({
+                  action: "read",
+                  expires: Date.now() + 24 * 60 * 60 * 1000, // 24時間
+                });
+                return url;
+              } catch (error) {
+                console.error("Error getting signed URL for image:", error);
+                return "";
+              }
+            })
+          );
+        }
+
+        return {
+          ...post,
+          images: imageUrls,
+          oshi,
+          user: {
+            uid: post.userId,
+            displayName: userData?.displayName || null,
+            photoURL: userData?.photoURL || null,
+            email: userData?.email || null,
+            bio: userData?.bio || null,
+            oshiName: userData?.oshiName || null,
+            snsLink: userData?.snsLink || null,
+            createdAt: userData?.createdAt?.toDate() || new Date(),
+            updatedAt: userData?.updatedAt?.toDate() || new Date(),
+          },
+        };
+      })
+    );
+
+    return postsWithUser;
+  } catch (error) {
+    console.error("Error fetching posts by category:", error);
+    throw error;
+  }
+}

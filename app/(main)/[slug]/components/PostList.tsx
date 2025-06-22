@@ -5,16 +5,26 @@ import { format } from "date-fns";
 import { ja } from "date-fns/locale";
 import { Post } from "@/types/post";
 import { HashtagText } from "@/lib/utils/hashtag";
+import { Category } from "@/types/category";
+import { CategoryBadge } from "@/components/ui/category-badge";
 
 interface PostListProps {
   posts: Post[];
   isCurrentUser?: boolean;
+  categories?: Category[];
 }
 
 export default function PostList({
   posts,
   isCurrentUser = false,
+  categories = [],
 }: PostListProps) {
+  // カテゴリーIDから名前を取得する関数
+  const getCategoryName = (categoryId: string) => {
+    const category = categories.find((cat) => cat.id === categoryId);
+    return category?.name || null;
+  };
+
   // 投稿を新規作成順（新しい順）でソート
   const sortedPosts = [...posts].sort((a, b) => {
     if (!a.createdAt || !b.createdAt) return 0;
@@ -70,6 +80,26 @@ export default function PostList({
               <p className="text-sm text-gray-600 line-clamp-2 mt-2">
                 <HashtagText text={post.content} />
               </p>
+              {/* カテゴリー表示 */}
+              {post.categories && post.categories.length > 0 && (
+                <div className="flex flex-wrap gap-1 mt-2">
+                  {post.categories
+                    .map((categoryId) => {
+                      const categoryName = getCategoryName(categoryId);
+                      return categoryName
+                        ? { id: categoryId, name: categoryName }
+                        : null;
+                    })
+                    .filter((category) => category !== null)
+                    .map((category, index) => (
+                      <CategoryBadge
+                        key={index}
+                        categoryId={category!.id}
+                        categoryName={category!.name}
+                      />
+                    ))}
+                </div>
+              )}
               <div className="flex items-center gap-2 mt-2">
                 <span className="text-xs text-gray-500">
                   {post.createdAt

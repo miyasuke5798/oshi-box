@@ -10,6 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { UserData } from "@/types/user";
 import { Post } from "@/types/post";
 import { Oshi } from "@/types/oshi";
+import { Category } from "@/types/category";
 import PostList from "./components/PostList";
 
 interface SlugPageClientProps {
@@ -27,28 +28,48 @@ export function SlugPageClient({
   posts,
 }: SlugPageClientProps) {
   const [oshis, setOshis] = useState<Oshi[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchOshis = async () => {
+    const fetchData = async () => {
       try {
-        const response = await fetch(`/api/user-oshis/${userData.uid}`);
+        // 推し情報とカテゴリー情報を並行して取得
+        const [oshisResponse, categoriesResponse] = await Promise.all([
+          fetch(`/api/user-oshis/${userData.uid}`),
+          fetch("/api/categories"),
+        ]);
 
-        if (response.ok) {
-          const data = await response.json();
-          setOshis(data.oshiList || []);
+        if (oshisResponse.ok) {
+          const oshisData = await oshisResponse.json();
+          setOshis(oshisData.oshiList || []);
         } else {
-          console.error("API error:", response.status, response.statusText);
+          console.error(
+            "API error:",
+            oshisResponse.status,
+            oshisResponse.statusText
+          );
+        }
+
+        if (categoriesResponse.ok) {
+          const categoriesData = await categoriesResponse.json();
+          setCategories(categoriesData);
+        } else {
+          console.error(
+            "API error:",
+            categoriesResponse.status,
+            categoriesResponse.statusText
+          );
         }
       } catch (error) {
-        console.error("Error fetching oshis:", error);
+        console.error("Error fetching data:", error);
       } finally {
         setLoading(false);
       }
     };
 
     if (userData.uid) {
-      fetchOshis();
+      fetchData();
     } else {
       setLoading(false);
     }
@@ -161,7 +182,11 @@ export function SlugPageClient({
             </TabsList>
 
             <TabsContent value="all" className="mt-6">
-              <PostList posts={posts} isCurrentUser={isCurrentUser} />
+              <PostList
+                posts={posts}
+                isCurrentUser={isCurrentUser}
+                categories={categories}
+              />
             </TabsContent>
 
             {!loading &&
@@ -172,6 +197,7 @@ export function SlugPageClient({
                       <PostList
                         posts={getPostsByOshi(oshi.id)}
                         isCurrentUser={isCurrentUser}
+                        categories={categories}
                       />
                     </TabsContent>
                   );
