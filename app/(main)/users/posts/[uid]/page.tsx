@@ -3,7 +3,7 @@ import Image from "next/image";
 import { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import { Card, CardContent } from "@/components/ui/card";
-import { BackButton } from "@/components/ui/back-button";
+import { XBackButtonWithLink } from "@/components/ui/x-back-button";
 import { Badge } from "@/components/ui/badge";
 import { ShareMenu } from "@/components/layout/share_menu";
 import { XShareButton } from "@/components/ui/x-share-button";
@@ -131,7 +131,7 @@ export default async function PostDetailPage({ params }: PageProps) {
       <ShareMenu />
       <Card className="w-full mb-4">
         <CardContent className="py-5 px-6">
-          <BackButton />
+          <XBackButtonWithLink />
           <div className="flex items-center gap-2 my-6">
             {post.user && (
               <Link href={`/${post.user.uid}`}>

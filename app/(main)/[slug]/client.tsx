@@ -12,6 +12,7 @@ import { Post } from "@/types/post";
 import { Oshi } from "@/types/oshi";
 import { Category } from "@/types/category";
 import PostList from "./components/PostList";
+import { BackButton } from "@/components/ui/back-button";
 
 interface SlugPageClientProps {
   params: {
@@ -102,6 +103,11 @@ export function SlugPageClient({
       <ShareMenu />
       <Card className="w-full mb-4">
         <CardContent className="relative py-5 px-6">
+          {!isCurrentUser && (
+            <div className="mb-4">
+              <BackButton />
+            </div>
+          )}
           <div className="flex items-center gap-2 mb-3">
             {userData?.photoURL ? (
               <div className="relative w-20 h-20 min-w-20 min-h-20">

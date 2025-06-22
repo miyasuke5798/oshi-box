@@ -205,7 +205,14 @@ export default function UsersPostsPage() {
       console.log("Post created successfully:", result);
 
       toast.success("投稿しました", { icon: <SuccessCircle /> });
-      router.push(`/${user.uid}`);
+
+      // 作成した投稿の詳細ページに遷移
+      if (result.id) {
+        router.push(`/users/posts/${result.id}`);
+      } else {
+        // フォールバック: ユーザーページに遷移
+        router.push(`/${user.uid}`);
+      }
     } catch (error) {
       console.error("Error creating post:", error);
       setError("エラーが発生しました。もう一度お試しください。");
