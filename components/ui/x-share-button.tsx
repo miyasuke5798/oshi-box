@@ -140,7 +140,7 @@ export function XShareButton({
       }
 
       // 通常のXシェア（Web Intent API）
-      let shareText = `${title}\n\n${content}`;
+      let shareText = `${title}\n\n${content} #推しBOX`;
 
       // テキストが長すぎる場合は切り詰める（Xの制限は280文字）
       if (shareText.length > 200) {
@@ -170,10 +170,11 @@ export function XShareButton({
     <button
       onClick={handleShare}
       disabled={isSharing}
-      className={`flex items-center justify-center p-2 rounded-full hover:bg-gray-50 cursor-pointer transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${className}`}
+      className={`flex items-center justify-center py-1.5 px-3 rounded-full bg-gray-100 hover:bg-gray-200 cursor-pointer transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${className}`}
       title="Xでシェア"
     >
-      <XIcon width={26} height={26} />
+      <XIcon width={24} height={24} />
+      <span className="text-sm">でシェア</span>
     </button>
   );
 }

@@ -155,18 +155,6 @@ export default async function PostDetailPage({ params }: PageProps) {
               </Link>
             )}
           </div>
-          <div className="text-xs text-gray-500">
-            {post.createdAt
-              ? format(
-                  new Date(
-                    post.createdAt.seconds * 1000 +
-                      post.createdAt.nanoseconds / 1000000
-                  ),
-                  "yyyy年MM月dd日",
-                  { locale: ja }
-                )
-              : "不明"}
-          </div>
           {post.images && post.images.length > 0 && (
             <div className="mt-4 columns-2 gap-4 space-y-4">
               {post.images.map((image, index) => (
@@ -182,7 +170,20 @@ export default async function PostDetailPage({ params }: PageProps) {
               ))}
             </div>
           )}
+          {oshi && (
+            <div className="flex items-center gap-2 my-4">
+              <span className="text-sm text-gray-500">推し:</span>
+              <Badge variant="outline" className="text-xs">
+                {oshi.name}
+              </Badge>
+            </div>
+          )}
           <h1 className="text-2xl font-bold my-4">{post.title}</h1>
+          <div className="prose max-w-none mb-4">
+            <p className="whitespace-pre-wrap">
+              <HashtagText text={post.content} />
+            </p>
+          </div>
           <div className="flex flex-wrap gap-4 mb-4">
             {post.categories && post.categories.length > 0 && (
               <div className="flex flex-wrap gap-2">
@@ -204,18 +205,17 @@ export default async function PostDetailPage({ params }: PageProps) {
               </div>
             )}
           </div>
-          {oshi && (
-            <div className="flex items-center gap-2 mb-4">
-              <span className="text-sm text-gray-500">推し:</span>
-              <Badge variant="outline" className="text-xs">
-                {oshi.name}
-              </Badge>
-            </div>
-          )}
-          <div className="prose max-w-none">
-            <p className="whitespace-pre-wrap">
-              <HashtagText text={post.content} />
-            </p>
+          <div className="text-xs text-gray-500">
+            {post.createdAt
+              ? format(
+                  new Date(
+                    post.createdAt.seconds * 1000 +
+                      post.createdAt.nanoseconds / 1000000
+                  ),
+                  "yyyy年MM月dd日",
+                  { locale: ja }
+                )
+              : "不明"}
           </div>
           <div className="mt-10">
             <XShareButton

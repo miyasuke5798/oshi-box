@@ -12,7 +12,7 @@ import { Post } from "@/types/post";
 import { Oshi } from "@/types/oshi";
 import { Category } from "@/types/category";
 import PostList from "./components/PostList";
-import { BackButton } from "@/components/ui/back-button";
+import { ChevronLeftBackButton } from "@/components/ui/chevron-left-back-button";
 
 interface SlugPageClientProps {
   params: {
@@ -104,8 +104,8 @@ export function SlugPageClient({
       <Card className="w-full mb-4">
         <CardContent className="relative py-5 px-6">
           {!isCurrentUser && (
-            <div className="mb-4">
-              <BackButton />
+            <div className="mt-1 mb-5">
+              <ChevronLeftBackButton />
             </div>
           )}
           <div className="flex items-center gap-2 mb-3">
