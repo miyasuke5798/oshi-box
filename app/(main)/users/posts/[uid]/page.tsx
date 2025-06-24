@@ -258,7 +258,7 @@ export default async function PostDetailPage({ params }: PageProps) {
           )}
         </CardContent>
       </Card>
-      <PostFooterCard isCurrentUser={isCurrentUser} />
+      <PostFooterCard />
     </div>
   );
 }
