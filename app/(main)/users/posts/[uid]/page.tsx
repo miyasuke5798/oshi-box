@@ -15,6 +15,7 @@ import { HashtagText } from "@/lib/utils/hashtag";
 import { getSession } from "@/lib/auth-server";
 import { getPostById, getCategories, getOshiById } from "@/lib/firebase/admin";
 import { CategoryBadge } from "@/components/ui/category-badge";
+import { PostFooterCard } from "./post-footer-card";
 
 interface PageProps {
   params: Promise<{
@@ -129,7 +130,7 @@ export default async function PostDetailPage({ params }: PageProps) {
   return (
     <div className="mt-3 mb-16">
       <ShareMenu />
-      <Card className="w-full mb-4">
+      <Card className="w-full mb-5">
         <CardContent className="py-5 px-6">
           <XBackButtonWithLink />
           <div className="flex items-center gap-2 my-6">
@@ -242,6 +243,7 @@ export default async function PostDetailPage({ params }: PageProps) {
           )}
         </CardContent>
       </Card>
+      <PostFooterCard isCurrentUser={isCurrentUser} />
     </div>
   );
 }
