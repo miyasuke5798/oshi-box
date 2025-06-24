@@ -109,7 +109,7 @@ export function SlugPageClient({
             </div>
           )}
           <div className="max-w-[70%] mx-auto">
-            <div className="flex flex-col items-center gap-2 mb-3">
+            <div className="flex flex-col items-center gap-2 mt-5 mb-3">
               {userData?.photoURL ? (
                 <div className="relative w-20 h-20 min-w-20 min-h-20">
                   <Image
