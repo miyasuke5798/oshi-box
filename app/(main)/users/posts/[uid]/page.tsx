@@ -89,7 +89,7 @@ export async function generateMetadata({
       card: "summary_large_image",
       title: post.title,
       description: description,
-      images: imageUrl ? [imageUrl] : ["/oshi_box_logo.png"],
+      images: imageUrl ? [imageUrl] : ["/oshi_box_logo_x_share.png"],
     },
     alternates: {
       canonical: postUrl,
