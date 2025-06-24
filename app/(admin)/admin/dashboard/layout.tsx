@@ -3,6 +3,9 @@ import { cookies } from "next/headers";
 import { adminAuth, adminDb } from "@/lib/firebase-admin";
 import { AdminSideMenu } from "@/components/admin/side_menu";
 
+// 動的レンダリングを強制
+export const dynamic = "force-dynamic";
+
 async function checkAdminAuth() {
   try {
     if (!adminAuth || !adminDb) {
