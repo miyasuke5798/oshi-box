@@ -9,7 +9,11 @@ import { TwitterAuthProvider, signInWithPopup } from "firebase/auth";
 import { AlertCircle } from "lucide-react";
 import { doc, setDoc, getDoc } from "firebase/firestore";
 
-export const XButton = () => {
+interface XButtonProps {
+  redirectPath?: string;
+}
+
+export const XButton = ({ redirectPath }: XButtonProps) => {
   const router = useRouter();
 
   const handleClick = async () => {
@@ -70,7 +74,9 @@ export const XButton = () => {
           throw new Error("セッションの設定に失敗しました");
         }
 
-        router.push(`/${result.user.uid}`);
+        // リダイレクト先を決定
+        const finalRedirectPath = redirectPath || `/${result.user.uid}`;
+        router.push(finalRedirectPath);
       }
     } catch (error) {
       console.error("認証エラー:", error);
