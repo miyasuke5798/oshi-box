@@ -16,6 +16,12 @@ import { getSession } from "@/lib/auth-server";
 import { getPostById, getCategories, getOshiById } from "@/lib/firebase/admin";
 import { CategoryBadge } from "@/components/ui/category-badge";
 import { PostFooterCard } from "./post-footer-card";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselIndicators,
+} from "@/components/ui/carousel";
 
 interface PageProps {
   params: Promise<{
@@ -157,18 +163,27 @@ export default async function PostDetailPage({ params }: PageProps) {
             )}
           </div>
           {post.images && post.images.length > 0 && (
-            <div className="mt-4 columns-2 gap-4 space-y-4">
-              {post.images.map((image, index) => (
-                <div key={index} className="break-inside-avoid mb-4">
-                  <Image
-                    src={image || ""}
-                    alt={`投稿画像 ${index + 1}`}
-                    width={100}
-                    height={100}
-                    className="w-full h-auto rounded-lg object-cover"
-                  />
-                </div>
-              ))}
+            <div className="mt-4">
+              <Carousel className="w-full">
+                <CarouselContent>
+                  {post.images.map((image, index) => (
+                    <CarouselItem key={index}>
+                      <div className="w-full">
+                        <Image
+                          src={image || ""}
+                          alt={`投稿画像 ${index + 1}`}
+                          width={800}
+                          height={600}
+                          className="w-full h-auto rounded-lg object-cover"
+                        />
+                      </div>
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+                {post.images.length > 1 && (
+                  <CarouselIndicators count={post.images.length} />
+                )}
+              </Carousel>
             </div>
           )}
           {oshi && (
