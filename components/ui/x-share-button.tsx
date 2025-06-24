@@ -140,7 +140,9 @@ export function XShareButton({
       }
 
       // 通常のXシェア（Web Intent API）
-      let shareText = `${title}\n\n${content} #推しBOX`;
+      //let shareText = `${title}\n\n${content} #推しBOX`;
+      // タイトルのみに修正
+      let shareText = `${title}`;
 
       // テキストが長すぎる場合は切り詰める（Xの制限は280文字）
       if (shareText.length > 200) {
