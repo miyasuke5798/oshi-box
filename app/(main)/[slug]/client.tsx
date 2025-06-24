@@ -104,44 +104,46 @@ export function SlugPageClient({
       <Card className="w-full mb-4">
         <CardContent className="relative py-5 px-6">
           {!isCurrentUser && (
-            <div className="mt-1 mb-5">
+            <div className="absolute top-5 left-5">
               <ChevronLeftBackButton />
             </div>
           )}
-          <div className="flex items-center gap-2 mb-3">
-            {userData?.photoURL ? (
-              <div className="relative w-20 h-20 min-w-20 min-h-20">
-                <Image
-                  src={userData.photoURL}
-                  alt={userData.displayName || "ユーザー"}
-                  fill
-                  className="border border-gray-300 rounded-full object-cover"
-                />
-              </div>
-            ) : (
-              <UserIcon className="w-20 h-20 min-w-20 min-h-20 border border-gray-300 rounded-full" />
-            )}
-            <h1 className="text-xl text-[#181818] mt-4 mb-2">
-              {userData?.displayName || ""}
-            </h1>
+          <div className="max-w-[70%] mx-auto">
+            <div className="flex flex-col items-center gap-2 mb-3">
+              {userData?.photoURL ? (
+                <div className="relative w-20 h-20 min-w-20 min-h-20">
+                  <Image
+                    src={userData.photoURL}
+                    alt={userData.displayName || "ユーザー"}
+                    fill
+                    className="border border-gray-300 rounded-full object-cover"
+                  />
+                </div>
+              ) : (
+                <UserIcon className="w-20 h-20 min-w-20 min-h-20 border border-gray-300 rounded-full" />
+              )}
+              <h1 className="text-xl text-[#181818] my-2">
+                {userData?.displayName || ""}
+              </h1>
+              <p className="text-xs mb-2">{userData?.bio || ""}</p>
+              {/* <p className="">{userData?.oshiName || ""}</p> */}
+              <p className="text-xs mb-2">
+                {userData?.snsLink ? (
+                  <Link
+                    href={userData.snsLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="rose_link flex items-center gap-1 no-underline w-fit"
+                  >
+                    <Link2 className="w-3.5 h-3.5 transform rotate-[135deg]" />
+                    {userData.snsLink}
+                  </Link>
+                ) : (
+                  <Link2 className="w-4.5 h-4.5 transform rotate-[135deg]" />
+                )}
+              </p>
+            </div>
           </div>
-          <p className="text-xs mb-2">{userData?.bio || ""}</p>
-          {/* <p className="">{userData?.oshiName || ""}</p> */}
-          <p className="text-xs mb-2">
-            {userData?.snsLink ? (
-              <Link
-                href={userData.snsLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="rose_link flex items-center gap-1 no-underline w-fit"
-              >
-                <Link2 className="w-3.5 h-3.5 transform rotate-[135deg]" />
-                {userData.snsLink}
-              </Link>
-            ) : (
-              <Link2 className="w-4.5 h-4.5 transform rotate-[135deg]" />
-            )}
-          </p>
           {isCurrentUser && (
             <Link
               href="/settings/profile"

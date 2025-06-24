@@ -12,7 +12,7 @@ export function ChevronLeftBackButton() {
       type="button"
       variant="gray"
       onClick={() => router.back()}
-      className="flex items-center rounded-full h-10 w-10 p-0"
+      className="flex items-center rounded-full h-10 w-10 !p-0"
     >
       <ChevronLeft className="h-6 w-6" />
     </Button>
