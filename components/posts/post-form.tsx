@@ -24,7 +24,10 @@ const postSchema = z.object({
     .string()
     .min(1, "入力してください")
     .max(100, "100文字以内で入力してください"),
-  content: z.string().max(1000, "1000文字以内で入力してください"),
+  content: z
+    .string()
+    .min(1, "入力してください")
+    .max(1000, "1000文字以内で入力してください"),
   visibility: z.enum(["public", "private"]),
   images: z
     .any()
