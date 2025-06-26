@@ -19,7 +19,7 @@ export default function About() {
           </div>
         </CardContent>
       </Card>
-      <Card className="w-full mb-4">
+      {/*<Card className="w-full mb-4">
         <CardHeader>
           <h2 className="text-[#52525b]">主な機能</h2>
         </CardHeader>
@@ -77,32 +77,47 @@ export default function About() {
             </div>
           </div>
         </CardContent>
-      </Card>
+      </Card>*/}
       <Card className="w-full mb-4">
         <CardHeader>
-          <h2 className="text-[#52525b]">使い方</h2>
+          <h2 className="text-[#52525b]">推しBOXの使い方 </h2>
         </CardHeader>
         <CardContent className="py-5  leading-relaxed">
           <div className="mb-4">
-            <h3 className="text-xl mb-2">1. 推しを登録しよう</h3>
+            <h3 className="text-xl mb-2">1. 推しを登録する</h3>
+            <div className="text-[#71717a]">
+              <p>まずは「推し」を登録！最大3人まで登録できます。</p>
+            </div>
+          </div>
+          <div className="mb-4">
+            <h3 className="text-xl mb-2">2. 推し活の記録を投稿</h3>
             <div className="text-[#71717a]">
               <p>
-                名前・ジャンル・画像などを入力して、自分だけの“推しページ”を作成！
+                感想、現場レポ、嬉しかった供給など、自由に記録！投稿時に推しを選んで紐づけられます。
               </p>
             </div>
           </div>
           <div className="mb-4">
-            <h3 className="text-xl mb-2">2. 投稿してみよう</h3>
+            <h3 className="text-xl mb-2">3. カテゴリやハッシュタグで整理</h3>
             <div className="text-[#71717a]">
-              <p>感想・現場レポ・嬉しかった供給など、どんどん記録！</p>
-              <p>画像も一緒にアップして、推しとの思い出を形にできます。</p>
+              <p>
+                #現場レポ #供給感謝 #初見沼落ち
+                など、自分好みにタグ管理！あとから見返すのもスムーズ。
+              </p>
             </div>
           </div>
           <div className="mb-4">
-            <h3 className="text-xl mb-2">3. ハッシュタグで整理しよう</h3>
+            <h3 className="text-xl mb-2">4. Xにシェアして共有</h3>
             <div className="text-[#71717a]">
-              <p>#現場レポ #供給感謝 #初見沼落ち など、自分好みにタグ管理。</p>
-              <p>あとから見返すのもスムーズに</p>
+              <p>投稿後はXにシェアできます！思い出を広げてみよう！</p>
+            </div>
+          </div>
+          <div className="mb-4">
+            <h3 className="text-xl mb-2">5. マイページで自分だけの記録帳に</h3>
+            <div className="text-[#71717a]">
+              <p>
+                推しとの思い出を増やして、あなた専用の推しアルバムを作りましょう！
+              </p>
             </div>
           </div>
         </CardContent>
