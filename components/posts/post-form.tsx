@@ -121,26 +121,54 @@ export function PostForm({
         try {
           const signedUrls = await Promise.all(
             initialData.images.map(async (imagePath) => {
+              if (!imagePath || typeof imagePath !== "string") {
+                console.warn("Invalid imagePath:", imagePath);
+                return "";
+              }
+
               if (imagePath.startsWith("http")) {
                 // 既に署名付きURLの場合はそのまま使用
-                return imagePath;
+                try {
+                  // URLの妥当性チェック
+                  new URL(imagePath);
+                  return imagePath;
+                } catch (error) {
+                  console.error("Invalid URL:", imagePath, error);
+                  return "";
+                }
               } else {
                 // ファイルパスの場合は署名付きURLを生成
-                const response = await fetch(
-                  `/api/images/signed-url?path=${encodeURIComponent(imagePath)}`
-                );
-                if (response.ok) {
-                  const data = await response.json();
-                  return data.url;
+                try {
+                  const response = await fetch(
+                    `/api/images/signed-url?path=${encodeURIComponent(
+                      imagePath
+                    )}`
+                  );
+                  if (response.ok) {
+                    const data = await response.json();
+                    return data.url;
+                  }
+                  console.warn("Failed to get signed URL for:", imagePath);
+                  return "";
+                } catch (error) {
+                  console.error(
+                    "Error getting signed URL for:",
+                    imagePath,
+                    error
+                  );
+                  return "";
                 }
-                return imagePath;
               }
             })
           );
-          setPreviewUrls(signedUrls);
+
+          // 空のURLを除外してプレビューURLを設定
+          const validUrls = signedUrls.filter((url) => url !== "");
+          setPreviewUrls(validUrls);
         } catch (error) {
           console.error("Error converting to signed URLs:", error);
-          setPreviewUrls(initialData.images);
+          // エラーの場合は空の配列を設定
+          setPreviewUrls([]);
         }
       };
 
@@ -195,7 +223,22 @@ export function PostForm({
       setValue("images", updatedImages);
 
       // プレビューURLを更新（既存の画像URL + 新しい画像のプレビュー）
-      const newPreviewUrls = files.map((file) => URL.createObjectURL(file));
+      const newPreviewUrls = files
+        .map((file) => {
+          try {
+            // ファイルの妥当性チェック
+            if (!file || !(file instanceof File)) {
+              console.warn("Invalid file:", file);
+              return "";
+            }
+            return URL.createObjectURL(file);
+          } catch (error) {
+            console.error("Error creating object URL for file:", error, file);
+            return "";
+          }
+        })
+        .filter((url) => url !== ""); // 空のURLを除外
+
       console.log("handleImageChange - new preview URLs:", newPreviewUrls);
       setPreviewUrls((prev) => [...prev, ...newPreviewUrls]);
     }
@@ -386,12 +429,25 @@ export function PostForm({
             <div className="grid grid-cols-3 gap-4 sm:grid-cols-4 md:grid-cols-5">
               {previewUrls.map((url, index) => (
                 <div key={url} className="relative aspect-square">
-                  <Image
-                    src={url}
-                    alt={`Preview ${index + 1}`}
-                    fill
-                    className="object-cover rounded-lg"
-                  />
+                  {url && url.startsWith("http") ? (
+                    <Image
+                      src={url}
+                      alt={`Preview ${index + 1}`}
+                      fill
+                      className="object-cover rounded-lg"
+                      onError={() => {
+                        console.error("Image load error:", url);
+                        // エラー時にプレビューを削除
+                        removeImage(index);
+                      }}
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-gray-200 rounded-lg flex items-center justify-center">
+                      <span className="text-xs text-gray-500">
+                        画像読み込みエラー
+                      </span>
+                    </div>
+                  )}
                   <button
                     type="button"
                     onClick={() => removeImage(index)}

@@ -363,24 +363,36 @@ export async function getPostById(
       if (forEdit) {
         // 編集用の場合は元のファイルパスを保持
         // 署名付きURLの場合はファイルパスを抽出
-        post.images = post.images.map((imagePath) => {
-          if (imagePath.startsWith("http")) {
-            // 署名付きURLからファイルパスを抽出
-            try {
-              const url = new URL(imagePath);
-              const pathParts = url.pathname.split("/");
-              if (pathParts.length >= 3) {
-                return pathParts.slice(1).join("/");
+        post.images = post.images
+          .map((imagePath) => {
+            if (imagePath.startsWith("http")) {
+              // 署名付きURLからファイルパスを抽出
+              try {
+                // URLの妥当性チェック
+                if (!imagePath || typeof imagePath !== "string") {
+                  console.warn("Invalid imagePath:", imagePath);
+                  return "";
+                }
+
+                const url = new URL(imagePath);
+                const pathParts = url.pathname.split("/");
+                if (pathParts.length >= 3) {
+                  return pathParts.slice(1).join("/");
+                }
+              } catch (error) {
+                console.error(
+                  "Error extracting file path from signed URL:",
+                  error,
+                  "imagePath:",
+                  imagePath
+                );
+                // エラーの場合は空文字を返す
+                return "";
               }
-            } catch (error) {
-              console.error(
-                "Error extracting file path from signed URL:",
-                error
-              );
             }
-          }
-          return imagePath;
-        });
+            return imagePath;
+          })
+          .filter((path) => path !== ""); // 空のパスを除外
       } else {
         // 表示用の場合は署名付きURLを生成
         const imageUrls = await Promise.all(
@@ -401,7 +413,7 @@ export async function getPostById(
             }
           })
         );
-        post.images = imageUrls;
+        post.images = imageUrls.filter((url) => url !== ""); // 空のURLを除外
       }
     }
 
