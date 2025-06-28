@@ -1,0 +1,99 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    // ユーザー認証チェック関数
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    // ユーザーが自分のファイルにアクセスしているかチェック
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+    
+    // 管理者チェック関数（usersドキュメントのadminフィールドを使用）
+    function isAdmin() {
+      return isAuthenticated() && 
+        firestore.get(/databases/(default)/documents/users/$(request.auth.uid)).data.admin == true;
+    }
+    
+    // ファイルサイズ制限（10MB）
+    function isValidFileSize() {
+      return request.resource.size < 10 * 1024 * 1024;
+    }
+    
+    // 画像ファイル形式チェック
+    function isImage() {
+      return request.resource.contentType.matches('image/.*');
+    }
+    
+    // 投稿の所有者かチェック（投稿IDからユーザーIDを抽出）
+    function isPostOwner(postId) {
+      return isAuthenticated() && 
+        firestore.get(/databases/(default)/documents/posts/$(postId)).data.userId == request.auth.uid;
+    }
+    
+    // 投稿が公開されているかチェック
+    function isPublicPost(postId) {
+      let postData = firestore.get(/databases/(default)/documents/posts/$(postId)).data;
+      return postData.visibility == "public" || postData.visibility == null;
+    }
+    
+    // ユーザーアバター画像
+    match /avatars/{userId}/{fileName} {
+      allow read: if true; // アバターは公開
+      allow create: if isOwner(userId) && 
+        isImage() && 
+        isValidFileSize();
+      allow update: if isOwner(userId) && 
+        isImage() && 
+        isValidFileSize();
+      allow delete: if isOwner(userId) || isAdmin();
+    }
+    
+    // 投稿画像
+    match /posts/{postId}/{fileName} {
+      // 公開投稿の画像は誰でも読める、非公開投稿の画像は所有者と管理者のみ
+      allow read: if isPublicPost(postId) || 
+        (isAuthenticated() && isPostOwner(postId)) || 
+        isAdmin();
+      
+      // 認証済みユーザーは投稿画像をアップロード可能
+      allow create: if isAuthenticated() && 
+        isImage() && 
+        isValidFileSize();
+      
+      // 投稿所有者と管理者のみ更新可能
+      allow update: if (isAuthenticated() && isPostOwner(postId)) || 
+        isAdmin() && 
+        isImage() && 
+        isValidFileSize();
+      
+      // 投稿所有者と管理者のみ削除可能
+      allow delete: if (isAuthenticated() && isPostOwner(postId)) || 
+        isAdmin();
+    }
+    
+    // 一時ファイル（アップロード前の一時保存）
+    match /temp/{userId}/{fileName} {
+      allow read: if isOwner(userId);
+      allow create: if isOwner(userId) && 
+        isImage() && 
+        isValidFileSize();
+      allow update: if isOwner(userId) && 
+        isImage() && 
+        isValidFileSize();
+      allow delete: if isOwner(userId);
+    }
+    
+    // 管理者専用ファイル
+    match /admin/{fileName} {
+      allow read, write: if isAdmin();
+    }
+    
+    // その他のファイルは拒否
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+} 

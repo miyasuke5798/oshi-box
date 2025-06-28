@@ -1,0 +1,66 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // ユーザー認証チェック関数
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    // ユーザーが自分のデータにアクセスしているかチェック
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+    
+    // 管理者チェック関数（usersドキュメントのadminフィールドを使用）
+    function isAdmin() {
+      return isAuthenticated() && 
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.admin == true;
+    }
+    
+    // 投稿の可視性チェック関数
+    function isPublicPost(postData) {
+      return postData.visibility == "public" || postData.visibility == null;
+    }
+    
+    // ユーザーコレクション
+    match /users/{userId} {
+      allow read: if isOwner(userId) || isAdmin();
+      allow create: if isAuthenticated() && request.auth.uid == userId;
+      allow update: if isOwner(userId) || isAdmin();
+      allow delete: if isAdmin();
+      
+      // ユーザーの推しサブコレクション
+      match /oshi/{oshiId} {
+        allow read: if isOwner(userId) || isAdmin();
+        allow create: if isOwner(userId);
+        allow update: if isOwner(userId);
+        allow delete: if isOwner(userId);
+      }
+    }
+    
+    // 投稿コレクション
+    match /posts/{postId} {
+      // 公開投稿は誰でも読める、非公開投稿は所有者と管理者のみ
+      allow read: if isPublicPost(resource.data) || 
+        (isAuthenticated() && resource.data.userId == request.auth.uid) || 
+        isAdmin();
+      
+      // 認証済みユーザーは投稿を作成可能
+      allow create: if isAuthenticated();
+      
+      // 所有者と管理者のみ更新可能
+      allow update: if isAuthenticated() && 
+        (resource.data.userId == request.auth.uid || isAdmin());
+      
+      // 所有者と管理者のみ削除可能
+      allow delete: if isAuthenticated() && 
+        (resource.data.userId == request.auth.uid || isAdmin());
+    }
+    
+    // カテゴリーコレクション（管理者のみ）
+    match /categories/{categoryId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+  }
+} 
