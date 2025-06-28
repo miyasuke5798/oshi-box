@@ -185,7 +185,7 @@ export function PostForm({
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
     if (files.length > 0) {
-      console.log("handleImageChange - selected files:", files);
+      //console.log("handleImageChange - selected files:", files);
 
       const allowedTypes = [
         "image/jpeg",
@@ -429,7 +429,8 @@ export function PostForm({
             <div className="grid grid-cols-3 gap-4 sm:grid-cols-4 md:grid-cols-5">
               {previewUrls.map((url, index) => (
                 <div key={url} className="relative aspect-square">
-                  {url && url.startsWith("http") ? (
+                  {url &&
+                  (url.startsWith("http") || url.startsWith("blob:")) ? (
                     <Image
                       src={url}
                       alt={`Preview ${index + 1}`}
