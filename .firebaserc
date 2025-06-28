@@ -1,6 +1,7 @@
 {
   "projects": {
-    "staging": "oshi-box-dev"
+    "staging": "oshi-box-dev",
+    "prod": "oshibox-62170"
   },
   "targets": {},
   "etags": {}
