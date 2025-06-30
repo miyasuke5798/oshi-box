@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import { ShareMenu } from "@/components/layout/share_menu";
 import { Card, CardContent } from "@/components/ui/card";
 import { UserIcon } from "@/components/svg/UserIcon";
-import { UsersRound, Link2 } from "lucide-react";
+import { UsersRound, Link2, Copy } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { UserData } from "@/types/user";
 import { Post } from "@/types/post";
@@ -13,6 +13,8 @@ import { Oshi } from "@/types/oshi";
 import { Category } from "@/types/category";
 import PostList from "./components/PostList";
 import { ChevronLeftBackButton } from "@/components/ui/chevron-left-back-button";
+import { toast } from "sonner";
+import { SuccessCircle } from "@/components/svg/success_circle";
 
 interface SlugPageClientProps {
   params: {
@@ -98,6 +100,18 @@ export function SlugPageClient({
 
   const tabs = generateTabs();
 
+  // URLコピー機能
+  const handleCopyUrl = async () => {
+    try {
+      const currentUrl = window.location.href;
+      await navigator.clipboard.writeText(currentUrl);
+      toast.success("URLをコピーしました", { icon: <SuccessCircle /> });
+    } catch (error) {
+      console.error("URLコピーエラー:", error);
+      toast.error("URLのコピーに失敗しました");
+    }
+  };
+
   return (
     <div className="mt-3 mb-16">
       <ShareMenu />
@@ -142,6 +156,14 @@ export function SlugPageClient({
                   <Link2 className="w-4.5 h-4.5 transform rotate-[135deg]" />
                 )}
               </p>
+              {/* URLコピーボタン */}
+              <button
+                onClick={handleCopyUrl}
+                className="flex items-center gap-1 px-2 py-0.5 text-xs border border-gray-300 rounded-full hover:bg-gray-50 transition-colors cursor-pointer"
+              >
+                <Copy className="w-3 h-3" />
+                リンクをコピー
+              </button>
             </div>
           </div>
           {isCurrentUser && (
