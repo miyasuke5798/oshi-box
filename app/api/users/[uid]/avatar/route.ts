@@ -23,8 +23,17 @@ export async function POST(
     }
 
     if (!adminStorage) {
+      console.error("Admin storage is not available");
       return NextResponse.json(
         { error: "ストレージサービスが利用できません" },
+        { status: 503 }
+      );
+    }
+
+    if (!adminDb) {
+      console.error("Admin database is not available");
+      return NextResponse.json(
+        { error: "データベースサービスが利用できません" },
         { status: 503 }
       );
     }
@@ -53,20 +62,35 @@ export async function POST(
     // デバッグログ
     console.log("Storage initialization:", {
       projectId: process.env.FIREBASE_PROJECT_ID,
-      storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+      storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
+      clientStorageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
     });
 
-    const bucket = adminStorage.bucket(
-      process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET
-    );
+    // サーバーサイドではFIREBASE_STORAGE_BUCKETを使用
+    const storageBucket =
+      process.env.FIREBASE_STORAGE_BUCKET ||
+      `${process.env.FIREBASE_PROJECT_ID}.appspot.com`;
+
+    if (!storageBucket) {
+      console.error("Storage bucket is not configured");
+      return NextResponse.json(
+        { error: "ストレージバケットが設定されていません" },
+        { status: 500 }
+      );
+    }
+
+    const bucket = adminStorage.bucket(storageBucket);
     const fileName = `avatars/${uid}/profile.jpg`; // 固定のファイル名を使用
     const fileBuffer = Buffer.from(buffer);
 
     try {
+      console.log(`Starting upload for user ${uid} to ${fileName}`);
+
       // 既存の画像を削除
       const existingFile = bucket.file(fileName);
       try {
         await existingFile.delete();
+        console.log("Existing image deleted successfully");
       } catch (error) {
         // ファイルが存在しない場合は無視
         console.log("既存の画像が存在しません", error);
@@ -79,17 +103,34 @@ export async function POST(
         },
       });
 
+      console.log("Image uploaded successfully to storage");
+
       // 公開URLを取得
       const [url] = await bucket.file(fileName).getSignedUrl({
         action: "read",
         expires: "03-01-2500", // 長期間有効なURL
       });
 
+      console.log("Signed URL generated:", url);
+
       // ユーザープロフィールを更新
-      await adminDb?.collection("users").doc(uid).update({
-        photoURL: url,
-        updatedAt: new Date(),
-      });
+      try {
+        await adminDb.collection("users").doc(uid).update({
+          photoURL: url,
+          updatedAt: new Date(),
+        });
+        console.log("User profile updated successfully");
+      } catch (firestoreError) {
+        console.error("Firestore update error:", firestoreError);
+        // Firestoreの更新に失敗しても、ストレージのアップロードは成功しているので
+        // 部分的に成功として扱う
+        return NextResponse.json({
+          status: "partial_success",
+          photoURL: url,
+          message:
+            "画像のアップロードは成功しましたが、プロフィールの更新に失敗しました",
+        });
+      }
 
       return NextResponse.json({ status: "success", photoURL: url });
     } catch (storageError) {
@@ -128,9 +169,19 @@ export async function DELETE(
       );
     }
 
-    const bucket = adminStorage.bucket(
-      process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET
-    );
+    if (!adminDb) {
+      return NextResponse.json(
+        { error: "データベースサービスが利用できません" },
+        { status: 503 }
+      );
+    }
+
+    // サーバーサイドではFIREBASE_STORAGE_BUCKETを使用
+    const storageBucket =
+      process.env.FIREBASE_STORAGE_BUCKET ||
+      `${process.env.FIREBASE_PROJECT_ID}.appspot.com`;
+
+    const bucket = adminStorage.bucket(storageBucket);
     const fileName = `avatars/${uid}/profile.jpg`;
 
     try {
@@ -138,7 +189,7 @@ export async function DELETE(
       await bucket.file(fileName).delete();
 
       // ユーザープロフィールを更新
-      await adminDb?.collection("users").doc(uid).update({
+      await adminDb.collection("users").doc(uid).update({
         photoURL: null,
         updatedAt: new Date(),
       });
@@ -149,7 +200,7 @@ export async function DELETE(
       const storageError = error as FirebaseStorageError;
       if (storageError.code === 404) {
         // ユーザープロフィールを更新
-        await adminDb?.collection("users").doc(uid).update({
+        await adminDb.collection("users").doc(uid).update({
           photoURL: null,
           updatedAt: new Date(),
         });

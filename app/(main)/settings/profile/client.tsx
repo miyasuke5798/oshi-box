@@ -96,7 +96,18 @@ export function SettingsProfileClient({
         });
 
         if (!imageResponse.ok) {
-          throw new Error("プロフィール画像のアップロードに失敗しました");
+          const errorData = await imageResponse.json();
+          throw new Error(
+            errorData.error || "プロフィール画像のアップロードに失敗しました"
+          );
+        }
+
+        const imageResult = await imageResponse.json();
+        if (imageResult.status === "partial_success") {
+          toast.warning(
+            imageResult.message ||
+              "画像のアップロードは成功しましたが、プロフィールの更新に失敗しました"
+          );
         }
       } else if (!previewUrl && userData.photoURL) {
         // 画像が削除された場合
@@ -108,7 +119,10 @@ export function SettingsProfileClient({
         );
 
         if (!deleteResponse.ok) {
-          throw new Error("プロフィール画像の削除に失敗しました");
+          const errorData = await deleteResponse.json();
+          throw new Error(
+            errorData.error || "プロフィール画像の削除に失敗しました"
+          );
         }
       }
 
@@ -127,16 +141,21 @@ export function SettingsProfileClient({
       });
 
       if (!response.ok) {
-        throw new Error("プロフィールの更新に失敗しました");
+        const errorData = await response.json();
+        throw new Error(errorData.error || "プロフィールの更新に失敗しました");
       }
 
       toast.success("プロフィールを保存しました", { icon: <SuccessCircle /> });
       router.push(`/${userData.uid}`);
     } catch (error) {
-      toast.error("エラーが発生しました。もう一度お試しください。", {
+      console.error("Profile update error:", error);
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : "エラーが発生しました。もう一度お試しください。";
+      toast.error(errorMessage, {
         icon: <AlertCircle className="w-5 h-5 text-red-500" />,
       });
-      console.error("Error:", error);
     }
   };
 
