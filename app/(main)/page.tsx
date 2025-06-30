@@ -1,5 +1,5 @@
 "use client";
-import { useEffect } from "react";
+import { useEffect, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { AlertCircle } from "lucide-react";
 
-export default function Home() {
+function HomeContent() {
   const searchParams = useSearchParams();
   const req = searchParams.get("req");
   const router = useRouter();
@@ -56,5 +56,13 @@ export default function Home() {
         </CardContent>
       </Card>
     </div>
+  );
+}
+
+export default function Home() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <HomeContent />
+    </Suspense>
   );
 }
