@@ -1,8 +1,26 @@
+"use client";
+import { useEffect } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
+import { AlertCircle } from "lucide-react";
 
 export default function Home() {
+  const searchParams = useSearchParams();
+  const req = searchParams.get("req");
+  const router = useRouter();
+
+  useEffect(() => {
+    if (req === "already_logged_in") {
+      toast.info("既にログインしています", {
+        icon: <AlertCircle className="h-5 w-5 text-yellow-500" />,
+      });
+      router.replace("/");
+    }
+  }, [req, router]);
+
   return (
     <div className="mt-6 mb-16">
       <Card className="w-full">

@@ -1,8 +1,20 @@
-//import Link from "next/link";
+import { redirect } from "next/navigation";
+import { getSession } from "@/lib/auth-server";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { XButton } from "@/components/ui/x_button";
 
-export default function UsersNew() {
+// 動的レンダリングを強制
+export const dynamic = "force-dynamic";
+
+export default async function UsersNew() {
+  // サーバーサイドでセッションチェック
+  const session = await getSession();
+
+  // ログイン中のユーザーがアクセスした場合はrootページにリダイレクト
+  if (session) {
+    redirect("/?req=already_logged_in");
+  }
+
   return (
     <div className="mt-3 mb-16">
       <Card className="w-full">
