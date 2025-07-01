@@ -1,5 +1,6 @@
 "use client";
 import { Suspense, useEffect } from "react";
+import Link from "next/link";
 import { useSearchParams, useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { AlertCircle } from "lucide-react";
@@ -25,7 +26,7 @@ function SessionNewContent() {
     <div className="mt-3 mb-16">
       <Card className="w-full">
         <CardHeader>
-          <h1 className="text-[#52525b]">持っている外部アカウントで登録</h1>
+          <h1 className="text-[#52525b]">ログイン</h1>
         </CardHeader>
         <CardContent className="py-5">
           <div className="text-sm mb-6">
@@ -34,6 +35,16 @@ function SessionNewContent() {
           <div className="flex flex-col gap-6 max-w-64 sm:max-w-72 mx-auto mb-6">
             <XButton />
           </div>
+          <ul className="text-sm">More actions
+            <li>
+              <p className="text-[#71717a]">
+                ユーザ登録をされていない方は
+                <Link href="/users/new" className="rose_link">
+                  こちら
+                </Link>
+              </p>
+            </li>
+          </ul>
         </CardContent>
       </Card>
     </div>
