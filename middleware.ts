@@ -4,10 +4,13 @@ import type { NextRequest } from "next/server";
 export function middleware(request: NextRequest) {
   const url = request.nextUrl;
 
-  // AdSense審査用の特別パスは認証をスキップ
-  if (url.pathname === "/" || url.pathname === "/robots.txt") {
-    return NextResponse.next();
-  }
+  if (
+   url.pathname === "/" ||
+   url.pathname === "/robots.txt" ||
+   url.pathname === "/adsense-check"
+　) {
+  return NextResponse.next();
+　}
 
   const basicAuth = request.headers.get("authorization");
 
