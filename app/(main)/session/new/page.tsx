@@ -35,7 +35,7 @@ function SessionNewContent() {
           <div className="flex flex-col gap-6 max-w-64 sm:max-w-72 mx-auto mb-6">
             <XButton />
           </div>
-          <ul className="text-sm">More actions
+          <ul className="text-sm">
             <li>
               <p className="text-[#71717a]">
                 ユーザ登録をされていない方は
