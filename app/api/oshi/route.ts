@@ -96,14 +96,16 @@ export async function POST(request: Request) {
     }
 
     // 推しを新規作成
+    const now = new Date();
     const oshiRef = await adminDb
       .collection("users")
       .doc(session.uid)
       .collection("oshi")
       .add({
         name: validatedData.name,
-        createdAt: new Date(),
-        updatedAt: new Date(),
+        createdAt: now,
+        updatedAt: now,
+        oshiStartedAt: now, // 推しを始めた日時
       });
 
     console.log("API - Successfully created oshi:", {

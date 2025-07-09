@@ -3,6 +3,7 @@ export interface Oshi {
   name: string;
   createdAt: string;
   updatedAt: string;
+  oshiStartedAt: string; // 推しを始めた日時
 }
 
 export interface CreateOshiRequest {
