@@ -49,18 +49,21 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   // 本番環境の判定
-  //const isProduction =
-  //  process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID === "oshibox-62170";
+  const isProduction =
+    process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID === "oshibox-62170";
 
   return (
     <html lang="ja" suppressHydrationWarning>
-　　　　<head>
-        {/* Google AdSense スクリプト */}
-        <Script
-          async
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4605715481399190"
-          crossOrigin="anonymous"
-        />
+      <head>
+        {/* Googleアドセンス - 本番環境でのみ読み込み */}
+        {isProduction && (
+          <Script
+            async
+            src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4605715481399190"
+            crossOrigin="anonymous"
+            strategy="afterInteractive"
+          />
+        )}
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col`}

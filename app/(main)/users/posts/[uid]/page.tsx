@@ -138,7 +138,7 @@ export default async function PostDetailPage({ params }: PageProps) {
       <ShareMenu />
       <Card className="w-full mb-5">
         <CardContent className="py-5 px-6">
-          <XBackButtonWithLink />
+          <XBackButtonWithLink userId={post.userId} />
           <div className="flex items-center gap-2 my-6">
             {post.user && (
               <Link href={`/${post.user.uid}`}>
