@@ -3,6 +3,7 @@ export interface Oshi {
   name: string;
   createdAt: string;
   updatedAt: string;
+  imageUrl?: string; // 推しの画像URL
   oshiStartedAt?:
     | string
     | {

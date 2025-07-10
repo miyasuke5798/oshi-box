@@ -44,7 +44,11 @@ export default function SettingsOshiPage() {
   };
 
   // 推しを追加
-  const handleAddOshi = async (name: string, oshiStartedAt: string) => {
+  const handleAddOshi = async (
+    name: string,
+    oshiStartedAt: string,
+    imageFile?: File
+  ) => {
     setIsAdding(true);
     try {
       const response = await fetch("/api/oshi", {
@@ -56,6 +60,27 @@ export default function SettingsOshiPage() {
       });
 
       if (response.ok) {
+        const data = await response.json();
+
+        // 画像がある場合はアップロード
+        if (imageFile) {
+          const formData = new FormData();
+          formData.append("file", imageFile);
+
+          const imageResponse = await fetch(`/api/oshi/${data.oshiId}/image`, {
+            method: "POST",
+            body: formData,
+          });
+
+          if (!imageResponse.ok) {
+            const errorData = await imageResponse.json();
+            toast.warning(
+              errorData.error ||
+                "推しは作成されましたが、画像のアップロードに失敗しました"
+            );
+          }
+        }
+
         await fetchOshis(); // 一覧を再取得
         toast.success("作成しました", { icon: <SuccessCircle /> });
       } else {
@@ -81,7 +106,11 @@ export default function SettingsOshiPage() {
   };
 
   // 推しを更新
-  const handleUpdateOshi = async (name: string, oshiStartedAt: string) => {
+  const handleUpdateOshi = async (
+    name: string,
+    oshiStartedAt: string,
+    imageFile?: File
+  ) => {
     if (!editingOshi) return;
 
     setIsEditing(true);
@@ -95,6 +124,28 @@ export default function SettingsOshiPage() {
       });
 
       if (response.ok) {
+        // 画像がある場合はアップロード
+        if (imageFile) {
+          const formData = new FormData();
+          formData.append("file", imageFile);
+
+          const imageResponse = await fetch(
+            `/api/oshi/${editingOshi.id}/image`,
+            {
+              method: "POST",
+              body: formData,
+            }
+          );
+
+          if (!imageResponse.ok) {
+            const errorData = await imageResponse.json();
+            toast.warning(
+              errorData.error ||
+                "推しは更新されましたが、画像のアップロードに失敗しました"
+            );
+          }
+        }
+
         await fetchOshis(); // 一覧を再取得
         setEditingOshi(null);
         toast.success("更新しました", { icon: <SuccessCircle /> });
@@ -260,6 +311,8 @@ export default function SettingsOshiPage() {
             return "";
           }
         })()}
+        initialImageUrl={editingOshi?.imageUrl || ""}
+        oshiId={editingOshi?.id}
         title="推しの編集"
         submitText="更新"
         isLoading={isEditing}

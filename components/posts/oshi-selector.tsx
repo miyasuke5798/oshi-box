@@ -55,7 +55,11 @@ export function OshiSelector({
     fetchOshiList();
   }, []);
 
-  const handleCreateOshi = async (name: string, oshiStartedAt: string) => {
+  const handleCreateOshi = async (
+    name: string,
+    oshiStartedAt: string,
+    imageFile?: File
+  ) => {
     try {
       setIsCreating(true);
 
@@ -72,6 +76,25 @@ export function OshiSelector({
 
       if (!response.ok) {
         throw new Error(data.error || "推しの登録に失敗しました");
+      }
+
+      // 画像がある場合はアップロード
+      if (imageFile) {
+        const formData = new FormData();
+        formData.append("file", imageFile);
+
+        const imageResponse = await fetch(`/api/oshi/${data.oshiId}/image`, {
+          method: "POST",
+          body: formData,
+        });
+
+        if (!imageResponse.ok) {
+          const errorData = await imageResponse.json();
+          toast.warning(
+            errorData.error ||
+              "推しは登録されましたが、画像のアップロードに失敗しました"
+          );
+        }
       }
 
       // 推し一覧を再取得
