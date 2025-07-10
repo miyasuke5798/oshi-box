@@ -2,8 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -11,27 +9,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { SuccessCircle } from "@/components/svg/success_circle";
 import { CirclePlus } from "lucide-react";
-import { z } from "zod";
 import { toast } from "sonner";
 import { Oshi } from "@/types/oshi";
-
-// 推し名のバリデーションスキーマ
-const oshiNameSchema = z.object({
-  name: z
-    .string()
-    .min(1, "推しの名前を入力してください")
-    .max(50, "推しの名前は50文字以内で入力してください")
-    .trim(),
-});
+import { OshiFormDialog } from "@/components/oshi/oshi-form-dialog";
 
 interface OshiSelectorProps {
   value: string | null;
@@ -45,8 +26,6 @@ export function OshiSelector({
   placeholder = "推しを選択してください",
 }: OshiSelectorProps) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [newOshiName, setNewOshiName] = useState("");
-  const [error, setError] = useState<string>("");
   const [oshiList, setOshiList] = useState<Oshi[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
@@ -76,12 +55,9 @@ export function OshiSelector({
     fetchOshiList();
   }, []);
 
-  const handleRegister = async () => {
+  const handleCreateOshi = async (name: string, oshiStartedAt: string) => {
     try {
       setIsCreating(true);
-
-      // バリデーション実行
-      const validatedData = oshiNameSchema.parse({ name: newOshiName });
 
       // 推し登録APIを呼び出し
       const response = await fetch("/api/oshi", {
@@ -89,7 +65,7 @@ export function OshiSelector({
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(validatedData),
+        body: JSON.stringify({ name, oshiStartedAt }),
       });
 
       const data = await response.json();
@@ -98,41 +74,19 @@ export function OshiSelector({
         throw new Error(data.error || "推しの登録に失敗しました");
       }
 
-      // 成功時の処理
-      setNewOshiName("");
-      setError("");
-      setIsDialogOpen(false);
-
       // 推し一覧を再取得
       await fetchOshiList();
 
       // 新しく作成された推しを選択
       onValueChange(data.oshiId);
 
-      toast.success("推しを登録しました", {
-        icon: <SuccessCircle />,
-      });
+      toast.success("推しを登録しました");
     } catch (error) {
-      if (error instanceof z.ZodError) {
-        const errorMessage =
-          error.errors[0]?.message || "入力内容を確認してください";
-        setError(errorMessage);
-      } else if (error instanceof Error) {
-        setError(error.message);
-      } else {
-        setError("推しの登録に失敗しました");
-      }
+      console.error("Error creating oshi:", error);
+      toast.error("推しの登録に失敗しました");
+      throw error;
     } finally {
       setIsCreating(false);
-    }
-  };
-
-  const handleDialogOpenChange = (open: boolean) => {
-    setIsDialogOpen(open);
-    if (!open) {
-      // ダイアログが閉じられた時に状態をリセット
-      setNewOshiName("");
-      setError("");
     }
   };
 
@@ -161,60 +115,26 @@ export function OshiSelector({
           </SelectContent>
         </Select>
       </div>
-      <Dialog open={isDialogOpen} onOpenChange={handleDialogOpenChange}>
-        <DialogTrigger asChild>
-          <Button variant="outline" className="shrink-0 font-normal py-0">
-            <CirclePlus className="h-5 w-5" />
-            <span className="">新規登録</span>
-          </Button>
-        </DialogTrigger>
-        <DialogContent onOpenAutoFocus={(e) => e.preventDefault()}>
-          <DialogHeader>
-            <DialogTitle>推しを新規登録</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4 py-4">
-            <div className="space-y-2">
-              <Label htmlFor="oshiName">名前</Label>
-              <Input
-                id="oshiName"
-                placeholder="推しの名前を入力"
-                value={newOshiName}
-                onChange={(e) => {
-                  setNewOshiName(e.target.value);
-                  // 入力時にエラーをクリア
-                  if (error) setError("");
-                }}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    e.preventDefault();
-                    handleRegister();
-                  }
-                }}
-                maxLength={50}
-                disabled={isCreating}
-              />
-              {error && <p className="text-sm text-red-500">{error}</p>}
-            </div>
-            <div className="flex gap-6">
-              <Button
-                variant="outline"
-                className="w-1/2"
-                onClick={() => handleDialogOpenChange(false)}
-                disabled={isCreating}
-              >
-                キャンセル
-              </Button>
-              <Button
-                className="w-1/2"
-                onClick={handleRegister}
-                disabled={isCreating}
-              >
-                {isCreating ? "登録中..." : "登録"}
-              </Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
+      <Button
+        type="button"
+        variant="outline"
+        className="shrink-0 font-normal py-0"
+        onClick={() => setIsDialogOpen(true)}
+      >
+        <CirclePlus className="h-5 w-5" />
+        <span className="">新規登録</span>
+      </Button>
+
+      {/* 推し作成Dialog */}
+      <OshiFormDialog
+        isOpen={isDialogOpen}
+        onClose={() => setIsDialogOpen(false)}
+        onSubmit={handleCreateOshi}
+        initialOshiStartedAt={new Date().toISOString().split("T")[0]} // 今日の日付をデフォルト
+        title="推しを新規登録"
+        submitText="登録"
+        isLoading={isCreating}
+      />
     </div>
   );
 }
