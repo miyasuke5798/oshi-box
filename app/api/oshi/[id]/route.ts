@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { adminDb } from "@/lib/firebase-admin";
+import { adminDb, adminStorage } from "@/lib/firebase-admin";
 import { requireAuth } from "@/lib/auth-server";
 import { z } from "zod";
 
@@ -68,7 +68,9 @@ export async function PUT(
 
     // 推しを更新
     // 日付文字列をローカルタイムゾーンでDateオブジェクトに変換
-    const [year, month, day] = validatedData.oshiStartedAt.split('-').map(Number);
+    const [year, month, day] = validatedData.oshiStartedAt
+      .split("-")
+      .map(Number);
     const oshiStartedAt = new Date(year, month - 1, day); // monthは0ベースなので-1
 
     await adminDb
@@ -150,6 +152,29 @@ export async function DELETE(
         { error: "この推しに関連する投稿があるため削除できません" },
         { status: 400 }
       );
+    }
+
+    // 推しの画像がある場合は削除
+    const oshiData = oshiDoc.data();
+    if (oshiData?.imageUrl && adminStorage) {
+      try {
+        // imageUrlからファイルパスを抽出
+        const urlParts = oshiData.imageUrl.split("/");
+        const fileName = urlParts[urlParts.length - 1].split("?")[0]; // クエリパラメータを除去
+        const filePath = `oshi-images/${session.uid}/${oshiId}/${fileName}`;
+
+        await adminStorage
+          .bucket(
+            process.env.FIREBASE_STORAGE_BUCKET ||
+              `${process.env.FIREBASE_PROJECT_ID}.appspot.com`
+          )
+          .file(filePath)
+          .delete();
+        console.log("API - Successfully deleted oshi image:", filePath);
+      } catch (error) {
+        console.error("Error deleting oshi image:", error);
+        // 画像削除に失敗しても推しの削除は続行
+      }
     }
 
     // 推しを削除

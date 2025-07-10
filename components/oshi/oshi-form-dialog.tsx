@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { UserIcon } from "@/components/svg/UserIcon";
 import { toast } from "sonner";
 import { AlertCircle, X } from "lucide-react";
 import { z } from "zod";
@@ -30,7 +31,8 @@ interface OshiFormDialogProps {
   onSubmit: (
     name: string,
     oshiStartedAt: string,
-    imageFile?: File
+    imageFile?: File,
+    shouldDeleteImage?: boolean
   ) => Promise<void>;
   initialName?: string;
   initialOshiStartedAt?: string;
@@ -58,6 +60,7 @@ export function OshiFormDialog({
   const [previewUrl, setPreviewUrl] = useState<string | null>(
     initialImageUrl || null
   );
+  const [shouldDeleteImage, setShouldDeleteImage] = useState(false);
 
   // Dialogが開かれたときに初期値を設定
   useEffect(() => {
@@ -66,6 +69,7 @@ export function OshiFormDialog({
       setOshiStartedAt(initialOshiStartedAt);
       setImageFile(null);
       setPreviewUrl(initialImageUrl || null);
+      setShouldDeleteImage(false);
     }
   }, [isOpen, initialName, initialOshiStartedAt, initialImageUrl]);
 
@@ -80,6 +84,7 @@ export function OshiFormDialog({
   const removeImage = () => {
     setImageFile(null);
     setPreviewUrl(null);
+    setShouldDeleteImage(true); // 既存の画像を削除するフラグを設定
     const fileInput = document.querySelector(
       'input[type="file"]'
     ) as HTMLInputElement;
@@ -111,7 +116,8 @@ export function OshiFormDialog({
       await onSubmit(
         validatedData.name,
         validatedData.oshiStartedAt,
-        imageFile || undefined
+        imageFile || undefined,
+        shouldDeleteImage
       );
       onClose();
     } catch {
@@ -133,6 +139,39 @@ export function OshiFormDialog({
         </DialogHeader>
         <div className="space-y-4">
           <div>
+            <label className="text-sm font-medium">推しの画像</label>
+            <div className="flex flex-col space-y-4 mt-1">
+              <div className="relative w-24 h-24">
+                {previewUrl ? (
+                  <>
+                    <Image
+                      src={previewUrl}
+                      alt="推し画像プレビュー"
+                      fill
+                      className="border border-gray-300 object-cover rounded-full"
+                    />
+                    <button
+                      type="button"
+                      onClick={removeImage}
+                      className="absolute top-1 right-1 bg-black text-white rounded-full p-1 hover:bg-gray-800 cursor-pointer"
+                    >
+                      <X className="h-4 w-4" />
+                    </button>
+                  </>
+                ) : (
+                  <UserIcon className="w-24 h-24 border border-gray-300 rounded-full" />
+                )}
+              </div>
+              <Input
+                type="file"
+                accept="image/*"
+                onChange={handleImageChange}
+                className="w-full sm:w-fit cursor-pointer"
+                disabled={isLoading}
+              />
+            </div>
+          </div>
+          <div>
             <label className="text-sm font-medium">推しの名前</label>
             <Input
               type="text"
@@ -143,6 +182,12 @@ export function OshiFormDialog({
               maxLength={50}
               disabled={isLoading}
               className="mt-1"
+              style={
+                {
+                  "--primary": "white",
+                  "--primary-foreground": "black",
+                } as React.CSSProperties
+              }
             />
           </div>
           <div>
@@ -154,41 +199,6 @@ export function OshiFormDialog({
               disabled={isLoading}
               className="mt-1"
             />
-          </div>
-          <div>
-            <label className="text-sm font-medium">推しの画像</label>
-            <div className="flex flex-col space-y-4 mt-1">
-              <div className="relative w-24 h-24">
-                {previewUrl ? (
-                  <>
-                    <Image
-                      src={previewUrl}
-                      alt="推し画像プレビュー"
-                      fill
-                      className="border border-gray-300 object-cover rounded-lg"
-                    />
-                    <button
-                      type="button"
-                      onClick={removeImage}
-                      className="absolute top-1 right-1 bg-black text-white rounded-full p-1 hover:bg-gray-800 cursor-pointer"
-                    >
-                      <X className="h-4 w-4" />
-                    </button>
-                  </>
-                ) : (
-                  <div className="w-24 h-24 border border-gray-300 rounded-lg flex items-center justify-center bg-gray-50">
-                    <span className="text-gray-400 text-xs">画像なし</span>
-                  </div>
-                )}
-              </div>
-              <Input
-                type="file"
-                accept="image/*"
-                onChange={handleImageChange}
-                className="w-full sm:w-fit cursor-pointer"
-                disabled={isLoading}
-              />
-            </div>
           </div>
           <div className="flex justify-end gap-2">
             <Button variant="gray" onClick={onClose} disabled={isLoading}>

@@ -109,7 +109,8 @@ export default function SettingsOshiPage() {
   const handleUpdateOshi = async (
     name: string,
     oshiStartedAt: string,
-    imageFile?: File
+    imageFile?: File,
+    shouldDeleteImage?: boolean
   ) => {
     if (!editingOshi) return;
 
@@ -124,8 +125,25 @@ export default function SettingsOshiPage() {
       });
 
       if (response.ok) {
-        // 画像がある場合はアップロード
-        if (imageFile) {
+        // 画像の削除が必要な場合
+        if (shouldDeleteImage) {
+          const deleteResponse = await fetch(
+            `/api/oshi/${editingOshi.id}/image`,
+            {
+              method: "DELETE",
+            }
+          );
+
+          if (!deleteResponse.ok) {
+            const errorData = await deleteResponse.json();
+            toast.warning(
+              errorData.error ||
+                "推しは更新されましたが、画像の削除に失敗しました"
+            );
+          }
+        }
+        // 新しい画像がある場合はアップロード
+        else if (imageFile) {
           const formData = new FormData();
           formData.append("file", imageFile);
 
