@@ -3,7 +3,12 @@ export interface Oshi {
   name: string;
   createdAt: string;
   updatedAt: string;
-  oshiStartedAt: string; // 推しを始めた日時
+  oshiStartedAt?:
+    | string
+    | {
+        _seconds: number;
+        _nanoseconds: number;
+      }; // 推しを始めた日時（文字列またはFirestore Timestamp）
 }
 
 export interface CreateOshiRequest {

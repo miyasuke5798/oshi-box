@@ -11,6 +11,8 @@ import { Plus, AlertCircle } from "lucide-react";
 import { Oshi } from "@/types/oshi";
 import { DeleteOshiDialog } from "./delete-oshi-dialog";
 import { z } from "zod";
+import { format } from "date-fns";
+import { ja } from "date-fns/locale";
 
 // 推し名のバリデーションスキーマ
 const oshiNameSchema = z.object({
@@ -239,6 +241,50 @@ export default function SettingsOshiPage() {
                       // 表示モード
                       <>
                         <p>{oshi.name}</p>
+                        {oshi.oshiStartedAt && (
+                          <p className="text-sm">
+                            {(() => {
+                              try {
+                                // oshiStartedAtが文字列の場合
+                                if (typeof oshi.oshiStartedAt === "string") {
+                                  return format(
+                                    new Date(oshi.oshiStartedAt),
+                                    "yyyy年MM月dd日",
+                                    { locale: ja }
+                                  );
+                                }
+                                // oshiStartedAtがTimestampオブジェクトの場合
+                                if (
+                                  typeof oshi.oshiStartedAt === "object" &&
+                                  oshi.oshiStartedAt !== null &&
+                                  "_seconds" in oshi.oshiStartedAt &&
+                                  "_nanoseconds" in oshi.oshiStartedAt
+                                ) {
+                                  const timestamp = oshi.oshiStartedAt as {
+                                    _seconds: number;
+                                    _nanoseconds: number;
+                                  };
+                                  return format(
+                                    new Date(
+                                      timestamp._seconds * 1000 +
+                                        timestamp._nanoseconds / 1000000
+                                    ),
+                                    "yyyy年MM月dd日",
+                                    { locale: ja }
+                                  );
+                                }
+                                return null;
+                              } catch (error) {
+                                console.error(
+                                  "Error formatting oshiStartedAt:",
+                                  error,
+                                  oshi.oshiStartedAt
+                                );
+                                return null;
+                              }
+                            })()}
+                          </p>
+                        )}
                         <div className="flex gap-2">
                           <button
                             onClick={() => startEditing(oshi)}
