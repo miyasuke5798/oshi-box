@@ -3,13 +3,14 @@ import { adminDb } from "@/lib/firebase-admin";
 import { requireAuth } from "@/lib/auth-server";
 import { z } from "zod";
 
-// 推し名のバリデーションスキーマ
-const oshiNameSchema = z.object({
+// 推しのバリデーションスキーマ
+const oshiSchema = z.object({
   name: z
     .string()
     .min(1, "推しの名前を入力してください")
     .max(50, "推しの名前は50文字以内で入力してください")
     .trim(),
+  oshiStartedAt: z.string().min(1, "推しを始めた日を選択してください"),
 });
 
 export async function GET() {
@@ -64,7 +65,7 @@ export async function POST(request: Request) {
     }
 
     // バリデーション実行
-    const validatedData = oshiNameSchema.parse(data);
+    const validatedData = oshiSchema.parse(data);
 
     // ユーザーの推し数をチェック（3つまで）
     const existingOshisSnapshot = await adminDb
@@ -97,6 +98,12 @@ export async function POST(request: Request) {
 
     // 推しを新規作成
     const now = new Date();
+    // 日付文字列をローカルタイムゾーンでDateオブジェクトに変換
+    const [year, month, day] = validatedData.oshiStartedAt
+      .split("-")
+      .map(Number);
+    const oshiStartedAt = new Date(year, month - 1, day); // monthは0ベースなので-1
+
     const oshiRef = await adminDb
       .collection("users")
       .doc(session.uid)
@@ -105,7 +112,7 @@ export async function POST(request: Request) {
         name: validatedData.name,
         createdAt: now,
         updatedAt: now,
-        oshiStartedAt: now, // 推しを始めた日時
+        oshiStartedAt: oshiStartedAt, // 推しを始めた日時
       });
 
     console.log("API - Successfully created oshi:", {

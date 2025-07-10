@@ -44,7 +44,7 @@ export default function SettingsOshiPage() {
   };
 
   // 推しを追加
-  const handleAddOshi = async (name: string) => {
+  const handleAddOshi = async (name: string, oshiStartedAt: string) => {
     setIsAdding(true);
     try {
       const response = await fetch("/api/oshi", {
@@ -52,7 +52,7 @@ export default function SettingsOshiPage() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ name }),
+        body: JSON.stringify({ name, oshiStartedAt }),
       });
 
       if (response.ok) {
@@ -81,7 +81,7 @@ export default function SettingsOshiPage() {
   };
 
   // 推しを更新
-  const handleUpdateOshi = async (name: string) => {
+  const handleUpdateOshi = async (name: string, oshiStartedAt: string) => {
     if (!editingOshi) return;
 
     setIsEditing(true);
@@ -91,7 +91,7 @@ export default function SettingsOshiPage() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ name }),
+        body: JSON.stringify({ name, oshiStartedAt }),
       });
 
       if (response.ok) {
@@ -218,6 +218,7 @@ export default function SettingsOshiPage() {
         isOpen={isCreateDialogOpen}
         onClose={() => setIsCreateDialogOpen(false)}
         onSubmit={handleAddOshi}
+        initialOshiStartedAt={new Date().toISOString().split("T")[0]} // 今日の日付をデフォルト
         title="推しの作成"
         submitText="作成"
         isLoading={isAdding}
@@ -232,6 +233,33 @@ export default function SettingsOshiPage() {
         }}
         onSubmit={handleUpdateOshi}
         initialName={editingOshi?.name || ""}
+        initialOshiStartedAt={(() => {
+          if (!editingOshi?.oshiStartedAt) return "";
+          try {
+            if (typeof editingOshi.oshiStartedAt === "string") {
+              const date = new Date(editingOshi.oshiStartedAt);
+              return `${date.getFullYear()}-${String(
+                date.getMonth() + 1
+              ).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+            }
+            if (
+              typeof editingOshi.oshiStartedAt === "object" &&
+              editingOshi.oshiStartedAt !== null
+            ) {
+              const timestamp = editingOshi.oshiStartedAt as {
+                _seconds: number;
+                _nanoseconds: number;
+              };
+              const date = new Date(timestamp._seconds * 1000);
+              return `${date.getFullYear()}-${String(
+                date.getMonth() + 1
+              ).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+            }
+            return "";
+          } catch {
+            return "";
+          }
+        })()}
         title="推しの編集"
         submitText="更新"
         isLoading={isEditing}
