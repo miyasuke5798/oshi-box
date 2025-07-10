@@ -12,6 +12,8 @@ import { DeleteOshiDialog } from "./delete-oshi-dialog";
 import { OshiFormDialog } from "@/components/oshi/oshi-form-dialog";
 import { format } from "date-fns";
 import { ja } from "date-fns/locale";
+import { UserIcon } from "@/components/svg/UserIcon";
+import Image from "next/image";
 
 export default function SettingsOshiPage() {
   const [oshis, setOshis] = useState<Oshi[]>([]);
@@ -208,72 +210,109 @@ export default function SettingsOshiPage() {
             {loading ? (
               <p className="text-sm text-gray-500">読み込み中...</p>
             ) : oshis.length > 0 ? (
-              <div className="space-y-2">
-                {oshis.map((oshi) => (
-                  <div
-                    key={oshi.id}
-                    className="flex items-center justify-between py-3 border-b"
-                  >
-                    <p>{oshi.name}</p>
-                    {oshi.oshiStartedAt && (
-                      <p className="text-sm">
-                        {(() => {
-                          try {
-                            // oshiStartedAtが文字列の場合
-                            if (typeof oshi.oshiStartedAt === "string") {
-                              return format(
-                                new Date(oshi.oshiStartedAt),
-                                "yyyy年MM月dd日",
-                                { locale: ja }
-                              );
-                            }
-                            // oshiStartedAtがTimestampオブジェクトの場合
-                            if (
-                              typeof oshi.oshiStartedAt === "object" &&
-                              oshi.oshiStartedAt !== null &&
-                              "_seconds" in oshi.oshiStartedAt &&
-                              "_nanoseconds" in oshi.oshiStartedAt
-                            ) {
-                              const timestamp = oshi.oshiStartedAt as {
-                                _seconds: number;
-                                _nanoseconds: number;
-                              };
-                              return format(
-                                new Date(
-                                  timestamp._seconds * 1000 +
-                                    timestamp._nanoseconds / 1000000
-                                ),
-                                "yyyy年MM月dd日",
-                                { locale: ja }
-                              );
-                            }
-                            return null;
-                          } catch (error) {
-                            console.error(
-                              "Error formatting oshiStartedAt:",
-                              error,
-                              oshi.oshiStartedAt
-                            );
-                            return null;
-                          }
-                        })()}
-                      </p>
-                    )}
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() => startEditing(oshi)}
-                        className="text-center text-sm font-normal rounded-full border border-gray-300 bg-white hover:bg-gray-50 px-2 py-0.5 cursor-pointer shadow-none"
-                      >
-                        編集
-                      </button>
-                      <DeleteOshiDialog
-                        oshiId={oshi.id}
-                        oshiName={oshi.name}
-                        onDelete={fetchOshis}
-                      />
-                    </div>
-                  </div>
-                ))}
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead>
+                    <tr className="border-b">
+                      <th className="text-left py-3 px-2 font-medium text-sm">
+                        画像
+                      </th>
+                      <th className="text-left py-3 px-2 font-medium text-sm">
+                        名前
+                      </th>
+                      <th className="text-left py-3 px-2 font-medium text-sm">
+                        推しを始めた日
+                      </th>
+                      <th className="text-center py-3 px-2 font-medium text-sm">
+                        操作
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {oshis.map((oshi) => (
+                      <tr key={oshi.id} className="border-b">
+                        <td className="py-3 px-2">
+                          <div className="w-12 h-12 relative">
+                            {oshi.imageUrl ? (
+                              <Image
+                                src={oshi.imageUrl}
+                                alt={`${oshi.name}の画像`}
+                                fill
+                                className="object-cover rounded-full border border-gray-300"
+                              />
+                            ) : (
+                              <UserIcon className="w-12 h-12 border border-gray-300 rounded-full" />
+                            )}
+                          </div>
+                        </td>
+                        <td className="py-3 px-2">
+                          <p className="font-medium">{oshi.name}</p>
+                        </td>
+                        <td className="py-3 px-2">
+                          {oshi.oshiStartedAt && (
+                            <p className="text-sm text-gray-600">
+                              {(() => {
+                                try {
+                                  // oshiStartedAtが文字列の場合
+                                  if (typeof oshi.oshiStartedAt === "string") {
+                                    return format(
+                                      new Date(oshi.oshiStartedAt),
+                                      "yyyy年MM月dd日",
+                                      { locale: ja }
+                                    );
+                                  }
+                                  // oshiStartedAtがTimestampオブジェクトの場合
+                                  if (
+                                    typeof oshi.oshiStartedAt === "object" &&
+                                    oshi.oshiStartedAt !== null &&
+                                    "_seconds" in oshi.oshiStartedAt &&
+                                    "_nanoseconds" in oshi.oshiStartedAt
+                                  ) {
+                                    const timestamp = oshi.oshiStartedAt as {
+                                      _seconds: number;
+                                      _nanoseconds: number;
+                                    };
+                                    return format(
+                                      new Date(
+                                        timestamp._seconds * 1000 +
+                                          timestamp._nanoseconds / 1000000
+                                      ),
+                                      "yyyy年MM月dd日",
+                                      { locale: ja }
+                                    );
+                                  }
+                                  return null;
+                                } catch (error) {
+                                  console.error(
+                                    "Error formatting oshiStartedAt:",
+                                    error,
+                                    oshi.oshiStartedAt
+                                  );
+                                  return null;
+                                }
+                              })()}
+                            </p>
+                          )}
+                        </td>
+                        <td className="py-3 px-2">
+                          <div className="flex gap-2 justify-end">
+                            <button
+                              onClick={() => startEditing(oshi)}
+                              className="text-center text-sm font-normal rounded-full border border-gray-300 bg-white hover:bg-gray-50 px-2 py-0.5 cursor-pointer shadow-none"
+                            >
+                              編集
+                            </button>
+                            <DeleteOshiDialog
+                              oshiId={oshi.id}
+                              oshiName={oshi.name}
+                              onDelete={fetchOshis}
+                            />
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
             ) : (
               <p className="text-center my-10">推しが登録されていません。</p>
