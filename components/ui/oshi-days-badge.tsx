@@ -13,9 +13,9 @@ export function OshiDaysBadge({
 }: OshiDaysBadgeProps) {
   const days = calculateOshiDays(oshiStartedAt);
 
-  // 日数が計算できない場合（null、未来の日付など）は何も表示しない
+  // 日数が計算できない場合（null、未来の日付など）は空白を表示
   if (days === null) {
-    return null;
+    return <span className={`text-xs text-gray-500 ${className}`}>&nbsp;</span>;
   }
 
   return (

@@ -190,22 +190,21 @@ export function SlugPageClient({
           )}
         </CardContent>
       </Card>
-      {isCurrentUser && (
-        <Card className="w-full mb-4">
-          <Link
-            href="/settings/oshi"
-            className="bg-white hover:bg-gray-50 rounded-[.5rem]"
-          >
-            <CardContent className="flex flex-row items-center gap-3 py-4 px-6">
-              <UsersRound strokeWidth={1.5} className="w-6 h-6" />
-              <p>推し管理</p>
-            </CardContent>
-          </Link>
-        </Card>
-      )}
+
       <Card className="w-full mb-4">
         <CardContent className="py-5 px-6">
-          <h1 className="text-xl font-bold mb-6">投稿一覧</h1>
+          <div className="flex justify-between items-center">
+            <h1 className="text-xl font-bold mb-6">投稿一覧</h1>
+            {isCurrentUser && (
+              <Link
+                href="/settings/oshi"
+                className="relative bottom-2 flex items-center gap-1 rounded-full border border-gray-300 hover:bg-gray-50 px-3 py-2"
+              >
+                <UsersRound strokeWidth={1.5} className="w-5 h-5" />
+                <p>推し管理</p>
+              </Link>
+            )}
+          </div>
           <Tabs
             value={activeTab}
             onValueChange={setActiveTab}
@@ -228,7 +227,7 @@ export function SlugPageClient({
                   >
                     {tab.oshi ? (
                       <div className="flex flex-col items-center gap-1">
-                        <div className="w-10 h-10 relative">
+                        <div className="w-16 h-16 relative">
                           {tab.oshi.imageUrl ? (
                             <Image
                               src={tab.oshi.imageUrl}
@@ -237,7 +236,7 @@ export function SlugPageClient({
                               className="object-cover rounded-full border border-gray-300"
                             />
                           ) : (
-                            <UserIcon className="w-9 h-9 border border-gray-300 rounded-full" />
+                            <UserIcon className="w-16 h-16 border border-gray-300 rounded-full" />
                           )}
                         </div>
                         <div className="text-sm">{tab.oshi.name}</div>
