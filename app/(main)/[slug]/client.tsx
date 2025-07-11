@@ -204,7 +204,7 @@ export function SlugPageClient({
           <h1 className="text-xl font-bold mb-6">投稿一覧</h1>
           <Tabs defaultValue="all" className="w-full">
             <TabsList
-              className="flex justify-start w-full overflow-x-auto gap-1 p-1 scrollbar-hide"
+              className="flex items-end justify-start w-full h-auto overflow-x-auto gap-1 p-1 scrollbar-hide"
               style={{
                 scrollbarWidth: "none",
                 msOverflowStyle: "none",
@@ -220,23 +220,21 @@ export function SlugPageClient({
                   >
                     {tab.oshi ? (
                       <div className="flex flex-col items-center gap-1">
-                        <div className="flex items-center gap-2">
-                          <div className="w-6 h-6 relative">
-                            {tab.oshi.imageUrl ? (
-                              <Image
-                                src={tab.oshi.imageUrl}
-                                alt={`${tab.oshi.name}の画像`}
-                                fill
-                                className="object-cover rounded-full border border-gray-300"
-                              />
-                            ) : (
-                              <UserIcon className="w-6 h-6 border border-gray-300 rounded-full" />
-                            )}
-                          </div>
-                          <span className="text-sm">{tab.oshi.name}</span>
+                        <div className="w-10 h-10 relative">
+                          {tab.oshi.imageUrl ? (
+                            <Image
+                              src={tab.oshi.imageUrl}
+                              alt={`${tab.oshi.name}の画像`}
+                              fill
+                              className="object-cover rounded-full border border-gray-300"
+                            />
+                          ) : (
+                            <UserIcon className="w-9 h-9 border border-gray-300 rounded-full" />
+                          )}
                         </div>
+                        <div className="text-sm">{tab.oshi.name}</div>
                         {tab.oshi.oshiStartedAt && (
-                          <span className="text-xs text-gray-500">
+                          <div className="text-xs text-gray-500">
                             {(() => {
                               try {
                                 if (
@@ -277,7 +275,7 @@ export function SlugPageClient({
                                 return null;
                               }
                             })()}
-                          </span>
+                          </div>
                         )}
                       </div>
                     ) : (
