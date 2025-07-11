@@ -210,7 +210,7 @@ export function SlugPageClient({
               }}
             >
               {tabs.map((tab) => {
-                console.log("Rendering tab:", tab);
+                //console.log("Rendering tab:", tab);
                 return (
                   <TabsTrigger
                     key={tab.value}
