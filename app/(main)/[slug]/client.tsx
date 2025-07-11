@@ -40,6 +40,7 @@ export function SlugPageClient({
   const [oshis, setOshis] = useState<Oshi[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState<string>("");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -52,7 +53,12 @@ export function SlugPageClient({
 
         if (oshisResponse.ok) {
           const oshisData = await oshisResponse.json();
-          setOshis(oshisData.oshiList || []);
+          const oshiList = oshisData.oshiList || [];
+          setOshis(oshiList);
+          // 最初の推しをアクティブタブに設定
+          if (oshiList.length > 0) {
+            setActiveTab(oshiList[0].id);
+          }
         } else {
           console.error(
             "API error:",
@@ -92,7 +98,7 @@ export function SlugPageClient({
 
   // タブの動的生成
   const generateTabs = (): TabItem[] => {
-    const tabs: TabItem[] = [{ value: "all", label: "すべて", oshi: null }];
+    const tabs: TabItem[] = [];
 
     if (!loading) {
       oshis.forEach((oshi) => {
@@ -200,7 +206,11 @@ export function SlugPageClient({
       <Card className="w-full mb-4">
         <CardContent className="py-5 px-6">
           <h1 className="text-xl font-bold mb-6">投稿一覧</h1>
-          <Tabs defaultValue="all" className="w-full">
+          <Tabs
+            value={activeTab}
+            onValueChange={setActiveTab}
+            className="w-full"
+          >
             <TabsList
               className="flex items-end justify-start w-full h-auto overflow-x-auto gap-1 p-1 scrollbar-hide"
               style={{
@@ -244,28 +254,18 @@ export function SlugPageClient({
               })}
             </TabsList>
 
-            <TabsContent value="all" className="mt-6">
-              <PostList
-                posts={posts}
-                isCurrentUser={isCurrentUser}
-                categories={categories}
-              />
-            </TabsContent>
-
             {!loading &&
-              (() => {
-                return oshis.map((oshi) => {
-                  return (
-                    <TabsContent key={oshi.id} value={oshi.id} className="mt-6">
-                      <PostList
-                        posts={getPostsByOshi(oshi.id)}
-                        isCurrentUser={isCurrentUser}
-                        categories={categories}
-                      />
-                    </TabsContent>
-                  );
-                });
-              })()}
+              oshis.map((oshi) => {
+                return (
+                  <TabsContent key={oshi.id} value={oshi.id} className="mt-6">
+                    <PostList
+                      posts={getPostsByOshi(oshi.id)}
+                      isCurrentUser={isCurrentUser}
+                      categories={categories}
+                    />
+                  </TabsContent>
+                );
+              })}
           </Tabs>
         </CardContent>
       </Card>
