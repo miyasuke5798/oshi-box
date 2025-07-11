@@ -15,8 +15,7 @@ import PostList from "./components/PostList";
 import { ChevronLeftBackButton } from "@/components/ui/chevron-left-back-button";
 import { toast } from "sonner";
 import { SuccessCircle } from "@/components/svg/success_circle";
-import { format } from "date-fns";
-import { ja } from "date-fns/locale";
+import { OshiDaysBadge } from "@/components/ui/oshi-days-badge";
 
 interface TabItem {
   value: string;
@@ -233,50 +232,10 @@ export function SlugPageClient({
                           )}
                         </div>
                         <div className="text-sm">{tab.oshi.name}</div>
-                        {tab.oshi.oshiStartedAt && (
-                          <div className="text-xs text-gray-500">
-                            {(() => {
-                              try {
-                                if (
-                                  typeof tab.oshi.oshiStartedAt === "string"
-                                ) {
-                                  return format(
-                                    new Date(tab.oshi.oshiStartedAt),
-                                    "yyyy/MM/dd",
-                                    { locale: ja }
-                                  );
-                                }
-                                if (
-                                  typeof tab.oshi.oshiStartedAt === "object" &&
-                                  tab.oshi.oshiStartedAt !== null &&
-                                  "_seconds" in tab.oshi.oshiStartedAt &&
-                                  "_nanoseconds" in tab.oshi.oshiStartedAt
-                                ) {
-                                  const timestamp = tab.oshi.oshiStartedAt as {
-                                    _seconds: number;
-                                    _nanoseconds: number;
-                                  };
-                                  return format(
-                                    new Date(
-                                      timestamp._seconds * 1000 +
-                                        timestamp._nanoseconds / 1000000
-                                    ),
-                                    "yyyy/MM/dd",
-                                    { locale: ja }
-                                  );
-                                }
-                                return null;
-                              } catch (error) {
-                                console.error(
-                                  "Error formatting oshiStartedAt:",
-                                  error,
-                                  tab.oshi.oshiStartedAt
-                                );
-                                return null;
-                              }
-                            })()}
-                          </div>
-                        )}
+                        <OshiDaysBadge
+                          oshiStartedAt={tab.oshi.oshiStartedAt || null}
+                          showLabel={true}
+                        />
                       </div>
                     ) : (
                       tab.label

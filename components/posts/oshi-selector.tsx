@@ -9,6 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { SuccessCircle } from "@/components/svg/success_circle";
 import { CirclePlus } from "lucide-react";
 import { toast } from "sonner";
 import { Oshi } from "@/types/oshi";
@@ -103,7 +104,7 @@ export function OshiSelector({
       // 新しく作成された推しを選択
       onValueChange(data.oshiId);
 
-      toast.success("推しを登録しました");
+      toast.success("推しを登録しました", { icon: <SuccessCircle /> });
     } catch (error) {
       console.error("Error creating oshi:", error);
       toast.error("推しの登録に失敗しました");
