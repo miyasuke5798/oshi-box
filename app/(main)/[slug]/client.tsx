@@ -15,6 +15,14 @@ import PostList from "./components/PostList";
 import { ChevronLeftBackButton } from "@/components/ui/chevron-left-back-button";
 import { toast } from "sonner";
 import { SuccessCircle } from "@/components/svg/success_circle";
+import { format } from "date-fns";
+import { ja } from "date-fns/locale";
+
+interface TabItem {
+  value: string;
+  label: string;
+  oshi: Oshi | null;
+}
 
 interface SlugPageClientProps {
   params: {
@@ -84,14 +92,15 @@ export function SlugPageClient({
   };
 
   // タブの動的生成
-  const generateTabs = () => {
-    const tabs = [{ value: "all", label: "すべて" }];
+  const generateTabs = (): TabItem[] => {
+    const tabs: TabItem[] = [{ value: "all", label: "すべて", oshi: null }];
 
     if (!loading) {
       oshis.forEach((oshi) => {
         tabs.push({
           value: oshi.id,
           label: oshi.name,
+          oshi: oshi,
         });
       });
     }
@@ -99,6 +108,7 @@ export function SlugPageClient({
   };
 
   const tabs = generateTabs();
+  console.log("Generated tabs:", tabs);
 
   // URLコピー機能
   const handleCopyUrl = async () => {
@@ -200,15 +210,82 @@ export function SlugPageClient({
                 msOverflowStyle: "none",
               }}
             >
-              {tabs.map((tab) => (
-                <TabsTrigger
-                  key={tab.value}
-                  value={tab.value}
-                  className="whitespace-nowrap flex-shrink-0 min-w-fit"
-                >
-                  {tab.label}
-                </TabsTrigger>
-              ))}
+              {tabs.map((tab) => {
+                console.log("Rendering tab:", tab);
+                return (
+                  <TabsTrigger
+                    key={tab.value}
+                    value={tab.value}
+                    className="whitespace-nowrap flex-shrink-0 min-w-fit"
+                  >
+                    {tab.oshi ? (
+                      <div className="flex flex-col items-center gap-1">
+                        <div className="flex items-center gap-2">
+                          <div className="w-6 h-6 relative">
+                            {tab.oshi.imageUrl ? (
+                              <Image
+                                src={tab.oshi.imageUrl}
+                                alt={`${tab.oshi.name}の画像`}
+                                fill
+                                className="object-cover rounded-full border border-gray-300"
+                              />
+                            ) : (
+                              <UserIcon className="w-6 h-6 border border-gray-300 rounded-full" />
+                            )}
+                          </div>
+                          <span className="text-sm">{tab.oshi.name}</span>
+                        </div>
+                        {tab.oshi.oshiStartedAt && (
+                          <span className="text-xs text-gray-500">
+                            {(() => {
+                              try {
+                                if (
+                                  typeof tab.oshi.oshiStartedAt === "string"
+                                ) {
+                                  return format(
+                                    new Date(tab.oshi.oshiStartedAt),
+                                    "yyyy/MM/dd",
+                                    { locale: ja }
+                                  );
+                                }
+                                if (
+                                  typeof tab.oshi.oshiStartedAt === "object" &&
+                                  tab.oshi.oshiStartedAt !== null &&
+                                  "_seconds" in tab.oshi.oshiStartedAt &&
+                                  "_nanoseconds" in tab.oshi.oshiStartedAt
+                                ) {
+                                  const timestamp = tab.oshi.oshiStartedAt as {
+                                    _seconds: number;
+                                    _nanoseconds: number;
+                                  };
+                                  return format(
+                                    new Date(
+                                      timestamp._seconds * 1000 +
+                                        timestamp._nanoseconds / 1000000
+                                    ),
+                                    "yyyy/MM/dd",
+                                    { locale: ja }
+                                  );
+                                }
+                                return null;
+                              } catch (error) {
+                                console.error(
+                                  "Error formatting oshiStartedAt:",
+                                  error,
+                                  tab.oshi.oshiStartedAt
+                                );
+                                return null;
+                              }
+                            })()}
+                          </span>
+                        )}
+                      </div>
+                    ) : (
+                      tab.label
+                    )}
+                  </TabsTrigger>
+                );
+              })}
             </TabsList>
 
             <TabsContent value="all" className="mt-6">
