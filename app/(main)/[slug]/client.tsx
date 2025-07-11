@@ -130,14 +130,14 @@ export function SlugPageClient({
     <div className="mt-3 mb-16">
       <ShareMenu />
       <Card className="w-full mb-4">
-        <CardContent className="relative py-5 px-6">
+        <CardContent className="relative px-6">
           {!isCurrentUser && (
             <div className="absolute top-5 left-5">
               <ChevronLeftBackButton />
             </div>
           )}
           <div className="max-w-[70%] mx-auto">
-            <div className="flex flex-col items-center gap-2 mt-5 mb-3">
+            <div className="flex flex-col items-center gap-1 my-3">
               {userData?.photoURL ? (
                 <div className="relative w-20 h-20 min-w-20 min-h-20">
                   <Image
@@ -150,12 +150,12 @@ export function SlugPageClient({
               ) : (
                 <UserIcon className="w-20 h-20 min-w-20 min-h-20 border border-gray-300 rounded-full" />
               )}
-              <h1 className="text-xl text-[#181818] my-2">
+              <h1 className="text-xl text-[#181818] my-1">
                 {userData?.displayName || ""}
               </h1>
-              <p className="text-xs mb-2">{userData?.bio || ""}</p>
+              <p className="text-xs mb-1">{userData?.bio || ""}</p>
               {/* <p className="">{userData?.oshiName || ""}</p> */}
-              <p className="text-xs mb-2">
+              <p className="text-xs mb-1">
                 {userData?.snsLink ? (
                   <Link
                     href={userData.snsLink}

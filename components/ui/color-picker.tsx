@@ -81,10 +81,16 @@ export function ColorPicker({
           ref={triggerRef}
           type="button"
           disabled={disabled}
-          className={`w-12 h-10 border border-gray-300 rounded cursor-pointer transition-colors hover:border-gray-400 ${className}`}
+          className={`w-12 h-10 border border-gray-300 rounded cursor-pointer transition-colors hover:border-gray-400 relative ${className}`}
           style={{ backgroundColor: value || "#f3f4f6" }}
           title="色を選択"
-        />
+        >
+          {!value && (
+            <span className="absolute inset-0 flex items-center justify-center text-xs text-gray-500 font-medium">
+              なし
+            </span>
+          )}
+        </button>
       </DialogTrigger>
       <DialogContent
         className="p-3 w-auto"
