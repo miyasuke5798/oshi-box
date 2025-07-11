@@ -4,6 +4,7 @@ export interface Oshi {
   createdAt: string;
   updatedAt: string;
   imageUrl?: string; // 推しの画像URL
+  oshiColor?: string | null; // 推しの色（HEX形式: #RRGGBB、未選択の場合はnull）
   oshiStartedAt?:
     | string
     | {

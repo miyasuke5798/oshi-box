@@ -11,6 +11,10 @@ const oshiSchema = z.object({
     .max(50, "推しの名前は50文字以内で入力してください")
     .trim(),
   oshiStartedAt: z.string().min(1, "推しを始めた日を選択してください"),
+  oshiColor: z
+    .string()
+    .regex(/^#[0-9A-Fa-f]{6}$/, "有効な色コードを入力してください")
+    .optional(),
 });
 
 export async function PUT(
@@ -80,6 +84,7 @@ export async function PUT(
       .doc(oshiId)
       .update({
         name: validatedData.name,
+        oshiColor: validatedData.oshiColor || null,
         oshiStartedAt: oshiStartedAt,
         updatedAt: new Date(),
       });

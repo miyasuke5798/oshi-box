@@ -11,6 +11,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { UserIcon } from "@/components/svg/UserIcon";
+import { ColorPicker } from "@/components/ui/color-picker";
 import { toast } from "sonner";
 import { AlertCircle, X } from "lucide-react";
 import { z } from "zod";
@@ -31,12 +32,14 @@ interface OshiFormDialogProps {
   onSubmit: (
     name: string,
     oshiStartedAt: string,
+    oshiColor: string,
     imageFile?: File,
     shouldDeleteImage?: boolean
   ) => Promise<void>;
   initialName?: string;
   initialOshiStartedAt?: string;
   initialImageUrl?: string;
+  initialOshiColor?: string;
   oshiId?: string; // 編集時に必要
   title: string;
   submitText: string;
@@ -50,12 +53,16 @@ export function OshiFormDialog({
   initialName = "",
   initialOshiStartedAt = "",
   initialImageUrl = "",
+  initialOshiColor = "",
   title,
   submitText,
   isLoading = false,
 }: OshiFormDialogProps) {
   const [name, setName] = useState(initialName);
   const [oshiStartedAt, setOshiStartedAt] = useState(initialOshiStartedAt);
+  const [oshiColor, setOshiColor] = useState<string | null>(
+    initialOshiColor || null
+  );
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(
     initialImageUrl || null
@@ -67,11 +74,18 @@ export function OshiFormDialog({
     if (isOpen) {
       setName(initialName);
       setOshiStartedAt(initialOshiStartedAt);
+      setOshiColor(initialOshiColor);
       setImageFile(null);
       setPreviewUrl(initialImageUrl || null);
       setShouldDeleteImage(false);
     }
-  }, [isOpen, initialName, initialOshiStartedAt, initialImageUrl]);
+  }, [
+    isOpen,
+    initialName,
+    initialOshiStartedAt,
+    initialOshiColor,
+    initialImageUrl,
+  ]);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -116,6 +130,7 @@ export function OshiFormDialog({
       await onSubmit(
         validatedData.name,
         validatedData.oshiStartedAt,
+        oshiColor || "",
         imageFile || undefined,
         shouldDeleteImage
       );
@@ -199,6 +214,17 @@ export function OshiFormDialog({
               disabled={isLoading}
               className="mt-1"
             />
+          </div>
+          <div>
+            <label className="text-sm font-medium">推しの色</label>
+            <div className="flex items-center gap-3 mt-1">
+              <ColorPicker
+                value={oshiColor}
+                onChange={setOshiColor}
+                disabled={isLoading}
+              />
+              <span className="text-sm text-gray-600">{oshiColor}</span>
+            </div>
           </div>
           <div className="flex justify-end gap-2">
             <Button variant="gray" onClick={onClose} disabled={isLoading}>

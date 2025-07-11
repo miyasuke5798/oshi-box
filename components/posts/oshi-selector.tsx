@@ -59,6 +59,7 @@ export function OshiSelector({
   const handleCreateOshi = async (
     name: string,
     oshiStartedAt: string,
+    oshiColor: string,
     imageFile?: File
   ) => {
     try {
@@ -70,7 +71,7 @@ export function OshiSelector({
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ name, oshiStartedAt }),
+        body: JSON.stringify({ name, oshiStartedAt, oshiColor }),
       });
 
       const data = await response.json();

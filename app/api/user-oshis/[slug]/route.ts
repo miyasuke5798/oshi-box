@@ -39,6 +39,7 @@ export async function GET(
         id: doc.id,
         name: data.name,
         imageUrl: data.imageUrl || null,
+        oshiColor: data.oshiColor || null,
         oshiStartedAt: data.oshiStartedAt || null,
         createdAt:
           data.createdAt?.toDate?.()?.toISOString() || new Date().toISOString(),

@@ -49,6 +49,7 @@ export default function SettingsOshiPage() {
   const handleAddOshi = async (
     name: string,
     oshiStartedAt: string,
+    oshiColor: string,
     imageFile?: File
   ) => {
     setIsAdding(true);
@@ -58,7 +59,7 @@ export default function SettingsOshiPage() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ name, oshiStartedAt }),
+        body: JSON.stringify({ name, oshiStartedAt, oshiColor }),
       });
 
       if (response.ok) {
@@ -111,6 +112,7 @@ export default function SettingsOshiPage() {
   const handleUpdateOshi = async (
     name: string,
     oshiStartedAt: string,
+    oshiColor: string,
     imageFile?: File,
     shouldDeleteImage?: boolean
   ) => {
@@ -123,7 +125,7 @@ export default function SettingsOshiPage() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ name, oshiStartedAt }),
+        body: JSON.stringify({ name, oshiStartedAt, oshiColor }),
       });
 
       if (response.ok) {
@@ -369,6 +371,7 @@ export default function SettingsOshiPage() {
           }
         })()}
         initialImageUrl={editingOshi?.imageUrl || ""}
+        initialOshiColor={editingOshi?.oshiColor || ""}
         oshiId={editingOshi?.id}
         title="推しの編集"
         submitText="更新"
