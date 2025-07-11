@@ -503,6 +503,9 @@ export async function getAllOshis(): Promise<
         } = {
           id: oshiDoc.id,
           name: oshiData?.name || "",
+          imageUrl: oshiData?.imageUrl || null,
+          oshiColor: oshiData?.oshiColor || null,
+          oshiStartedAt: oshiData?.oshiStartedAt || null,
           createdAt:
             oshiData?.createdAt?.toDate?.()?.toISOString() ||
             new Date().toISOString(),

@@ -107,7 +107,6 @@ export function SlugPageClient({
   };
 
   const tabs = generateTabs();
-  console.log("Generated tabs:", tabs);
 
   // URLコピー機能
   const handleCopyUrl = async () => {
