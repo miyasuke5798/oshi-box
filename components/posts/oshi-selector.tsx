@@ -120,7 +120,7 @@ export function OshiSelector({
       <div className="flex-1">
         <Select
           onValueChange={(value) =>
-            onValueChange(value === "none" ? null : value)
+            onValueChange(value === "none" ? "" : value)
           }
           value={value || "none"}
           disabled={isLoading}

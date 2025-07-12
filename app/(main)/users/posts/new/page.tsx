@@ -41,7 +41,7 @@ const usersPostSchema = z.object({
     )
     .optional(),
   categories: z.array(z.string()),
-  oshi: z.string().nullable(),
+  oshi: z.string().min(1, "推しを選択してください"),
 });
 
 type usersPostFormData = z.infer<typeof usersPostSchema>;
@@ -66,7 +66,7 @@ export default function UsersPostsPage() {
       visibility: "public",
       images: [],
       categories: [],
-      oshi: null,
+      oshi: "",
     },
   });
 
@@ -159,7 +159,7 @@ export default function UsersPostsPage() {
         content: data.content,
         visibility: data.visibility,
         categories: data.categories,
-        oshiId: data.oshi, // 推しIDを設定（nullの場合はnull）
+        oshiId: data.oshi, // 推しIDを設定
         images: [],
       };
 
@@ -238,9 +238,12 @@ export default function UsersPostsPage() {
                 ※推しは最大3人まで登録できます
               </p>
               <OshiSelector
-                value={watch("oshi") || null}
-                onValueChange={(oshi) => setValue("oshi", oshi)}
+                value={watch("oshi") || ""}
+                onValueChange={(oshi) => setValue("oshi", oshi || "")}
               />
+              {errors.oshi && (
+                <p className="text-sm text-red-500">{errors.oshi.message}</p>
+              )}
             </div>
             <div className="space-y-2">
               <label htmlFor="title" className="text-sm font-medium">

@@ -40,7 +40,7 @@ const postSchema = z.object({
     )
     .optional(),
   categories: z.array(z.string()),
-  oshi: z.string().nullable(),
+  oshi: z.string().min(1, "推しを選択してください"),
 });
 
 type PostFormData = z.infer<typeof postSchema>;
@@ -87,7 +87,7 @@ export function PostForm({
       visibility: initialData?.visibility || "public",
       images: [],
       categories: initialData?.categories || [],
-      oshi: initialData?.oshiId || null,
+      oshi: initialData?.oshiId || "",
     },
   });
 
@@ -386,9 +386,12 @@ export function PostForm({
           ※推しは最大3人まで登録できます
         </p>
         <OshiSelector
-          value={watch("oshi") || null}
-          onValueChange={(oshi) => setValue("oshi", oshi)}
+          value={watch("oshi") || ""}
+          onValueChange={(oshi) => setValue("oshi", oshi || "")}
         />
+        {errors.oshi && (
+          <p className="text-sm text-red-500">{errors.oshi.message}</p>
+        )}
       </div>
       <div className="space-y-2">
         <Label htmlFor="title">タイトル</Label>
