@@ -236,14 +236,34 @@ export default function SettingsOshiPage() {
                         <td className="py-3 px-2">
                           <div className="w-12 h-12 relative">
                             {oshi.imageUrl ? (
-                              <Image
-                                src={oshi.imageUrl}
-                                alt={`${oshi.name}の画像`}
-                                fill
-                                className="object-cover rounded-full border border-gray-300"
-                              />
+                              <div
+                                className="w-12 h-12 rounded-full p-1"
+                                style={{
+                                  background: oshi.oshiColor
+                                    ? `linear-gradient(45deg, ${oshi.oshiColor}, ${oshi.oshiColor})`
+                                    : "transparent",
+                                }}
+                              >
+                                <div className="w-full h-full relative">
+                                  <Image
+                                    src={oshi.imageUrl}
+                                    alt={`${oshi.name}の画像`}
+                                    fill
+                                    className="object-cover rounded-full border border-gray-300"
+                                  />
+                                </div>
+                              </div>
                             ) : (
-                              <UserIcon className="w-12 h-12 border border-gray-300 rounded-full" />
+                              <div
+                                className="w-12 h-12 rounded-full p-1"
+                                style={{
+                                  background: oshi.oshiColor
+                                    ? `linear-gradient(45deg, ${oshi.oshiColor}, ${oshi.oshiColor})`
+                                    : "transparent",
+                                }}
+                              >
+                                <UserIcon className="w-10 h-10 border border-gray-300 rounded-full bg-white" />
+                              </div>
                             )}
                           </div>
                         </td>

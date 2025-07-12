@@ -229,14 +229,34 @@ export function SlugPageClient({
                       <div className="flex flex-col items-center gap-1">
                         <div className="w-16 h-16 relative">
                           {tab.oshi.imageUrl ? (
-                            <Image
-                              src={tab.oshi.imageUrl}
-                              alt={`${tab.oshi.name}の画像`}
-                              fill
-                              className="object-cover rounded-full border border-gray-300"
-                            />
+                            <div
+                              className="w-16 h-16 rounded-full p-1"
+                              style={{
+                                background: tab.oshi.oshiColor
+                                  ? `linear-gradient(45deg, ${tab.oshi.oshiColor}, ${tab.oshi.oshiColor})`
+                                  : "transparent",
+                              }}
+                            >
+                              <div className="w-full h-full relative">
+                                <Image
+                                  src={tab.oshi.imageUrl}
+                                  alt={`${tab.oshi.name}の画像`}
+                                  fill
+                                  className="object-cover rounded-full border border-gray-300"
+                                />
+                              </div>
+                            </div>
                           ) : (
-                            <UserIcon className="w-16 h-16 border border-gray-300 rounded-full" />
+                            <div
+                              className="w-16 h-16 rounded-full p-1"
+                              style={{
+                                background: tab.oshi.oshiColor
+                                  ? `linear-gradient(45deg, ${tab.oshi.oshiColor}, ${tab.oshi.oshiColor})`
+                                  : "transparent",
+                              }}
+                            >
+                              <UserIcon className="w-14 h-14 border border-gray-300 rounded-full bg-white" />
+                            </div>
                           )}
                         </div>
                         <div className="text-sm">{tab.oshi.name}</div>
