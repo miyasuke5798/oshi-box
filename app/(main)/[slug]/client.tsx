@@ -130,7 +130,7 @@ export function SlugPageClient({
     <div className="mt-3 mb-16">
       <ShareMenu />
       <Card className="w-full mb-4">
-        <CardContent className="relative px-6">
+        <CardContent className="relative py-2 px-6">
           {!isCurrentUser && (
             <div className="absolute top-5 left-5">
               <ChevronLeftBackButton />
