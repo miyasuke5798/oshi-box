@@ -242,7 +242,7 @@ export function SlugPageClient({
                                   src={tab.oshi.imageUrl}
                                   alt={`${tab.oshi.name}の画像`}
                                   fill
-                                  className="object-cover rounded-full border border-gray-300"
+                                  className="object-cover rounded-full"
                                 />
                               </div>
                             </div>
@@ -255,7 +255,7 @@ export function SlugPageClient({
                                   : "transparent",
                               }}
                             >
-                              <UserIcon className="w-14 h-14 border border-gray-300 rounded-full bg-white" />
+                              <UserIcon className="w-14 h-14 rounded-full bg-white" />
                             </div>
                           )}
                         </div>

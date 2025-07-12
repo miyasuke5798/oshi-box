@@ -249,7 +249,7 @@ export default function SettingsOshiPage() {
                                     src={oshi.imageUrl}
                                     alt={`${oshi.name}の画像`}
                                     fill
-                                    className="object-cover rounded-full border border-gray-300"
+                                    className="object-cover rounded-full"
                                   />
                                 </div>
                               </div>
@@ -262,7 +262,7 @@ export default function SettingsOshiPage() {
                                     : "transparent",
                                 }}
                               >
-                                <UserIcon className="w-10 h-10 border border-gray-300 rounded-full bg-white" />
+                                <UserIcon className="w-10 h-10 rounded-full bg-white" />
                               </div>
                             )}
                           </div>
