@@ -1,6 +1,5 @@
 import { ShareMenu } from "@/components/layout/share_menu";
 import { Card, CardContent } from "@/components/ui/card";
-import { requireAuth } from "@/lib/auth-server";
 import { getPosts, getCategories } from "@/lib/firebase/admin";
 import Link from "next/link";
 import Image from "next/image";
@@ -10,7 +9,6 @@ import { Badge } from "@/components/ui/badge";
 import { CategoryBadge } from "@/components/ui/category-badge";
 
 export default async function PostsPage() {
-  await requireAuth();
   const [posts, categories] = await Promise.all([getPosts(), getCategories()]);
 
   // カテゴリーIDから名前を取得する関数
