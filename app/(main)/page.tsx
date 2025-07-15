@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { PostsGrid } from "@/components/posts/PostsGrid";
 import { getPosts, getCategories } from "@/lib/firebase/admin";
@@ -8,8 +9,11 @@ export default async function Home() {
 
   return (
     <div className="mt-6 mb-16">
-      <HomeContent />
+      <Suspense fallback={<div>Loading...</div>}>
+        <HomeContent />
+      </Suspense>
 
+      {/* 投稿一覧 */}
       <Card className="w-full">
         <CardContent className="py-5 px-6">
           <PostsGrid
