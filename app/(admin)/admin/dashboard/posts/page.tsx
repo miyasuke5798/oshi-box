@@ -6,6 +6,7 @@ import { ja } from "date-fns/locale";
 import { Card, CardContent } from "@/components/ui/card";
 import { Post } from "@/types/post";
 import { Badge } from "@/components/ui/badge";
+import { DeletePostDialog } from "./_components/delete-post-dialog";
 
 type PostWithUser = Post & {
   user: {
@@ -52,6 +53,7 @@ export default async function PostsDashboard() {
                   <th className="text-left p-4 font-medium">推し</th>
                   <th className="text-left p-4 font-medium">公開範囲</th>
                   <th className="text-left p-4 font-medium">作成日</th>
+                  <th className="text-left p-4 font-medium">操作</th>
                 </tr>
               </thead>
               <tbody>
@@ -128,12 +130,20 @@ export default async function PostsDashboard() {
                             )
                           : "不明"}
                       </td>
+                      <td className="p-4">
+                        <div className="flex items-center">
+                          <DeletePostDialog
+                            postId={post.id}
+                            postTitle={post.title}
+                          />
+                        </div>
+                      </td>
                     </tr>
                   ))
                 ) : (
                   <tr>
                     <td
-                      colSpan={7}
+                      colSpan={8}
                       className="p-4 text-sm text-center text-gray-500"
                     >
                       投稿がありません

@@ -209,6 +209,11 @@ export async function DELETE(
       );
     }
 
+    // 管理者権限チェック
+    const userDoc = await adminDb.collection("users").doc(session.uid).get();
+    const userData = userDoc.data();
+    const isAdmin = userData?.admin === true;
+
     // 投稿データを取得
     const postDoc = await adminDb.collection("posts").doc(postId).get();
 
@@ -221,8 +226,8 @@ export async function DELETE(
 
     const postData = postDoc.data();
 
-    // 投稿の所有者かチェック
-    if (postData?.userId !== session.uid) {
+    // 投稿の所有者または管理者かチェック
+    if (postData?.userId !== session.uid && !isAdmin) {
       return NextResponse.json(
         { error: "投稿の削除権限がありません" },
         { status: 403 }
@@ -232,6 +237,7 @@ export async function DELETE(
     // 画像がある場合はStorageから削除
     if (postData?.images && postData.images.length > 0) {
       const bucket = adminStorage.bucket(process.env.FIREBASE_STORAGE_BUCKET);
+      const postUserId = postData.userId; // 投稿者のユーザーIDを使用
 
       console.log(
         "API - Deleting images from storage:",
@@ -240,10 +246,22 @@ export async function DELETE(
 
       for (const imageUrl of postData.images) {
         try {
-          // URLからファイルパスを抽出
-          const urlParts = imageUrl.split("/");
-          const fileName = urlParts[urlParts.length - 1];
-          const filePath = `posts/${session.uid}/${fileName}`;
+          // 署名付きURLの場合はファイルパスを抽出、そうでなければURLから抽出
+          let filePath: string;
+          if (imageUrl.startsWith("http")) {
+            const extractedPath = extractFilePathFromSignedUrl(imageUrl);
+            if (extractedPath) {
+              filePath = extractedPath;
+            } else {
+              // 通常のURLの場合、投稿者のユーザーIDを使用してパスを構築
+              const urlParts = imageUrl.split("/");
+              const fileName = urlParts[urlParts.length - 1];
+              filePath = `posts/${postUserId}/${fileName}`;
+            }
+          } else {
+            // ファイルパスの場合、そのまま使用
+            filePath = imageUrl;
+          }
 
           console.log("API - Deleting image file:", filePath);
 
