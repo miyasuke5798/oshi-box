@@ -54,16 +54,16 @@ export function DeletePostDialog({ postId, postTitle }: DeletePostDialogProps) {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <button className="text-red-400 hover:text-red-500 underline cursor-pointer font-normal ml-4">
+        <button className="text-red-400 hover:text-red-500 underline cursor-pointer font-normal md:ml-4 ml-0">
           削除
         </button>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>投稿の削除</DialogTitle>
         </DialogHeader>
         <div className="py-4">
-          <p className="">
+          <p className="text-sm leading-relaxed">
             「{postTitle}」を削除してもよろしいですか？
             <br />
             この操作は取り消せません。
@@ -71,11 +71,12 @@ export function DeletePostDialog({ postId, postTitle }: DeletePostDialogProps) {
             関連する画像も削除されます。
           </p>
         </div>
-        <div className="flex justify-end gap-4">
+        <div className="flex flex-col sm:flex-row justify-end gap-3 sm:gap-4">
           <Button
             variant="outline"
             onClick={() => setIsOpen(false)}
             disabled={isDeleting}
+            className="w-full sm:w-auto"
           >
             キャンセル
           </Button>
@@ -83,6 +84,7 @@ export function DeletePostDialog({ postId, postTitle }: DeletePostDialogProps) {
             variant="destructive"
             onClick={handleDelete}
             disabled={isDeleting}
+            className="w-full sm:w-auto"
           >
             {isDeleting ? "削除中..." : "削除"}
           </Button>

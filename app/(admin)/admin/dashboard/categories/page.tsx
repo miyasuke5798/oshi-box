@@ -23,7 +23,8 @@ export default async function CategoriesDashboard() {
         </Button>
       </div>
 
-      <Card>
+      {/* デスクトップ用テーブル */}
+      <Card className="hidden md:block">
         <CardContent className="p-0">
           <div className="overflow-x-auto">
             <table className="w-full">
@@ -86,6 +87,71 @@ export default async function CategoriesDashboard() {
           </div>
         </CardContent>
       </Card>
+
+      {/* モバイル用カード表示 */}
+      <div className="md:hidden space-y-4">
+        {categories.length > 0 ? (
+          categories.map((category) => (
+            <Card key={category.id}>
+              <CardContent className="p-4">
+                <div className="space-y-3">
+                  {/* カテゴリー名 */}
+                  <div>
+                    <h3 className="font-medium text-lg">{category.name}</h3>
+                  </div>
+
+                  {/* カテゴリーID */}
+                  <div>
+                    <span className="text-sm text-gray-500">ID: </span>
+                    <span className="text-sm font-mono">{category.id}</span>
+                  </div>
+
+                  {/* 作成日 */}
+                  <div>
+                    <span className="text-sm text-gray-500">作成日: </span>
+                    <span className="text-sm">
+                      {category.createdAt
+                        ? format(
+                            new Date(
+                              category.createdAt.seconds * 1000 +
+                                category.createdAt.nanoseconds / 1000000
+                            ),
+                            "yyyy年MM月dd日",
+                            {
+                              locale: ja,
+                            }
+                          )
+                        : "不明"}
+                    </span>
+                  </div>
+
+                  {/* 操作ボタン */}
+                  <div className="pt-2 border-t">
+                    <div className="flex items-center gap-4">
+                      <Link
+                        href={`/admin/dashboard/categories/${category.id}/edit`}
+                        className="rose_link text-sm"
+                      >
+                        編集
+                      </Link>
+                      <DeleteCategoryDialog
+                        categoryId={category.id}
+                        categoryName={category.name}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))
+        ) : (
+          <Card>
+            <CardContent className="p-4 text-center text-gray-500">
+              カテゴリーがありません
+            </CardContent>
+          </Card>
+        )}
+      </div>
     </div>
   );
 }

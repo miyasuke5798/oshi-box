@@ -40,7 +40,8 @@ export default async function PostsDashboard() {
         <h1 className="text-xl font-bold">投稿一覧</h1>
       </div>
 
-      <Card>
+      {/* デスクトップ用テーブル */}
+      <Card className="hidden md:block">
         <CardContent className="p-0">
           <div className="overflow-x-auto">
             <table className="w-full">
@@ -155,6 +156,109 @@ export default async function PostsDashboard() {
           </div>
         </CardContent>
       </Card>
+
+      {/* モバイル用カード表示 */}
+      <div className="md:hidden space-y-4">
+        {posts.length > 0 ? (
+          (posts as PostWithUser[]).map((post) => (
+            <Card key={post.id}>
+              <CardContent className="p-4">
+                <div className="space-y-3">
+                  {/* タイトル */}
+                  <div>
+                    <Link
+                      href={`/users/posts/${post.id}`}
+                      className="rose_link"
+                    >
+                      <h3 className="font-medium text-lg">{post.title}</h3>
+                    </Link>
+                  </div>
+
+                  {/* 投稿者 */}
+                  <div>
+                    <span className="text-sm text-gray-500">投稿者: </span>
+                    <Link
+                      href={`/${post.user.uid}`}
+                      className="rose_link text-sm font-medium"
+                    >
+                      {post.user.displayName || "名前未設定"}
+                    </Link>
+                  </div>
+
+                  {/* カテゴリー */}
+                  <div>
+                    <span className="text-sm text-gray-500">カテゴリー: </span>
+                    <div className="flex flex-wrap gap-1 mt-1">
+                      {post.categories.map((categoryId) => (
+                        <Badge
+                          key={categoryId}
+                          variant="secondary"
+                          className="text-xs"
+                        >
+                          {getCategoryName(categoryId)}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* 推し */}
+                  <div>
+                    <span className="text-sm text-gray-500">推し: </span>
+                    {post.oshi ? (
+                      <Badge variant="outline" className="text-xs ml-1">
+                        {post.oshi.name}
+                      </Badge>
+                    ) : (
+                      <span className="text-gray-500 text-xs ml-1">未選択</span>
+                    )}
+                  </div>
+
+                  {/* 公開範囲 */}
+                  <div>
+                    <span className="text-sm text-gray-500">公開範囲: </span>
+                    <Badge
+                      variant={
+                        post.visibility === "public" ? "default" : "secondary"
+                      }
+                      className="text-xs ml-1"
+                    >
+                      {post.visibility === "public" ? "全体公開" : "非公開"}
+                    </Badge>
+                  </div>
+
+                  {/* 作成日 */}
+                  <div>
+                    <span className="text-sm text-gray-500">作成日: </span>
+                    <span className="text-sm">
+                      {post.createdAt
+                        ? format(
+                            new Date(
+                              post.createdAt.seconds * 1000 +
+                                post.createdAt.nanoseconds / 1000000
+                            ),
+                            "yyyy年MM月dd日",
+                            { locale: ja }
+                          )
+                        : "不明"}
+                    </span>
+                  </div>
+
+                  {/* 操作ボタン */}
+                  <div className="pt-2 border-t">
+                    <DeletePostDialog postId={post.id} postTitle={post.title} />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))
+        ) : (
+          <Card>
+            <CardContent className="p-4 text-center text-gray-500">
+              投稿がありません
+            </CardContent>
+          </Card>
+        )}
+      </div>
     </div>
   );
 }

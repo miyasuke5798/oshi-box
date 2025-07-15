@@ -13,7 +13,8 @@ export default async function AdminDashboard() {
         <h1 className="text-xl font-bold">ユーザー一覧</h1>
       </div>
 
-      <Card>
+      {/* デスクトップ用テーブル */}
+      <Card className="hidden md:block">
         <CardContent className="p-0">
           <div className="overflow-x-auto">
             <table className="w-full">
@@ -49,6 +50,52 @@ export default async function AdminDashboard() {
           </div>
         </CardContent>
       </Card>
+
+      {/* モバイル用カード表示 */}
+      <div className="md:hidden space-y-4">
+        {users.map((user) => (
+          <Card key={user.uid}>
+            <CardContent className="p-4">
+              <div className="space-y-3">
+                {/* 名前 */}
+                <div>
+                  <Link href={`/${user.uid}`} className="rose_link">
+                    <h3 className="font-medium text-lg">
+                      {user.displayName || "未設定"}
+                    </h3>
+                  </Link>
+                </div>
+
+                {/* ユーザーID */}
+                <div>
+                  <span className="text-sm text-gray-500">ID: </span>
+                  <span className="text-sm font-mono">{user.uid}</span>
+                </div>
+
+                {/* メールアドレス */}
+                <div>
+                  <span className="text-sm text-gray-500">
+                    メールアドレス:{" "}
+                  </span>
+                  <span className="text-sm break-all">{user.email}</span>
+                </div>
+
+                {/* 登録日 */}
+                <div>
+                  <span className="text-sm text-gray-500">登録日: </span>
+                  <span className="text-sm">
+                    {user.createdAt
+                      ? format(user.createdAt.toDate(), "yyyy年MM月dd日", {
+                          locale: ja,
+                        })
+                      : "不明"}
+                  </span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
     </div>
   );
 }
