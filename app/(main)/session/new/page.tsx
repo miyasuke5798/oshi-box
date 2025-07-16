@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { AlertCircle } from "lucide-react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { XButton } from "@/components/ui/x_button";
+import { GoogleButton } from "@/components/ui/google-button";
 
 function SessionNewContent() {
   const searchParams = useSearchParams();
@@ -32,8 +33,9 @@ function SessionNewContent() {
           <div className="text-sm mb-6">
             <p></p>
           </div>
-          <div className="flex flex-col gap-6 max-w-64 sm:max-w-72 mx-auto mb-6">
+          <div className="flex flex-col gap-4 max-w-64 sm:max-w-72 mx-auto mb-6">
             <XButton />
+            <GoogleButton />
           </div>
           <ul className="text-sm">
             <li>

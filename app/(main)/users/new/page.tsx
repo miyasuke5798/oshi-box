@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { getSession } from "@/lib/auth-server";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { XButton } from "@/components/ui/x_button";
+import { GoogleButton } from "@/components/ui/google-button";
 
 // 動的レンダリングを強制
 export const dynamic = "force-dynamic";
@@ -25,8 +26,9 @@ export default async function UsersNew() {
           <div className="text-sm mb-6">
             <p></p>
           </div>
-          <div className="flex flex-col gap-6 max-w-64 sm:max-w-72 mx-auto mb-6">
+          <div className="flex flex-col gap-4 max-w-64 sm:max-w-72 mx-auto mb-6">
             <XButton />
+            <GoogleButton />
           </div>
         </CardContent>
       </Card>

@@ -3,6 +3,7 @@ import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Card } from "@/components/ui/card";
 import { XButton } from "@/components/ui/x_button";
+import { GoogleButton } from "@/components/ui/google-button";
 import { useEffect, Suspense } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -28,8 +29,9 @@ function AdminContent() {
     <div className="flex items-center justify-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
       <Card className="w-full max-w-md p-6 space-y-8">
         <h1 className="text-2xl font-bold">管理者ログイン</h1>
-        <div className="flex justify-center">
+        <div className="flex flex-col gap-4">
           <XButton redirectPath="/admin/dashboard/users" />
+          <GoogleButton redirectPath="/admin/dashboard/users" />
         </div>
         <div className="text-center">
           <Link href="/" className="text-sm text-gray-500 hover:text-gray-700">
@@ -48,7 +50,8 @@ export default function Admin() {
         <div className="flex items-center justify-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
           <Card className="w-full max-w-md p-6 space-y-8">
             <h1 className="text-2xl font-bold">管理者ログイン</h1>
-            <div className="flex justify-center">
+            <div className="flex flex-col gap-4">
+              <div className="animate-pulse bg-gray-200 h-10 w-48 rounded"></div>
               <div className="animate-pulse bg-gray-200 h-10 w-48 rounded"></div>
             </div>
             <div className="text-center">
