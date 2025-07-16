@@ -80,9 +80,17 @@ export const XButton = ({ redirectPath }: XButtonProps) => {
       }
     } catch (error) {
       console.error("認証エラー:", error);
-      toast.error("認証に失敗しました", {
-        icon: <AlertCircle />,
-      });
+      
+      // アカウントが異なる認証プロバイダーで既に存在する場合
+      if (error && typeof error === 'object' && 'code' in error && error.code === "auth/account-exists-with-different-credential") {
+        toast.error("このメールアドレスは既に登録されています", {
+          icon: <AlertCircle />,
+        });
+      } else {
+        toast.error("認証に失敗しました", {
+          icon: <AlertCircle />,
+        });
+      }
     }
   };
 
