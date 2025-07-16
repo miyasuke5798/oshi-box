@@ -19,7 +19,7 @@ export const ShareMenu: React.FC = () => {
     },
     {
       label: "投稿する",
-      href: "/users/posts/new",
+      href: user ? "/users/posts/new" : "/session/new?req=auth",
       icon: <BsFillSendFill size={26} color="#3ebff5" />,
     },
     {

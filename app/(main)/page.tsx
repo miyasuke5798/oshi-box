@@ -25,7 +25,7 @@ export default async function Home() {
             posts={posts}
             categories={categories}
             showTitle={true}
-            maxPosts={6}
+            //maxPosts={6}
           />
         </CardContent>
       </Card>

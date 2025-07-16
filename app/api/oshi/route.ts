@@ -14,6 +14,9 @@ const oshiSchema = z.object({
   oshiColor: z
     .string()
     .regex(/^#[0-9A-Fa-f]{6}$/, "有効な色コードを入力してください")
+    .optional()
+    .or(z.literal(""))
+    .or(z.null())
     .optional(),
 });
 
