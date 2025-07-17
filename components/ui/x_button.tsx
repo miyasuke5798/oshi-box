@@ -39,6 +39,7 @@ export const XButton = ({ redirectPath }: XButtonProps) => {
             uid: result.user.uid,
             displayName: result.user.displayName,
             email: result.user.email,
+            provider: "twitter", // プロバイダー情報を追加
             createdAt: new Date(),
             updatedAt: new Date(),
           });
@@ -46,11 +47,14 @@ export const XButton = ({ redirectPath }: XButtonProps) => {
             toast.success("登録に成功しました", { icon: <SuccessCircle /> });
           }, 500);
         } else {
-          // 既存ユーザーの場合
+          // 既存ユーザーの場合（同じプロバイダーでの再ログイン）
+          // プロバイダー情報を更新
           await setDoc(
             userRef,
             {
-              ...userDoc.data(),
+              displayName: result.user.displayName,
+              email: result.user.email,
+              provider: "twitter",
               updatedAt: new Date(),
             },
             { merge: true }
@@ -80,17 +84,10 @@ export const XButton = ({ redirectPath }: XButtonProps) => {
       }
     } catch (error) {
       console.error("認証エラー:", error);
-      
-      // アカウントが異なる認証プロバイダーで既に存在する場合
-      if (error && typeof error === 'object' && 'code' in error && error.code === "auth/account-exists-with-different-credential") {
-        toast.error("このメールアドレスは既に登録されています", {
-          icon: <AlertCircle />,
-        });
-      } else {
-        toast.error("認証に失敗しました", {
-          icon: <AlertCircle />,
-        });
-      }
+
+      toast.error("認証に失敗しました", {
+        icon: <AlertCircle />,
+      });
     }
   };
 

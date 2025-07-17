@@ -38,7 +38,7 @@ export const GoogleButton = ({ redirectPath }: GoogleButtonProps) => {
             uid: result.user.uid,
             displayName: result.user.displayName,
             email: result.user.email,
-            photoURL: result.user.photoURL,
+            provider: "google", // プロバイダー情報を追加
             createdAt: new Date(),
             updatedAt: new Date(),
           });
@@ -46,11 +46,14 @@ export const GoogleButton = ({ redirectPath }: GoogleButtonProps) => {
             toast.success("登録に成功しました", { icon: <SuccessCircle /> });
           }, 500);
         } else {
-          // 既存ユーザーの場合
+          // 既存ユーザーの場合（同じプロバイダーでの再ログイン）
+          // プロバイダー情報を更新
           await setDoc(
             userRef,
             {
-              ...userDoc.data(),
+              displayName: result.user.displayName,
+              email: result.user.email,
+              provider: "google",
               updatedAt: new Date(),
             },
             { merge: true }
@@ -80,22 +83,9 @@ export const GoogleButton = ({ redirectPath }: GoogleButtonProps) => {
       }
     } catch (error) {
       console.error("認証エラー:", error);
-
-      // アカウントが異なる認証プロバイダーで既に存在する場合
-      if (
-        error &&
-        typeof error === "object" &&
-        "code" in error &&
-        error.code === "auth/account-exists-with-different-credential"
-      ) {
-        toast.error("このメールアドレスは既に登録されています", {
-          icon: <AlertCircle />,
-        });
-      } else {
-        toast.error("認証に失敗しました", {
-          icon: <AlertCircle />,
-        });
-      }
+      toast.error("認証に失敗しました", {
+        icon: <AlertCircle />,
+      });
     }
   };
 
