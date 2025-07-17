@@ -1,6 +1,7 @@
 "use client";
 
-import { XIcon } from "@/components/svg/x_icon";
+//import { XIcon } from "@/components/svg/x_icon";
+import { Share } from "lucide-react";
 import { useState } from "react";
 
 interface XShareButtonProps {
@@ -171,11 +172,11 @@ export function XShareButton({
     <button
       onClick={handleShare}
       disabled={isSharing}
-      className={`flex items-center justify-center py-1.5 px-3 rounded-full bg-gray-100 hover:bg-gray-200 cursor-pointer transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${className}`}
+      className={`flex items-center justify-center gap-1 py-1.5 px-3 rounded-full bg-gray-100 hover:bg-gray-200 cursor-pointer transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${className}`}
       title="Xでシェア"
     >
-      <XIcon width={24} height={24} />
-      <span className="text-sm">でシェア</span>
+      <Share className="w-5 h-5" />
+      <span className="text-sm">シェア</span>
     </button>
   );
 }
