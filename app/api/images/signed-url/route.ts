@@ -19,7 +19,7 @@ export async function GET(request: Request) {
 
     const [url] = await file.getSignedUrl({
       action: "read",
-      expires: Date.now() + 24 * 60 * 60 * 1000, // 24時間
+      expires: Date.now() + 365 * 24 * 60 * 60 * 1000, // 1年
     });
 
     return NextResponse.json({ url });
