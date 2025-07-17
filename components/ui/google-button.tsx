@@ -47,12 +47,15 @@ export const GoogleButton = ({ redirectPath }: GoogleButtonProps) => {
           }, 500);
         } else {
           // 既存ユーザーの場合（同じプロバイダーでの再ログイン）
-          // プロバイダー情報を更新
+          // 既存データを保持し、必要な情報のみ更新
+          const existingData = userDoc.data();
           await setDoc(
             userRef,
             {
-              displayName: result.user.displayName,
-              email: result.user.email,
+              ...existingData, // 既存データを保持
+              displayName: existingData.displayName || result.user.displayName, // 既存の名前がない場合のみ更新
+              email: existingData.email || result.user.email, // 既存のメールがない場合のみ更新
+              photoURL: existingData.photoURL || result.user.photoURL, // 既存の画像がない場合のみ更新
               provider: "google",
               updatedAt: new Date(),
             },
