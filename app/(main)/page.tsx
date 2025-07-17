@@ -4,8 +4,23 @@ import { PostsGrid } from "@/components/posts/PostsGrid";
 import { getPosts, getCategories } from "@/lib/firebase/admin";
 import { HomeContent } from "@/components/home/home-content";
 import { HomeClient } from "@/components/home/home-client";
+import { redirect } from "next/navigation";
+import { getSession } from "@/lib/auth-server";
 
 export default async function Home() {
+  // セッションを取得（エラーが発生しないように）
+  let session = null;
+  try {
+    session = await getSession();
+  } catch {
+    // セッションが取得できない場合は無視（未ログイン状態）
+  }
+
+  // ログイン中の場合はマイページにリダイレクト
+  if (session?.uid) {
+    redirect(`/${session.uid}`);
+  }
+
   const [posts, categories] = await Promise.all([getPosts(), getCategories()]);
 
   return (
