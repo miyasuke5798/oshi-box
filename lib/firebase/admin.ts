@@ -144,7 +144,7 @@ export async function getPosts(): Promise<Post[]> {
                 const file = bucket.file(imagePath);
                 const [url] = await file.getSignedUrl({
                   action: "read",
-                  expires: Date.now() + 24 * 60 * 60 * 1000, // 24時間
+                  expires: Date.now() + 7 * 24 * 60 * 60 * 1000, // 7日間
                 });
                 return url;
               } catch (error) {
@@ -272,7 +272,7 @@ export async function getUserPosts(
                 const file = bucket.file(imagePath);
                 const [url] = await file.getSignedUrl({
                   action: "read",
-                  expires: Date.now() + 24 * 60 * 60 * 1000, // 24時間
+                  expires: Date.now() + 7 * 24 * 60 * 60 * 1000, // 7日間
                 });
                 return url;
               } catch (error) {
@@ -404,7 +404,7 @@ export async function getPostById(
               const file = bucket.file(imagePath);
               const [url] = await file.getSignedUrl({
                 action: "read",
-                expires: Date.now() + 24 * 60 * 60 * 1000, // 24時間
+                expires: Date.now() + 7 * 24 * 60 * 60 * 1000, // 7日間
               });
               return url;
             } catch (error) {
@@ -594,7 +594,7 @@ export async function getPostsForAdmin(): Promise<Post[]> {
                 const file = bucket.file(imagePath);
                 const [url] = await file.getSignedUrl({
                   action: "read",
-                  expires: Date.now() + 24 * 60 * 60 * 1000, // 24時間
+                  expires: Date.now() + 7 * 24 * 60 * 60 * 1000, // 7日間
                 });
                 return url;
               } catch (error) {
@@ -723,7 +723,7 @@ export async function getPostsByHashtag(hashtag: string): Promise<Post[]> {
                 const file = bucket.file(imagePath);
                 const [url] = await file.getSignedUrl({
                   action: "read",
-                  expires: Date.now() + 24 * 60 * 60 * 1000, // 24時間
+                  expires: Date.now() + 7 * 24 * 60 * 60 * 1000, // 7日間
                 });
                 return url;
               } catch (error) {
@@ -829,7 +829,7 @@ export async function getPostsByCategory(categoryId: string): Promise<Post[]> {
                 const file = bucket.file(imagePath);
                 const [url] = await file.getSignedUrl({
                   action: "read",
-                  expires: Date.now() + 24 * 60 * 60 * 1000, // 24時間
+                  expires: Date.now() + 7 * 24 * 60 * 60 * 1000, // 7日間
                 });
                 return url;
               } catch (error) {
