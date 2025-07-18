@@ -13,6 +13,14 @@ interface XButtonProps {
   redirectPath?: string;
 }
 
+// AdditionalUserInfoの型定義
+interface ReloadUserInfo {
+  screenName?: string;
+  profile?: Record<string, unknown>;
+  providerId: string;
+  isNewUser: boolean;
+}
+
 export const XButton = ({ redirectPath }: XButtonProps) => {
   const router = useRouter();
 
@@ -29,6 +37,13 @@ export const XButton = ({ redirectPath }: XButtonProps) => {
       const result = await signInWithPopup(auth, provider);
 
       if (result.user) {
+        // Xのユーザー名を取得（AdditionalUserInfoから）
+        const reloadUserInfo = (
+          result.user as { reloadUserInfo?: ReloadUserInfo }
+        ).reloadUserInfo;
+        const xUsername = reloadUserInfo?.screenName;
+        const xUrl = xUsername ? `https://x.com/${xUsername}` : null;
+
         // ユーザー情報をFirestoreに保存/更新
         const userRef = doc(db, "users", result.user.uid);
         const userDoc = await getDoc(userRef);
@@ -40,6 +55,7 @@ export const XButton = ({ redirectPath }: XButtonProps) => {
             displayName: result.user.displayName,
             email: result.user.email,
             provider: "twitter", // プロバイダー情報を追加
+            snsLink: xUrl, // XのURLを設定
             createdAt: new Date(),
             updatedAt: new Date(),
           });
@@ -50,12 +66,19 @@ export const XButton = ({ redirectPath }: XButtonProps) => {
           // 既存ユーザーの場合（同じプロバイダーでの再ログイン）
           // 既存データを保持し、必要な情報のみ更新
           const existingData = userDoc.data();
+
+          // snsLinkが存在しない、null、空文字列の場合のみXのURLを設定
+          const currentSnsLink = existingData.snsLink;
+          const updatedSnsLink =
+            !currentSnsLink || currentSnsLink === "" ? xUrl : currentSnsLink;
+
           await setDoc(
             userRef,
             {
               ...existingData, // 既存データを保持
               displayName: existingData.displayName || result.user.displayName, // 既存の名前がない場合のみ更新
               email: existingData.email || result.user.email, // 既存のメールがない場合のみ更新
+              snsLink: updatedSnsLink, // 既存のsnsLinkが空の場合のみ更新
               provider: "twitter",
               updatedAt: new Date(),
             },
