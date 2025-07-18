@@ -16,6 +16,7 @@ import { SuccessCircle } from "@/components/svg/success_circle";
 import { Textarea } from "@/components/ui/textarea";
 import { UserData } from "@/types/user";
 import { useRouter } from "next/navigation";
+import { FileInput } from "@/components/ui/file-input";
 
 const profileSchema = z.object({
   name: z
@@ -200,11 +201,10 @@ export function SettingsProfileClient({
                     <UserIcon className="w-24 h-24 border border-gray-300 rounded-full" />
                   )}
                 </div>
-                <Input
-                  type="file"
+                <FileInput
                   accept="image/*"
                   onChange={handleImageChange}
-                  className="w-full sm:w-fit cursor-pointer"
+                  label="プロフィール画像を選択"
                 />
               </div>
             </div>

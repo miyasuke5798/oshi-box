@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { FileInput } from "@/components/ui/file-input";
 import { UserIcon } from "@/components/svg/UserIcon";
 import { ColorPicker } from "@/components/ui/color-picker";
 import { toast } from "sonner";
@@ -177,11 +178,10 @@ export function OshiFormDialog({
                   <UserIcon className="w-24 h-24 border border-gray-300 rounded-full" />
                 )}
               </div>
-              <Input
-                type="file"
+              <FileInput
                 accept="image/*"
                 onChange={handleImageChange}
-                className="w-full sm:w-fit cursor-pointer"
+                label="推しの画像を選択"
                 disabled={isLoading}
               />
             </div>

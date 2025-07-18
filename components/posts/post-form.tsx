@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { FileInput } from "@/components/ui/file-input";
 import { Post } from "@/types/post";
 import { useState, useEffect, useRef } from "react";
 import { Category } from "@/types/category";
@@ -421,8 +422,7 @@ export function PostForm({
       <div className="space-y-2">
         <Label>画像</Label>
         <div className="flex flex-col space-y-4">
-          <Input
-            type="file"
+          <FileInput
             accept="image/jpeg,image/jpg,image/png,image/webp"
             multiple
             onChange={handleImageChange}

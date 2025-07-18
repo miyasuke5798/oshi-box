@@ -6,6 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { FileInput } from "@/components/ui/file-input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -274,12 +275,11 @@ export function NewPostClient({ session }: NewPostClientProps) {
             <div className="space-y-2">
               <label className="text-sm font-medium">画像</label>
               <div className="flex flex-col space-y-4">
-                <Input
-                  type="file"
+                <FileInput
                   accept="image/jpeg,image/jpg,image/png,image/webp"
                   multiple
                   onChange={handleImageChange}
-                  className="w-auto sm:w-fit cursor-pointer"
+                  label="画像を選択"
                 />
                 {previewUrls.length > 0 && (
                   <div className="grid grid-cols-3 gap-4 sm:grid-cols-4 md:grid-cols-5">
