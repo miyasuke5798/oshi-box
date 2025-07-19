@@ -1,5 +1,4 @@
 import Link from "next/link";
-import Image from "next/image";
 import { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import { Card, CardContent } from "@/components/ui/card";
@@ -7,7 +6,6 @@ import { XBackButton } from "@/components/ui/x-back-button";
 import { Badge } from "@/components/ui/badge";
 import { ShareMenu } from "@/components/layout/share_menu";
 import { XShareButton } from "@/components/ui/x-share-button";
-import { UserIcon } from "lucide-react";
 import { format } from "date-fns";
 import { ja } from "date-fns/locale";
 import { DeletePostDialog } from "./delete-post-dialog";
@@ -16,12 +14,8 @@ import { getSession } from "@/lib/auth-server";
 import { getPostById, getCategories, getOshiById } from "@/lib/firebase/admin";
 import { CategoryBadge } from "@/components/ui/category-badge";
 import { PostFooterCard } from "./post-footer-card";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselIndicators,
-} from "@/components/ui/carousel";
+import { PostImages } from "./components/post-images";
+import { UserAvatar } from "./components/user-avatar";
 
 interface PageProps {
   params: Promise<{
@@ -144,16 +138,11 @@ export default async function PostDetailPage({ params }: PageProps) {
               <Link href={`/${post.user.uid}`}>
                 <div className="flex items-center gap-2 mt-1">
                   <div className="relative w-8 h-8 rounded-full overflow-hidden">
-                    {post.user.photoURL ? (
-                      <Image
-                        src={post.user.photoURL}
-                        alt={post.user.displayName || "ユーザー"}
-                        fill
-                        className="object-cover border-[0.5px] border-gray-300 rounded-full"
-                      />
-                    ) : (
-                      <UserIcon className="w-full h-full text-gray-400" />
-                    )}
+                    <UserAvatar
+                      photoURL={post.user.photoURL}
+                      displayName={post.user.displayName}
+                      uid={post.user.uid}
+                    />
                   </div>
                   <span className="text-sm text-gray-600">
                     {post.user.displayName || "不明"}
@@ -162,30 +151,7 @@ export default async function PostDetailPage({ params }: PageProps) {
               </Link>
             )}
           </div>
-          {post.images && post.images.length > 0 && (
-            <div className="mt-4">
-              <Carousel className="w-full">
-                <CarouselContent>
-                  {post.images.map((image, index) => (
-                    <CarouselItem key={index}>
-                      <div className="w-full">
-                        <Image
-                          src={image || ""}
-                          alt={`投稿画像 ${index + 1}`}
-                          width={800}
-                          height={600}
-                          className="w-full h-auto rounded-lg object-cover"
-                        />
-                      </div>
-                    </CarouselItem>
-                  ))}
-                </CarouselContent>
-                {post.images.length > 1 && (
-                  <CarouselIndicators count={post.images.length} />
-                )}
-              </Carousel>
-            </div>
-          )}
+          <PostImages images={post.images || []} title={post.title} />
           {oshi && (
             <div className="flex items-center gap-2 my-4">
               <span className="text-sm text-gray-500">推し:</span>
