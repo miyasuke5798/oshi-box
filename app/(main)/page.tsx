@@ -7,6 +7,10 @@ import { HomeClient } from "@/components/home/home-client";
 import { redirect } from "next/navigation";
 import { getSession } from "@/lib/auth-server";
 
+// 動的レンダリングを強制
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export default async function Home() {
   // セッションを取得（エラーが発生しないように）
   let session = null;
