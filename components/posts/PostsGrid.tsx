@@ -1,11 +1,15 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
+import { useState, useEffect } from "react";
 import { UserIcon } from "@/components/svg/UserIcon";
 import { Image as ImageIcon } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { CategoryBadge } from "@/components/ui/category-badge";
 import { Post } from "@/types/post";
 import { Category } from "@/types/category";
+import { addCacheBuster } from "@/lib/utils";
 
 interface PostsGridProps {
   posts: Post[];
@@ -20,10 +24,61 @@ export function PostsGrid({
   showTitle = true,
   maxPosts,
 }: PostsGridProps) {
+  // エラー状態を管理
+  const [imageErrors, setImageErrors] = useState<Set<string>>(new Set());
+  // ハイドレーション完了状態を管理
+  const [isHydrated, setIsHydrated] = useState(false);
+  // キャッシュバスティング済みの画像URLを管理
+  const [cachedImageUrls, setCachedImageUrls] = useState<Map<string, string>>(
+    new Map()
+  );
+
+  // ハイドレーション完了後にキャッシュバスティングを有効化
+  useEffect(() => {
+    setIsHydrated(true);
+
+    // 全ての画像URLにキャッシュバスティングを適用
+    const newCachedUrls = new Map<string, string>();
+
+    // 投稿画像
+    posts.forEach((post) => {
+      if (post.images && post.images.length > 0) {
+        post.images.forEach((imageUrl) => {
+          if (imageUrl && !newCachedUrls.has(imageUrl)) {
+            newCachedUrls.set(imageUrl, addCacheBuster(imageUrl));
+          }
+        });
+      }
+    });
+
+    // ユーザーアバター画像
+    posts.forEach((post) => {
+      if (post.user.photoURL && !newCachedUrls.has(post.user.photoURL)) {
+        newCachedUrls.set(
+          post.user.photoURL,
+          addCacheBuster(post.user.photoURL)
+        );
+      }
+    });
+
+    setCachedImageUrls(newCachedUrls);
+  }, [posts]);
+
   // カテゴリーIDから名前を取得する関数
   const getCategoryName = (categoryId: string) => {
     const category = categories.find((cat) => cat.id === categoryId);
     return category?.name || null;
+  };
+
+  // 画像エラーハンドラー
+  const handleImageError = (imageUrl: string) => {
+    setImageErrors((prev) => new Set(prev).add(imageUrl));
+  };
+
+  // 画像URLを取得（ハイドレーション完了後はキャッシュバスティング済みURLを使用）
+  const getImageUrl = (url: string) => {
+    if (!isHydrated || !url) return url;
+    return cachedImageUrls.get(url) || url;
   };
 
   // 最大表示数を制限
@@ -43,17 +98,24 @@ export function PostsGrid({
               <div className="relative rounded-lg overflow-hidden bg-white shadow-sm hover:shadow-md transition-shadow">
                 {post.images && post.images.length > 0 ? (
                   <div className="relative">
-                    <Image
-                      src={post.images[0]}
-                      alt={post.title}
-                      width={300}
-                      height={400}
-                      className="w-full h-auto"
-                      style={{
-                        aspectRatio: "auto",
-                        display: "block",
-                      }}
-                    />
+                    {!imageErrors.has(post.images[0]) ? (
+                      <Image
+                        src={getImageUrl(post.images[0])}
+                        alt={post.title}
+                        width={300}
+                        height={400}
+                        className="w-full h-auto"
+                        style={{
+                          aspectRatio: "auto",
+                          display: "block",
+                        }}
+                        onError={() => handleImageError(post.images[0])}
+                      />
+                    ) : (
+                      <div className="w-full h-48 flex items-center justify-center bg-gray-100">
+                        <ImageIcon className="w-12 h-12 text-gray-400" />
+                      </div>
+                    )}
                   </div>
                 ) : (
                   <div className="w-full h-48 flex items-center justify-center bg-gray-100">
@@ -66,12 +128,14 @@ export function PostsGrid({
                   </h3>
                   <div className="flex items-center gap-2 mb-2">
                     <div className="relative w-6 h-6 overflow-hidden rounded-full">
-                      {post.user.photoURL ? (
+                      {post.user.photoURL &&
+                      !imageErrors.has(post.user.photoURL) ? (
                         <Image
-                          src={post.user.photoURL}
+                          src={getImageUrl(post.user.photoURL)}
                           alt={post.user.displayName || "ユーザー"}
                           fill
                           className="object-cover border-[0.5px] border-gray-300"
+                          onError={() => handleImageError(post.user.photoURL!)}
                         />
                       ) : (
                         <UserIcon className="w-full h-full text-gray-400" />

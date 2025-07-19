@@ -272,7 +272,7 @@ export async function getUserPosts(
                 const file = bucket.file(imagePath);
                 const [url] = await file.getSignedUrl({
                   action: "read",
-                  expires: Date.now() + 7 * 24 * 60 * 60 * 1000, // 7日間
+                  expires: Date.now() + 365 * 24 * 60 * 60 * 1000, // 1年間
                 });
                 return url;
               } catch (error) {
@@ -404,7 +404,7 @@ export async function getPostById(
               const file = bucket.file(imagePath);
               const [url] = await file.getSignedUrl({
                 action: "read",
-                expires: Date.now() + 7 * 24 * 60 * 60 * 1000, // 7日間
+                expires: Date.now() + 365 * 24 * 60 * 60 * 1000, // 1年間
               });
               return url;
             } catch (error) {
