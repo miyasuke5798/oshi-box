@@ -33,8 +33,21 @@ export function PostsGrid({
     new Map()
   );
 
+  // デバッグ情報
+  useEffect(() => {
+    console.log("PostsGrid - posts received:", {
+      count: posts.length,
+      posts: posts.map((p) => ({
+        id: p.id,
+        title: p.title,
+        hasImages: p.images?.length > 0,
+      })),
+    });
+  }, [posts]);
+
   // ハイドレーション完了後にキャッシュバスティングを有効化
   useEffect(() => {
+    console.log("PostsGrid - useEffect triggered, isHydrated:", isHydrated);
     setIsHydrated(true);
 
     // 全ての画像URLにキャッシュバスティングを適用
@@ -61,6 +74,7 @@ export function PostsGrid({
       }
     });
 
+    console.log("PostsGrid - cached URLs created:", newCachedUrls.size);
     setCachedImageUrls(newCachedUrls);
   }, [posts]);
 
@@ -72,6 +86,7 @@ export function PostsGrid({
 
   // 画像エラーハンドラー
   const handleImageError = (imageUrl: string) => {
+    console.log("PostsGrid - image error:", imageUrl);
     setImageErrors((prev) => new Set(prev).add(imageUrl));
   };
 
@@ -83,6 +98,13 @@ export function PostsGrid({
 
   // 最大表示数を制限
   const displayPosts = maxPosts ? posts.slice(0, maxPosts) : posts;
+
+  console.log("PostsGrid - render state:", {
+    isHydrated,
+    displayPostsCount: displayPosts.length,
+    imageErrorsCount: imageErrors.size,
+    cachedUrlsCount: cachedImageUrls.size,
+  });
 
   return (
     <div>
