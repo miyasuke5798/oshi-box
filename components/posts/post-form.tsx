@@ -411,7 +411,7 @@ export function PostForm({
         <Textarea
           id="content"
           {...register("content")}
-          placeholder="投稿の内容を入力"
+          //placeholder="投稿の内容を入力"
           rows={10}
         />
         {errors.content && (

@@ -229,7 +229,7 @@ export function NewPostClient({ session }: NewPostClientProps) {
       <ShareMenu />
       <Card className="w-full mb-4">
         <CardContent className="py-5 px-6">
-          <h1 className="text-xl font-bold mb-6">投稿する</h1>
+          {/*<h1 className="text-xl font-bold mb-6">投稿する</h1>*/}
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             <div className="space-y-2">
               <label className="text-sm font-medium">推し選択</label>
@@ -266,7 +266,7 @@ export function NewPostClient({ session }: NewPostClientProps) {
                 id="content"
                 {...register("content")}
                 className="min-h-[110px]"
-                placeholder="例：推しの○○のライブに行ってきました！生で見た瞬間に涙腺崩壊…。衣装や表情、ファンサも最高すぎて、一生の思い出です！"
+                //placeholder="例：推しの○○のライブに行ってきました！生で見た瞬間に涙腺崩壊…。衣装や表情、ファンサも最高すぎて、一生の思い出です！"
               />
               {errors.content && (
                 <p className="text-sm text-red-500">{errors.content.message}</p>

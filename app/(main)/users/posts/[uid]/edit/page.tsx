@@ -26,7 +26,7 @@ export default async function EditPostPage({ params }: PageProps) {
       <ShareMenu />
       <Card className="w-full mb-4">
         <CardContent className="py-5 px-6">
-          <h1 className="text-xl font-bold mb-6">投稿を編集</h1>
+          {/*<h1 className="text-xl font-bold mb-6">投稿を編集</h1>*/}
           <EditPostForm post={post} />
         </CardContent>
       </Card>
