@@ -194,7 +194,10 @@ export default function SettingsOshiPage() {
         <CardContent className="py-5 px-6">
           <BackButton />
           {/* 推し追加フォーム */}
-          <div className="flex justify-end mt-6 mb-10">
+          <div className="flex items-center justify-end mt-6 mb-10">
+            <p className="text-sm text-gray-500 mr-4">
+              Xでシェアすると、推し登録は無制限に
+            </p>
             <Button
               onClick={() => setIsCreateDialogOpen(true)}
               disabled={isAdding}

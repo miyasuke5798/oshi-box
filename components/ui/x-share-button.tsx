@@ -172,7 +172,7 @@ export function XShareButton({
     <button
       onClick={handleShare}
       disabled={isSharing}
-      className={`flex items-center justify-center gap-1 py-1.5 px-3 rounded-full bg-gray-100 hover:bg-gray-200 cursor-pointer transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${className}`}
+      className={`min-w-fit flex items-center justify-center gap-1 py-1.5 px-3 rounded-full bg-gray-100 hover:bg-gray-200 cursor-pointer transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${className}`}
       title="Xでシェア"
     >
       <Share className="w-5 h-5" />

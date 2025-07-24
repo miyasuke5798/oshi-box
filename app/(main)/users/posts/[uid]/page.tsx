@@ -199,13 +199,16 @@ export default async function PostDetailPage({ params }: PageProps) {
                 )
               : "不明"}
           </div>
-          <div className="mt-10">
+          <div className="flex items-center justify-start mt-10">
             <XShareButton
               title={post.title}
               content={post.content}
               url={`/users/posts/${post.id}`}
               imageUrl={imageUrl}
             />
+            <p className="text-sm text-gray-500 ml-4">
+              Xでシェアすると、推し登録は無制限に
+            </p>
           </div>
           {isCurrentUser && (
             <div className="flex items-center gap-6 mt-10 w-full">
