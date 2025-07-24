@@ -74,16 +74,16 @@ export async function POST(request: Request) {
     // バリデーション実行
     const validatedData = oshiSchema.parse(data);
 
-    // ユーザーの推し数をチェック（3つまで）
+    // ユーザーの推し数をチェック（5つまで）
     const existingOshisSnapshot = await adminDb
       .collection("users")
       .doc(session.uid)
       .collection("oshi")
       .get();
 
-    if (existingOshisSnapshot.size >= 3) {
+    if (existingOshisSnapshot.size >= 5) {
       return NextResponse.json(
-        { error: "推しは3つまでしか作成できません" },
+        { error: "推しは5つまでしか作成できません" },
         { status: 400 }
       );
     }
