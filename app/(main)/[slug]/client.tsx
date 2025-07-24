@@ -194,7 +194,7 @@ export function SlugPageClient({
       <Card className="w-full mb-4">
         <CardContent className="py-5 px-6">
           <div className="flex justify-between items-center">
-            <h1 className="text-xl font-bold mb-6">投稿一覧</h1>
+            <h1 className="text-xl font-bold mb-6">推し一覧</h1>
             {isCurrentUser && (
               <Link
                 href="/settings/oshi"

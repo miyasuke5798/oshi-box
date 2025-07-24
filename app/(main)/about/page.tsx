@@ -10,12 +10,10 @@ export default function About() {
         </CardHeader>
         <CardContent className="py-5">
           <div className="text-[#000] leading-relaxed">
-            <p>あなたの“推し活”、ちゃんと残していますか？</p>
+            <p>推しの記録、散らばっていませんか？</p>
             <p>
-              「今日のMCが最高だった」「配信のあのセリフ、一生忘れたくない」
+              散らばった記録を整理して、コレクションできる場所、それが推しBOXです。
             </p>
-            <p>そんな感動の瞬間を、自分だけの空間に残せる。</p>
-            <p>それが 推しBOX です。</p>
           </div>
         </CardContent>
       </Card>
@@ -86,38 +84,32 @@ export default function About() {
           <div className="mb-4">
             <h3 className="text-xl mb-2">1. 推しを登録する</h3>
             <div className="text-[#71717a]">
-              <p>まずは「推し」を登録！最大3人まで登録できます。</p>
+              <p>まずは「推し」を登録！最大5人まで登録できます。</p>
+              <p>投稿をXでシェアすれば無制限で登録可能。</p>
             </div>
           </div>
           <div className="mb-4">
             <h3 className="text-xl mb-2">2. 推し活の記録を投稿</h3>
             <div className="text-[#71717a]">
-              <p>
-                感想、現場レポ、嬉しかった供給など、自由に記録！投稿時に推しを選んで紐づけられます。
-              </p>
+              <p>投稿時に推しを選んで紐づけられます。</p>
             </div>
           </div>
           <div className="mb-4">
             <h3 className="text-xl mb-2">3. カテゴリやハッシュタグで整理</h3>
             <div className="text-[#71717a]">
-              <p>
-                #現場レポ #供給感謝 #初見沼落ち
-                など、自分好みにタグ管理！あとから見返すのもスムーズ。
-              </p>
+              <p>自分好みにタグ管理！あとから見返すのもスムーズ。</p>
             </div>
           </div>
           <div className="mb-4">
-            <h3 className="text-xl mb-2">4. Xにシェアして共有</h3>
+            <h3 className="text-xl mb-2">4. シェアして共有</h3>
             <div className="text-[#71717a]">
-              <p>投稿後はXにシェアできます！思い出を広げてみよう！</p>
+              <p>投稿後はSNSにシェアできます！思い出を広げてみよう！</p>
             </div>
           </div>
           <div className="mb-4">
-            <h3 className="text-xl mb-2">5. マイページで自分だけの記録帳に</h3>
+            <h3 className="text-xl mb-2">5. マイページで自分だけの推しBOXに</h3>
             <div className="text-[#71717a]">
-              <p>
-                推しとの思い出を増やして、あなた専用の推しアルバムを作りましょう！
-              </p>
+              <p>あなた専用の推しBOXを作りましょう！</p>
             </div>
           </div>
         </CardContent>

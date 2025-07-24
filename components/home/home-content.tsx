@@ -7,21 +7,15 @@ export function HomeContent() {
     <Card className="w-full mb-8">
       <CardContent className="flex flex-col gap-6 py-16">
         <h1 className="text-2xl sm:text-3xl font-medium mb-4">
-          「忘れたくない、あの瞬間がある。」
+          「散らばった&quot;推し記録&quot;、ここにひとつに。」
         </h1>
         <div className="text-lg leading-relaxed mb-8">
           <p className="text-[#71717a]">
-            日常の中に、ふと訪れる尊い一瞬。
+            埋もれてしまった推しの記録。
             <br />
-            推しがくれた笑顔、言葉、感動のライブ──
+            あとから見つけられないことはありませんか？
             <br />
-            どれもが、かけがえのない宝物。
-            <br />
-            <br />
-            「すぐに書き残せて、いつでも見返せる。」
-            <br />
-            推しBOXは、そんな&quot;ときめき&quot;をそっと残す、あなただけの日記帳です。
-            <br />
+            推しBOXは、散らばった&quot;推しの記録&quot;をひとつにまとめて、いつでも整理・保存・振り返れる、あなただけの推しアルバムです。
           </p>
         </div>
         <Link href="/users/new" className="w-full">

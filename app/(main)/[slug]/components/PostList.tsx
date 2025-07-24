@@ -42,7 +42,6 @@ export default function PostList({
     return (
       <div className="text-center">
         <p className="mb-4">まだ投稿がありません。</p>
-        <p className="mb-4">あなたの「推し活」をシェアしてみましょう！</p>
       </div>
     );
   }
