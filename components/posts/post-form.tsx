@@ -384,7 +384,7 @@ export function PostForm({
       <div className="space-y-2">
         <Label>推し選択</Label>
         <p className="text-xs text-gray-500 mt-0.5">
-          ※推しは最大3人まで登録できます
+          ※推しは最大5人まで登録できます
         </p>
         <OshiSelector
           value={watch("oshi") || ""}

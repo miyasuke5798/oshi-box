@@ -27,8 +27,8 @@ export default async function UsersNew() {
             <p></p>
           </div>
           <div className="flex flex-col gap-4 max-w-64 sm:max-w-72 mx-auto mb-6">
-            <XButton />
-            <GoogleButton />
+            <XButton redirectPath="/settings/oshi" />
+            <GoogleButton redirectPath="/settings/oshi" />
           </div>
         </CardContent>
       </Card>

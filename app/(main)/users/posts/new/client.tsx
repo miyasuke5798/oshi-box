@@ -234,7 +234,7 @@ export function NewPostClient({ session }: NewPostClientProps) {
             <div className="space-y-2">
               <label className="text-sm font-medium">推し選択</label>
               <p className="text-xs text-gray-500 mt-0.5">
-                ※推しは最大3人まで登録できます
+                ※推しは最大5人まで登録できます
               </p>
               <OshiSelector
                 value={watch("oshi") || ""}
