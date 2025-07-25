@@ -14,8 +14,10 @@ import { format } from "date-fns";
 import { ja } from "date-fns/locale";
 import { UserIcon } from "@/components/svg/UserIcon";
 import Image from "next/image";
+import { useAuth } from "@/lib/hooks/useAuth";
 
 export default function SettingsOshiPage() {
+  const { user } = useAuth();
   const [oshis, setOshis] = useState<Oshi[]>([]);
   const [loading, setLoading] = useState(true);
   const [isAdding, setIsAdding] = useState(false);
@@ -192,7 +194,7 @@ export default function SettingsOshiPage() {
       <ShareMenu />
       <Card className="w-full mb-4">
         <CardContent className="py-5 px-6">
-          <XBackButton />
+          <XBackButton to={user ? `/${user.uid}` : "/"} />
           {/* 推し追加フォーム */}
           <div className="flex items-center justify-end mt-6 mb-10">
             <p className="text-sm text-gray-500 mr-4">

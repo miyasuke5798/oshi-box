@@ -4,11 +4,15 @@ import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
 import { useRouter } from "next/navigation";
 
-export function XBackButton() {
+export function XBackButton({ to }: { to?: string }) {
   const router = useRouter();
 
   const handleBack = () => {
-    router.back();
+    if (to) {
+      router.push(to);
+    } else {
+      router.back();
+    }
   };
 
   return (
