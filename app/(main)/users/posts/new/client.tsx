@@ -252,7 +252,7 @@ export function NewPostClient({ session }: NewPostClientProps) {
                 id="title"
                 type="text"
                 {...register("title")}
-                placeholder="例：初めての現地ライブで涙が止まらなかった話"
+                //placeholder="例：初めての現地ライブで涙が止まらなかった話"
               />
               {errors.title && (
                 <p className="text-sm text-red-500">{errors.title.message}</p>

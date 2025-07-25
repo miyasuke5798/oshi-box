@@ -7,7 +7,7 @@ export function HomeContent() {
     <Card className="w-full mb-8">
       <CardContent className="flex flex-col gap-6 py-16">
         <h1 className="text-2xl sm:text-3xl font-medium mb-4">
-          「散らばった&quot;推し記録&quot;、ここにひとつに。」
+          「散らばった&quot;推しの記録&quot;、ここにひとつに。」
         </h1>
         <div className="text-lg leading-relaxed mb-8">
           <p className="text-[#71717a]">

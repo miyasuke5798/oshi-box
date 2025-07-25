@@ -399,7 +399,7 @@ export function PostForm({
         <Input
           id="title"
           {...register("title")}
-          placeholder="投稿のタイトルを入力"
+          //placeholder="投稿のタイトルを入力"
         />
         {errors.title && (
           <p className="text-sm text-red-500">{errors.title.message}</p>

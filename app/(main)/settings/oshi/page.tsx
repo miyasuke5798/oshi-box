@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { ShareMenu } from "@/components/layout/share_menu";
 import { Card, CardContent } from "@/components/ui/card";
-import { BackButton } from "@/components/ui/back-button";
+import { XBackButton } from "@/components/ui/x-back-button";
 import { Button } from "@/components/ui/button";
 import { SuccessCircle } from "@/components/svg/success_circle";
 import { toast } from "sonner";
@@ -192,11 +192,11 @@ export default function SettingsOshiPage() {
       <ShareMenu />
       <Card className="w-full mb-4">
         <CardContent className="py-5 px-6">
-          <BackButton />
+          <XBackButton />
           {/* 推し追加フォーム */}
           <div className="flex items-center justify-end mt-6 mb-10">
             <p className="text-sm text-gray-500 mr-4">
-              Xでシェアすると、推し登録は無制限に
+              ※推しは最大5人まで登録できます
             </p>
             <Button
               onClick={() => setIsCreateDialogOpen(true)}
